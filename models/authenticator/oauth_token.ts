@@ -10,119 +10,135 @@ import got from 'got';
 import { APIHTTPConnector } from '../../routes/controllers/api_http_connector';
 
 /**
- * This class contains different types of token.
-*/
-export class TokenType {
-    public static GRANT = 'GRANT';
-    public static REFRESH = 'REFRESH';
-}
-
-/**
  * This class maintains the tokens and authenticates every request.
 */
 export class OAuthToken implements Token {
     private clientID: string;
+
     private clientSecret: string;
-    private redirectURL: string | undefined;
+
+    private redirectURL: string | null;
+
     private grantToken: string | null;
+
     private refreshToken: string | null;
-    private accessToken: string | undefined;
+
+    private accessToken: string | null;
+
     private expiresIn: string;
+
     private userMail: string;
-    private id: string | undefined;
+
+    private id: string | null;
 
     /**
-     * Creates an OAuthToken class instance with the specified parameters.
-     * @param {String} clientID - A String containing the OAuth client id.
-     * @param {String} clientSecret - A String containing the OAuth client secret.
-     * @param {String} token - A String containing the REFRESH/GRANT token.
-     * @param {String} type - A TokenType key containing the given token type.
-     * @param {String} redirectURL - A String containing the OAuth redirect URL.
-    */
-    constructor(clientID: string, clientSecret: string, token: string, type: TokenType, redirectURL?: string) {
+     * This is a setter method to set OAuth client id.
+     * @param {string} clientID - A String containing the client Id.
+     */
+    public setClientId(clientID: string) {
         this.clientID = clientID;
-        this.clientSecret = clientSecret;
-        this.redirectURL = redirectURL;
-        this.refreshToken = (type === TokenType.REFRESH) ? token : null;
-        this.grantToken = (type === TokenType.GRANT) ? token : null;
     }
 
     /**
      * This is a getter method to get OAuth client id.
      * @returns A String representing the OAuth client id.
     */
-    public getClientID() : string {
+    public getClientId(): string {
         return this.clientID;
     }
 
     /**
-	 * This is a getter method to get OAuth client secret.
-	 * @returns A String representing the OAuth client secret.
-	*/
-    public getClientSecret() : string {
+     * This is a setter method to set OAuth client secret.
+     * @param {string} clientSecret - A String containing the client Secret.
+     */
+    public setClientSecret(clientSecret: string) {
+        this.clientSecret = clientSecret;
+    }
+
+    /**
+     * This is a getter method to get OAuth client secret.
+     * @returns A String representing the OAuth client secret.
+    */
+    public getClientSecret(): string {
         return this.clientSecret;
     }
 
     /**
-	 * This is a getter method to get OAuth redirect URL.
-	 * @returns A String representing the OAuth redirect URL.
-	*/
-    public getRedirectURL() : string | undefined {
+     * This is a setter method to set OAuth redirect URL.
+     * @param {string} redirectURL - A String containing the redirectURL.
+     */
+    public setRedirectURL(redirectURL: string | null) {
+        this.redirectURL = redirectURL;
+    }
+
+    /**
+     * This is a getter method to get OAuth redirect URL.
+     * @returns A String representing the OAuth redirect URL.
+    */
+    public getRedirectURL(): string | null {
         return this.redirectURL;
     }
 
     /**
-	 * This is a getter method to get grant token.
-	 * @returns A String representing the grant token.
-	*/
-    public getGrantToken() : string | null {
+     * This is a setter method to set grant token.
+     * @param {string} grantToken - A String containing the grantToken.
+     */
+    public setGrantToken(grantToken: string | null) {
+        this.grantToken = grantToken;
+    }
+
+    /**
+     * This is a getter method to get grant token.
+     * @returns A String representing the grant token.
+    */
+    public getGrantToken(): string | null {
         return this.grantToken;
     }
 
     /**
-	 * This is a getter method to get refresh token.
-	 * @returns A String representing the refresh token.
-	*/
-    public getRefreshToken() : string | null {
+     * This is a getter method to get refresh token.
+     * @returns A String representing the refresh token.
+    */
+    public getRefreshToken(): string | null {
         return this.refreshToken;
     }
 
     /**
-	 * This is a setter method to set refresh token.
-	 * @param {string} refreshToken - A String containing the refresh token.
-	*/
+     * This is a setter method to set refresh token.
+     * @param {string} refreshToken - A String containing the refresh token.
+    */
     public setRefreshToken(refreshToken: string | null) {
         this.refreshToken = refreshToken;
     }
 
     /**
-	 * This is a getter method to get access token.
-	 * @returns A String representing the access token.
-	*/
-    public getAccessToken() : string | undefined {
+     * This is a getter method to get access token.
+     * @returns A String representing the access token.
+    */
+    public getAccessToken(): string | null {
         return this.accessToken;
     }
 
     /**
-	 * This is a setter method to set access token.
-	 * @param {string} accessToken A String containing the access token.
-	*/
-    public setAccessToken(accessToken: string | undefined) {
+     * This is a setter method to set access token.
+     * @param {string} accessToken A String containing the access token.
+    */
+    public setAccessToken(accessToken: string | null) {
         this.accessToken = accessToken;
     }
 
     /**
-	 * This is a getter method to get token expire time.
-	 * @returns A String representing the token expire time.
-	*/
-    public getExpiresIn() : string {
+     * This is a getter method to get token expire time.
+     * @returns A String representing the token expire time.
+    */
+    public getExpiresIn(): string {
         return this.expiresIn;
     }
 
     /**
-	 * This is a setter method to set token expire time.
-	 * @param {string} expiresIn A String containing the token expire time.
-	*/
+     * This is a setter method to set token expire time.
+     * @param {string} expiresIn A String containing the token expire time.
+    */
     public setExpiresIn(expiresIn: string) {
         this.expiresIn = expiresIn;
     }
@@ -131,7 +147,7 @@ export class OAuthToken implements Token {
      * This is a getter method to get token user mail.
      * @returns A String representing the userMail
     */
-    public getUserMail() : string {
+    public getUserMail(): string {
         return this.userMail;
     }
 
@@ -139,7 +155,7 @@ export class OAuthToken implements Token {
      * This is a setter method to set token user email.
      * @param {String} userMail A String containing the userMail
     */
-    public setUserMail(userMail : string) {
+    public setUserMail(userMail: string) {
         this.userMail = userMail;
     }
 
@@ -147,7 +163,7 @@ export class OAuthToken implements Token {
      * This is a getter method to get the id
      * @returns the id
     */
-    public getId() : string | undefined {
+    public getId(): string | null {
         return this.id;
     }
 
@@ -155,58 +171,97 @@ export class OAuthToken implements Token {
      * This is a setter method to set the id
      * @param {String} id A String containing the id
     */
-    public setId(id : string | undefined) {
+    public setId(id: string | null) {
         this.id = id;
     }
 
     public async authenticate(urlConnection: APIHTTPConnector) {
-        var token: string | undefined;
-        var initializer = await Initializer.getInitializer();
-        var store = initializer.getStore();
-        var user = initializer.getUser();
-        var oauthToken = await store.getToken(user, this) as OAuthToken;
-        if(oauthToken == null) {
-            token = (this.refreshToken === null) ? (await this.generateAccessToken(user, store)).getAccessToken() : (await this.refreshAccessToken(user, store)).getAccessToken();
-        }
-        else if (oauthToken.getExpiresIn() !== undefined && (parseInt(oauthToken.getExpiresIn()) - (new Date().getTime())) < 5000) {
-            Logger.info(Constants.REFRESH_TOKEN_MESSAGE);
-            token = (await this.refreshAccessToken(user, store)).getAccessToken();
-        }
-        else {
-            token = this.getAccessToken();
-        }
-        if(token !== undefined) {
-            urlConnection.addHeader(Constants.AUTHORIZATION, Constants.OAUTH_HEADER_PREFIX.concat(token));
+        try {
+            var token: string | null;
+
+            var initializer = await Initializer.getInitializer();
+
+            var store = initializer.getStore();
+
+            var user = initializer.getUser();
+
+            var oauthToken = null;
+
+            if (this.accessToken == null) {
+                if (this.id != null) {
+                    oauthToken = await store.getTokenById(this.id, this) as OAuthToken;
+                }
+                else {
+                    oauthToken = await store.getToken(user, this) as OAuthToken;
+                }
+            }
+            else {
+                oauthToken = this;
+            }
+
+            if (oauthToken == null) {//first time
+                token = (this.refreshToken === null) ? (await this.generateAccessToken(user, store)).getAccessToken() : (await this.refreshAccessToken(user, store)).getAccessToken();
+            }
+            else if (oauthToken.getExpiresIn() !== undefined && (parseInt(oauthToken.getExpiresIn()) - (new Date().getTime())) < 5000) { //access token will expire in next 5 seconds or less
+                Logger.info(Constants.REFRESH_TOKEN_MESSAGE);
+
+                token = (await this.refreshAccessToken(user, store)).getAccessToken();
+            }
+            else {
+                token = this.getAccessToken();
+            }
+
+            if (token !== null) {
+                urlConnection.addHeader(Constants.AUTHORIZATION, Constants.OAUTH_HEADER_PREFIX.concat(token));
+            }
+        } catch (error) {
+            if (!(error instanceof SDKException)) {
+                error = new SDKException(null, null, null, error);
+            }
+
+            throw error;
         }
     }
 
     private async refreshAccessToken(user: UserSignature, store: TokenStore): Promise<OAuthToken> {
         let initializer = await Initializer.getInitializer();
+
         let url = initializer.getEnvironment().getAccountsUrl();
+
         var formDataRequestBody = new FormData();
+
         formDataRequestBody.append(Constants.REFRESH_TOKEN, this.refreshToken);
+
         formDataRequestBody.append(Constants.CLIENT_ID, this.clientID);
+
         formDataRequestBody.append(Constants.CLIENT_SECRET, this.clientSecret);
+
         formDataRequestBody.append(Constants.GRANT_TYPE, Constants.REFRESH_TOKEN);
-        if(this.redirectURL !== undefined){
-            formDataRequestBody.append(Constants.REDIRECT_URL, this.redirectURL);
-        }
+
         const requestDetails = {
-			method : Constants.REQUEST_METHOD_POST,
-			headers : {},
-			body : formDataRequestBody,
+            method: Constants.REQUEST_METHOD_POST,
+            headers: {},
+            body: formDataRequestBody,
             encoding: "utf8",
-			allowGetBody : true,
-			throwHttpErrors : false
+            allowGetBody: true,
+            throwHttpErrors: false
         };
+
         var response = await this.getResponse(url, requestDetails);
+
         try {
-            store.saveToken(user, await this.parseResponse(response.body));
+            await this.parseResponse(response.body);
+
+            if (this.id == null) {
+                await this.generateId();
+            }
+
+            store.saveToken(user, this);
         } catch (error) {
-            if(error instanceof SDKException) {
+            if (error instanceof SDKException) {
                 throw error;
             }
-            else if(error instanceof Error) {
+            else if (error instanceof Error) {
                 throw new SDKException(Constants.SAVE_TOKEN_ERROR, null, null, error);
             }
         }
@@ -216,29 +271,47 @@ export class OAuthToken implements Token {
 
     private async generateAccessToken(user: UserSignature, store: TokenStore): Promise<OAuthToken> {
         let initializer = await Initializer.getInitializer();
+
         let url = initializer.getEnvironment().getAccountsUrl();
+
         var formDataRequestBody = new FormData();
+
         formDataRequestBody.append(Constants.REFRESH_TOKEN, this.refreshToken);
+
         formDataRequestBody.append(Constants.CLIENT_ID, this.clientID);
+
         formDataRequestBody.append(Constants.CLIENT_SECRET, this.clientSecret);
+
+        if (this.redirectURL != null) {
+            formDataRequestBody.append(Constants.REDIRECT_URI, this.redirectURL);
+        }
+
         formDataRequestBody.append(Constants.GRANT_TYPE, Constants.GRANT_TYPE_AUTH_CODE);
+
         formDataRequestBody.append(Constants.CODE, this.grantToken);
+
         const requestDetails = {
-			method : Constants.REQUEST_METHOD_POST,
-			headers : {},
-			body : formDataRequestBody,
+            method: Constants.REQUEST_METHOD_POST,
+            headers: {},
+            body: formDataRequestBody,
             encoding: "utf8",
-			allowGetBody : true,
-			throwHttpErrors : false
+            allowGetBody: true,
+            throwHttpErrors: false
         };
+
         var response = await this.getResponse(url, requestDetails);
+
         try {
-            store.saveToken(user, await this.parseResponse(response.body));
+            await this.parseResponse(response.body);
+
+            await this.generateId();
+
+            await store.saveToken(user, this);
         } catch (error) {
-            if(error instanceof SDKException) {
+            if (error instanceof SDKException) {
                 throw error;
             }
-            else if(error instanceof Error) {
+            else if (error instanceof Error) {
                 throw new SDKException(Constants.SAVE_TOKEN_ERROR, null, null, error);
             }
         }
@@ -250,31 +323,81 @@ export class OAuthToken implements Token {
         return await got(url, requestDetails);
     }
 
-    async parseResponse(response: string){
+    async parseResponse(response: string) {
         var responseJSON = JSON.parse(response);
+
         if (!responseJSON.hasOwnProperty(Constants.ACCESS_TOKEN)) {
-            throw new SDKException(Constants.INVALID_CLIENT_ERROR, responseJSON[Constants.ERROR_KEY].toString());
+            throw new SDKException(Constants.INVALID_TOKEN_ERROR, responseJSON.hasOwnProperty(Constants.ERROR_KEY) ? responseJSON[Constants.ERROR_KEY].toString() : Constants.NO_ACCESS_TOKEN_ERROR);
         }
+
         this.accessToken = responseJSON[Constants.ACCESS_TOKEN];
+
+        this.expiresIn = (new Date().getTime() + await this.getTokenExpiryTime(responseJSON)).toString();
+
         if (responseJSON.hasOwnProperty(Constants.REFRESH_TOKEN)) {
             this.refreshToken = responseJSON[Constants.REFRESH_TOKEN];
         }
-        this.expiresIn=(new Date().getTime() + await this.getTokenExpiryTime(responseJSON)).toString();
+
         return this;
     }
 
     getTokenExpiryTime(response: any) {
-        return response.hasOwnProperty(Constants.EXPIRES_IN_SEC)? response[Constants.EXPIRES_IN] : response[Constants.EXPIRES_IN]*1000;
+        return response.hasOwnProperty(Constants.EXPIRES_IN_SEC) ? response[Constants.EXPIRES_IN] : response[Constants.EXPIRES_IN] * 1000;
     }
 
     async remove(): Promise<boolean> {
         try {
             let initializer = await Initializer.getInitializer();
+
             await initializer.getStore().deleteToken(this);
+
             return true;
+        } catch (error) {
+            if (error instanceof SDKException) {
+                throw error;
+            }
+            else if (error instanceof Error) {
+                throw new SDKException(null, null, null, error);
+            }
         }
-        catch (error) {
-            return false;
+
+        return false;
+    }
+
+    /**
+     * Creates an OAuthToken class instance with the specified parameters.
+     * @param {String} clientID - A String containing the OAuth client id.
+     * @param {String} clientSecret - A String containing the OAuth client secret.
+     * @param {String} grantToken - A String containing the GRANT token.
+     * @param {String} refreshToken - A String containing the REFRESH token.
+     * @param {String} redirectURL - A String containing the OAuth redirect URL.
+     * @param {String} id - A string
+     */
+    constructor(clientID: string, clientSecret: string, grantToken: string | null, refreshToken: string | null, redirectURL: string | null, id: string | null) {
+        this.clientID = clientID;
+
+        this.clientSecret = clientSecret;
+
+        this.grantToken = grantToken;
+
+        this.refreshToken = refreshToken;
+
+        this.redirectURL = redirectURL;
+
+        this.id = id;
+    }
+
+    async generateId() {
+        let email = (await Initializer.getInitializer()).getUser().getEmail();
+
+        let builder = "typescript_" + (email).substring(0, (email.indexOf('@'))) + "_";
+
+        builder = builder + (await Initializer.getInitializer()).getEnvironment().getName() + "_";
+
+        if (this.refreshToken != null) {
+            builder = builder + this.refreshToken.substring(this.refreshToken.length - 4);
         }
+
+        this.id = builder;
     }
 }

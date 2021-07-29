@@ -6,53 +6,55 @@ import { Environment } from './environment';
 */
 export class CNDataCenter extends DataCenter {
 
-    private static PRODUCTION_ENVIRONMENT :Environment;
+    private static _PRODUCTION: Environment;
 
-    private static SANDBOX_ENVIRONMENT :Environment;
+    private static _SANDBOX: Environment;
 
-    private static DEVELOPER_ENVIRONMENT :Environment;
+    private static _DEVELOPER: Environment;
+
+    private static CN: CNDataCenter = new CNDataCenter();
 
     /**
      * This method represents the Zoho CRM Production environment in CN domain
      * @returns {Environment} An instance of Environment
     */
-    public static PRODUCTION() {
-        if(this.PRODUCTION_ENVIRONMENT == null) {
-            this.PRODUCTION_ENVIRONMENT = DataCenter.setEnvironment("https://www.zohoapis.com.cn", new CNDataCenter().getIAMUrl(), new CNDataCenter().getFileUploadUrl());
+    public static PRODUCTION(): Environment {
+        if (this._PRODUCTION == null) {
+            this._PRODUCTION = DataCenter.setEnvironment("https://www.zohoapis.com.cn", this.CN.getIAMUrl(), this.CN.getFileUploadUrl(), "cn_prd");
         }
 
-        return this.PRODUCTION_ENVIRONMENT;
+        return this._PRODUCTION;
     }
 
     /**
      *  This method represents the Zoho CRM Sandbox environment in CN domain
      * @returns {Environment} An instance of Environment
     */
-    public static SANDBOX() {
-        if(this.SANDBOX_ENVIRONMENT == null) {
-            this.SANDBOX_ENVIRONMENT = DataCenter.setEnvironment("https://sandbox.zohoapis.com.cn", new CNDataCenter().getIAMUrl(), new CNDataCenter().getFileUploadUrl());
+    public static SANDBOX(): Environment {
+        if (this._SANDBOX == null) {
+            this._SANDBOX = DataCenter.setEnvironment("https://sandbox.zohoapis.com.cn", this.CN.getIAMUrl(), this.CN.getFileUploadUrl(), "cn_sdb");
         }
 
-        return this.SANDBOX_ENVIRONMENT;
+        return this._SANDBOX;
     }
 
     /**
      *  This method represents the Zoho CRM Developer environment in CN domain
      * @returns {Environment} An instance of Environment
     */
-    public static DEVELOPER() {
-        if(this.DEVELOPER_ENVIRONMENT == null) {
-            this.DEVELOPER_ENVIRONMENT = DataCenter.setEnvironment("https://developer.zohoapis.com.cn", new CNDataCenter().getIAMUrl(), new CNDataCenter().getFileUploadUrl());
+    public static DEVELOPER(): Environment {
+        if (this._DEVELOPER == null) {
+            this._DEVELOPER = DataCenter.setEnvironment("https://developer.zohoapis.com.cn", this.CN.getIAMUrl(), this.CN.getFileUploadUrl(), "cn_dev");
         }
 
-        return this.DEVELOPER_ENVIRONMENT;
+        return this._DEVELOPER;
     }
 
     public getIAMUrl() {
         return "https://accounts.zoho.com.cn/oauth/v2/token";
     }
 
-    public getFileUploadUrl(){
+    public getFileUploadUrl() {
         return "https://content.zohoapis.com.cn";
     }
 }

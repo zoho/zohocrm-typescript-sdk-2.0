@@ -23,9 +23,10 @@ class DataCenter {
      * @param {string} url - A String representing the domain URL
      * @param {string} accountsUrl - A String representing the accounts URL to fetch tokens.
      * @param {string} fileUploadUrl - A String representing the File Upload URL
+     * @param {string} name - A string
      */
-    static setEnvironment(url, accountsUrl, fileUploadUrl) {
-        return new environment_1.Environment(url, accountsUrl, fileUploadUrl);
+    static setEnvironment(url, accountsUrl, fileUploadUrl, name) {
+        return new environment_1.Environment(url, accountsUrl, fileUploadUrl, name);
     }
 }
 exports.DataCenter = DataCenter;

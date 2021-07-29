@@ -18,15 +18,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -89,21 +80,12 @@ class APIHTTPConnector {
         this.headers = headers;
     }
     /**
-     * This is a setter method to set the API request body.
-     * @param {object} requestBody - A Object containing the API request body.
+     * This method to add API request header name and value.
+     * @param {string} headerName - A String containing the API request header name.
+     * @param {string} headerValue - A String containing the API request header value.
     */
-    setRequestBody(requestBody) {
-        this.requestBody = requestBody;
-    }
-    getRequestBody() {
-        return this.requestBody;
-    }
-    /**
-     * This is a setter method to set API request parameters.
-     * @param {Map} params - A Map containing the API request parameters.
-    */
-    setParams(params) {
-        this.parameters = params;
+    addHeader(headerName, headerValue) {
+        this.headers.set(headerName, headerValue);
     }
     /**
      * This is a getter method to get API request parameters.
@@ -111,6 +93,13 @@ class APIHTTPConnector {
     */
     getParams() {
         return this.parameters;
+    }
+    /**
+     * This is a setter method to set API request parameters.
+     * @param {Map} params - A Map containing the API request parameters.
+    */
+    setParams(params) {
+        this.parameters = params;
     }
     /**
      * This method to add API request param name and value.
@@ -121,110 +110,108 @@ class APIHTTPConnector {
         this.parameters.set(paramName, paramValue);
     }
     /**
-     * This method to add API request header name and value.
-     * @param {string} headerName - A String containing the API request header name.
-     * @param {string} headerValue - A String containing the API request header value.
+     * This is a setter method to set the API request body.
+     * @param {object} requestBody - A Object containing the API request body.
     */
-    addHeader(headerName, headerValue) {
-        this.headers.set(headerName, headerValue);
+    setRequestBody(requestBody) {
+        this.requestBody = requestBody;
+    }
+    getRequestBody() {
+        return this.requestBody;
     }
     /**
      * This method makes the Zoho CRM Rest API request.
      * @param {object} converterInstance A Converter class instance to call appendToRequest method.
      * @returns got instance or null
     */
-    fireRequest(converterInstance) {
-        return __awaiter(this, void 0, void 0, function* () {
-            var apiHeaders = {};
-            var apiParameters = {};
-            var modifiedRequestBody;
-            if (this.contentType !== undefined) {
-                this.setContentTypeHeader();
+    async fireRequest(converterInstance) {
+        var apiHeaders = {};
+        var apiParameters = {};
+        var modifiedRequestBody;
+        if (this.contentType !== undefined) {
+            this.setContentTypeHeader();
+        }
+        if (this.headers) {
+            this.headers.forEach(function (value, key) {
+                apiHeaders[key] = value;
+            });
+        }
+        if (this.parameters) {
+            this.parameters.forEach(function (value, key) {
+                apiParameters[key] = value;
+            });
+        }
+        if (this.requestBody !== undefined && this.requestBody !== null && Array.from(Object.keys(this.requestBody)).length > 0 && converterInstance !== null) {
+            modifiedRequestBody = await converterInstance.appendToRequest(this);
+        }
+        let initializer = await initializer_1.Initializer.getInitializer();
+        var requestDetails = {
+            method: this.requestMethod,
+            headers: apiHeaders,
+            searchParams: apiParameters,
+            body: modifiedRequestBody,
+            encoding: "utf8",
+            allowGetBody: true,
+            throwHttpErrors: false
+        };
+        let timeout = initializer.getSDKConfig().getTimeout();
+        if (timeout > 0) {
+            requestDetails.timeout = timeout;
+        }
+        let requestProxy = initializer.getRequestProxy();
+        if (requestProxy !== undefined) {
+            let proxyAuthorization = undefined;
+            if (requestProxy.getUser() != undefined) {
+                proxyAuthorization = requestProxy.getUser() + ":" + requestProxy.getPassword();
             }
-            if (this.headers) {
-                this.headers.forEach(function (value, key) {
-                    apiHeaders[key] = value;
-                });
-            }
-            if (this.parameters) {
-                this.parameters.forEach(function (value, key) {
-                    apiParameters[key] = value;
-                });
-            }
-            if (this.requestBody !== undefined && this.requestBody !== null && Array.from(Object.keys(this.requestBody)).length > 0 && converterInstance !== null) {
-                modifiedRequestBody = yield converterInstance.appendToRequest(this);
-            }
-            let initializer = yield initializer_1.Initializer.getInitializer();
-            var requestDetails = {
-                method: this.requestMethod,
-                headers: apiHeaders,
-                searchParams: apiParameters,
-                body: modifiedRequestBody,
-                encoding: "utf8",
-                allowGetBody: true,
-                throwHttpErrors: false
-            };
-            let timeout = initializer.getSDKConfig().timeout();
-            if (timeout > 0) {
-                requestDetails.timeout = timeout;
-            }
-            let requestProxy = initializer.getRequestProxy();
-            if (requestProxy !== undefined) {
-                let proxyAuthorization = undefined;
-                if (requestProxy.getUser() != null) {
-                    proxyAuthorization = requestProxy.getUser() + ":" + requestProxy.getPassword();
+            let httpTunnel = tunnel.httpOverHttp({
+                proxy: {
+                    host: requestProxy.getHost(),
+                    port: requestProxy.getPort(),
+                    proxyAuth: proxyAuthorization
                 }
-                let httpTunnel = tunnel.httpOverHttp({
-                    proxy: {
-                        host: requestProxy.getHost(),
-                        port: requestProxy.getPort(),
-                        proxyAuth: proxyAuthorization
-                    }
-                });
-                let httpsTunnel = tunnel.httpsOverHttp({
-                    proxy: {
-                        host: requestProxy.getHost(),
-                        port: requestProxy.getPort(),
-                        proxyAuth: proxyAuthorization
-                    }
-                });
-                let agents = {
-                    http: httpTunnel,
-                    https: httpsTunnel
-                };
-                requestDetails.agent = agents;
-                Logger.info(yield this.proxyLog(requestProxy));
-            }
-            Logger.info(yield this.toString());
-            return yield got_1.default(this.url, requestDetails);
-        });
-    }
-    toString() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let headers = new Map(this.headers);
-            headers.set(constants_1.Constants.AUTHORIZATION, constants_1.Constants.CANT_DISCLOSE);
-            let headerMapString = JSON.stringify(headers, (key, value) => (value instanceof Map ? [...value] : value));
-            let paramMapString = JSON.stringify(this.parameters, (key, value) => (value instanceof Map ? [...value] : value));
-            return constants_1.Constants.REQUEST_METHOD.concat(" = ").concat(this.requestMethod).concat(" , ").concat(constants_1.Constants.URL).concat(" = ").concat(this.url).concat(" , ").concat(constants_1.Constants.HEADERS).concat(" = ").concat(headerMapString).concat(" , ").concat(constants_1.Constants.PARAMS).concat(" = ").concat(paramMapString).concat(".");
-        });
-    }
-    proxyLog(requestProxy) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let proxyDetails = constants_1.Constants.PROXY_SETTINGS.concat(constants_1.Constants.PROXY_HOST).concat(requestProxy.getHost()).concat(" , ").concat(constants_1.Constants.PROXY_PORT).concat(requestProxy.getPort().toString());
-            let user = requestProxy.getUser();
-            if (user != null) {
-                proxyDetails = proxyDetails.concat(" , ").concat(constants_1.Constants.PROXY_USER).concat(user);
-            }
-            return proxyDetails;
-        });
+            });
+            let httpsTunnel = tunnel.httpsOverHttp({
+                proxy: {
+                    host: requestProxy.getHost(),
+                    port: requestProxy.getPort(),
+                    proxyAuth: proxyAuthorization
+                }
+            });
+            let agents = {
+                http: httpTunnel,
+                https: httpsTunnel
+            };
+            requestDetails.agent = agents;
+            Logger.info(await this.proxyLog(requestProxy));
+        }
+        Logger.info(await this.toString());
+        return await got_1.default(this.url, requestDetails);
     }
     setContentTypeHeader() {
         for (let url of constants_1.Constants.SET_TO_CONTENT_TYPE) {
             if (this.contentType !== undefined) {
-                this.headers.set(constants_1.Constants.CONTENT_TYPE_HEADER, this.contentType);
-                return;
+                if (this.url.includes(url)) {
+                    this.headers.set(constants_1.Constants.CONTENT_TYPE_HEADER, this.contentType);
+                    return;
+                }
             }
         }
+    }
+    async toString() {
+        let headers = new Map(this.headers);
+        headers.set(constants_1.Constants.AUTHORIZATION, constants_1.Constants.CANT_DISCLOSE);
+        let headerMapString = JSON.stringify(headers, (key, value) => (value instanceof Map ? [...value] : value));
+        let paramMapString = JSON.stringify(this.parameters, (key, value) => (value instanceof Map ? [...value] : value));
+        return constants_1.Constants.REQUEST_METHOD.concat(" = ").concat(this.requestMethod).concat(" , ").concat(constants_1.Constants.URL).concat(" = ").concat(this.url).concat(" , ").concat(constants_1.Constants.HEADERS).concat(" = ").concat(headerMapString).concat(" , ").concat(constants_1.Constants.PARAMS).concat(" = ").concat(paramMapString).concat(".");
+    }
+    async proxyLog(requestProxy) {
+        let proxyDetails = constants_1.Constants.PROXY_SETTINGS.concat(constants_1.Constants.PROXY_HOST).concat(requestProxy.getHost()).concat(" , ").concat(constants_1.Constants.PROXY_PORT).concat(requestProxy.getPort().toString());
+        let user = requestProxy.getUser();
+        if (user != null) {
+            proxyDetails = proxyDetails.concat(" , ").concat(constants_1.Constants.PROXY_USER).concat(user);
+        }
+        return proxyDetails;
     }
 }
 exports.APIHTTPConnector = APIHTTPConnector;

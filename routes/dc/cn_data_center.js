@@ -11,30 +11,30 @@ class CNDataCenter extends data_center_1.DataCenter {
      * @returns {Environment} An instance of Environment
     */
     static PRODUCTION() {
-        if (this.PRODUCTION_ENVIRONMENT == null) {
-            this.PRODUCTION_ENVIRONMENT = data_center_1.DataCenter.setEnvironment("https://www.zohoapis.com.cn", new CNDataCenter().getIAMUrl(), new CNDataCenter().getFileUploadUrl());
+        if (this._PRODUCTION == null) {
+            this._PRODUCTION = data_center_1.DataCenter.setEnvironment("https://www.zohoapis.com.cn", this.CN.getIAMUrl(), this.CN.getFileUploadUrl(), "cn_prd");
         }
-        return this.PRODUCTION_ENVIRONMENT;
+        return this._PRODUCTION;
     }
     /**
      *  This method represents the Zoho CRM Sandbox environment in CN domain
      * @returns {Environment} An instance of Environment
     */
     static SANDBOX() {
-        if (this.SANDBOX_ENVIRONMENT == null) {
-            this.SANDBOX_ENVIRONMENT = data_center_1.DataCenter.setEnvironment("https://sandbox.zohoapis.com.cn", new CNDataCenter().getIAMUrl(), new CNDataCenter().getFileUploadUrl());
+        if (this._SANDBOX == null) {
+            this._SANDBOX = data_center_1.DataCenter.setEnvironment("https://sandbox.zohoapis.com.cn", this.CN.getIAMUrl(), this.CN.getFileUploadUrl(), "cn_sdb");
         }
-        return this.SANDBOX_ENVIRONMENT;
+        return this._SANDBOX;
     }
     /**
      *  This method represents the Zoho CRM Developer environment in CN domain
      * @returns {Environment} An instance of Environment
     */
     static DEVELOPER() {
-        if (this.DEVELOPER_ENVIRONMENT == null) {
-            this.DEVELOPER_ENVIRONMENT = data_center_1.DataCenter.setEnvironment("https://developer.zohoapis.com.cn", new CNDataCenter().getIAMUrl(), new CNDataCenter().getFileUploadUrl());
+        if (this._DEVELOPER == null) {
+            this._DEVELOPER = data_center_1.DataCenter.setEnvironment("https://developer.zohoapis.com.cn", this.CN.getIAMUrl(), this.CN.getFileUploadUrl(), "cn_dev");
         }
-        return this.DEVELOPER_ENVIRONMENT;
+        return this._DEVELOPER;
     }
     getIAMUrl() {
         return "https://accounts.zoho.com.cn/oauth/v2/token";
@@ -44,4 +44,5 @@ class CNDataCenter extends data_center_1.DataCenter {
     }
 }
 exports.CNDataCenter = CNDataCenter;
+CNDataCenter.CN = new CNDataCenter();
 //# sourceMappingURL=cn_data_center.js.map

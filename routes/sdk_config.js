@@ -35,7 +35,7 @@ class SDKConfig {
      *  This is a getter method to get timeout.
      * @returns {number} A Integer representing API timeout
      */
-    timeout() {
+    getTimeout() {
         return this._timeout;
     }
 }

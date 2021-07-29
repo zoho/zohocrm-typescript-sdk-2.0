@@ -1,15 +1,6 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GetDeletedRecordsHeader = exports.RecordOperations = exports.MasterModel = exports.DeleteRecordsHeader = exports.DeleteRecordsParam = exports.DeleteRecordHeader = exports.SearchRecordsHeader = exports.UpdateRecordsHeader = exports.DeleteRecordParam = exports.SearchRecordsParam = exports.GetRecordsParam = exports.UpdateRecordHeader = exports.GetMassUpdateStatusParam = exports.GetDeletedRecordsParam = exports.GetRecordHeader = exports.GetRecordsHeader = exports.UpsertRecordsHeader = exports.GetRecordParam = void 0;
+exports.GetRecordUsingExternalIDHeader = exports.DeleteRecordUsingExternalIDHeader = exports.GetDeletedRecordsHeader = exports.RecordOperations = exports.MasterModel = exports.DeleteRecordsHeader = exports.DeleteRecordsParam = exports.DeleteRecordHeader = exports.SearchRecordsHeader = exports.UpdateRecordsHeader = exports.DeleteRecordParam = exports.SearchRecordsParam = exports.GetRecordsParam = exports.UpdateRecordHeader = exports.GetMassUpdateStatusParam = exports.UpdateRecordUsingExternalIDHeader = exports.GetDeletedRecordsParam = exports.GetRecordUsingExternalIDParam = exports.GetRecordHeader = exports.GetRecordsHeader = exports.DeleteRecordUsingExternalIDParam = exports.UpsertRecordsHeader = exports.CreateRecordsHeader = exports.GetRecordParam = void 0;
 const header_1 = require("../../../../../../routes/header");
 const param_1 = require("../../../../../../routes/param");
 const common_api_handler_1 = require("../../../../../../routes/middlewares/common_api_handler");
@@ -25,24 +16,22 @@ class RecordOperations {
      * @returns An instance of APIResponse<ResponseHandler>
      * @throws SDKException
      */
-    getRecord(id, moduleAPIName, paramInstance, headerInstance) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/");
-            apiPath = apiPath.concat(moduleAPIName.toString());
-            apiPath = apiPath.concat("/");
-            apiPath = apiPath.concat(id.toString());
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_GET);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_READ);
-            handlerInstance.setParam(paramInstance);
-            handlerInstance.setHeader(headerInstance);
-            yield utility_1.Utility.getFields(moduleAPIName);
-            handlerInstance.setModuleAPIName(moduleAPIName);
-            let ResponseHandler = require.resolve("./response_handler");
-            return handlerInstance.apiCall(ResponseHandler, "application/json");
-        });
+    async getRecord(id, moduleAPIName, paramInstance, headerInstance) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/");
+        apiPath = apiPath.concat(moduleAPIName.toString());
+        apiPath = apiPath.concat("/");
+        apiPath = apiPath.concat(id.toString());
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_GET);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_READ);
+        handlerInstance.setParam(paramInstance);
+        handlerInstance.setHeader(headerInstance);
+        handlerInstance.setModuleAPIName(moduleAPIName);
+        await utility_1.Utility.getFields(moduleAPIName, handlerInstance);
+        let ResponseHandler = require.resolve("./response_handler");
+        return handlerInstance.apiCall(ResponseHandler, "application/json");
     }
     /**
      * The method to update record
@@ -53,25 +42,23 @@ class RecordOperations {
      * @returns An instance of APIResponse<ActionHandler>
      * @throws SDKException
      */
-    updateRecord(id, moduleAPIName, request, headerInstance) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/");
-            apiPath = apiPath.concat(moduleAPIName.toString());
-            apiPath = apiPath.concat("/");
-            apiPath = apiPath.concat(id.toString());
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_PUT);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_UPDATE);
-            handlerInstance.setContentType("application/json");
-            handlerInstance.setRequest(request);
-            handlerInstance.setHeader(headerInstance);
-            yield utility_1.Utility.getFields(moduleAPIName);
-            handlerInstance.setModuleAPIName(moduleAPIName);
-            let ActionHandler = require.resolve("./action_handler");
-            return handlerInstance.apiCall(ActionHandler, "application/json");
-        });
+    async updateRecord(id, moduleAPIName, request, headerInstance) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/");
+        apiPath = apiPath.concat(moduleAPIName.toString());
+        apiPath = apiPath.concat("/");
+        apiPath = apiPath.concat(id.toString());
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_PUT);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_UPDATE);
+        handlerInstance.setContentType("application/json");
+        handlerInstance.setRequest(request);
+        handlerInstance.setHeader(headerInstance);
+        handlerInstance.setModuleAPIName(moduleAPIName);
+        await utility_1.Utility.getFields(moduleAPIName, handlerInstance);
+        let ActionHandler = require.resolve("./action_handler");
+        return handlerInstance.apiCall(ActionHandler, "application/json");
     }
     /**
      * The method to delete record
@@ -82,22 +69,21 @@ class RecordOperations {
      * @returns An instance of APIResponse<ActionHandler>
      * @throws SDKException
      */
-    deleteRecord(id, moduleAPIName, paramInstance, headerInstance) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/");
-            apiPath = apiPath.concat(moduleAPIName.toString());
-            apiPath = apiPath.concat("/");
-            apiPath = apiPath.concat(id.toString());
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_DELETE);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_METHOD_DELETE);
-            handlerInstance.setParam(paramInstance);
-            handlerInstance.setHeader(headerInstance);
-            let ActionHandler = require.resolve("./action_handler");
-            return handlerInstance.apiCall(ActionHandler, "application/json");
-        });
+    async deleteRecord(id, moduleAPIName, paramInstance, headerInstance) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/");
+        apiPath = apiPath.concat(moduleAPIName.toString());
+        apiPath = apiPath.concat("/");
+        apiPath = apiPath.concat(id.toString());
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_DELETE);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_METHOD_DELETE);
+        handlerInstance.setParam(paramInstance);
+        handlerInstance.setHeader(headerInstance);
+        await utility_1.Utility.getFields(moduleAPIName, handlerInstance);
+        let ActionHandler = require.resolve("./action_handler");
+        return handlerInstance.apiCall(ActionHandler, "application/json");
     }
     /**
      * The method to get records
@@ -107,47 +93,44 @@ class RecordOperations {
      * @returns An instance of APIResponse<ResponseHandler>
      * @throws SDKException
      */
-    getRecords(moduleAPIName, paramInstance, headerInstance) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/");
-            apiPath = apiPath.concat(moduleAPIName.toString());
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_GET);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_READ);
-            handlerInstance.setParam(paramInstance);
-            handlerInstance.setHeader(headerInstance);
-            yield utility_1.Utility.getFields(moduleAPIName);
-            handlerInstance.setModuleAPIName(moduleAPIName);
-            let ResponseHandler = require.resolve("./response_handler");
-            return handlerInstance.apiCall(ResponseHandler, "application/json");
-        });
+    async getRecords(moduleAPIName, paramInstance, headerInstance) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/");
+        apiPath = apiPath.concat(moduleAPIName.toString());
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_GET);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_READ);
+        handlerInstance.setParam(paramInstance);
+        handlerInstance.setHeader(headerInstance);
+        handlerInstance.setModuleAPIName(moduleAPIName);
+        await utility_1.Utility.getFields(moduleAPIName, handlerInstance);
+        let ResponseHandler = require.resolve("./response_handler");
+        return handlerInstance.apiCall(ResponseHandler, "application/json");
     }
     /**
      * The method to create records
      * @param moduleAPIName A string representing the moduleAPIName
      * @param request An instance of BodyWrapper
+     * @param headerInstance An instance of HeaderMap
      * @returns An instance of APIResponse<ActionHandler>
      * @throws SDKException
      */
-    createRecords(moduleAPIName, request) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/");
-            apiPath = apiPath.concat(moduleAPIName.toString());
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_POST);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_CREATE);
-            handlerInstance.setContentType("application/json");
-            handlerInstance.setRequest(request);
-            handlerInstance.setMandatoryChecker(true);
-            yield utility_1.Utility.getFields(moduleAPIName);
-            handlerInstance.setModuleAPIName(moduleAPIName);
-            let ActionHandler = require.resolve("./action_handler");
-            return handlerInstance.apiCall(ActionHandler, "application/json");
-        });
+    async createRecords(moduleAPIName, request, headerInstance) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/");
+        apiPath = apiPath.concat(moduleAPIName.toString());
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_POST);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_CREATE);
+        handlerInstance.setContentType("application/json");
+        handlerInstance.setRequest(request);
+        handlerInstance.setHeader(headerInstance);
+        handlerInstance.setModuleAPIName(moduleAPIName);
+        await utility_1.Utility.getFields(moduleAPIName, handlerInstance);
+        let ActionHandler = require.resolve("./action_handler");
+        return handlerInstance.apiCall(ActionHandler, "application/json");
     }
     /**
      * The method to update records
@@ -157,24 +140,21 @@ class RecordOperations {
      * @returns An instance of APIResponse<ActionHandler>
      * @throws SDKException
      */
-    updateRecords(moduleAPIName, request, headerInstance) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/");
-            apiPath = apiPath.concat(moduleAPIName.toString());
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_PUT);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_UPDATE);
-            handlerInstance.setContentType("application/json");
-            handlerInstance.setRequest(request);
-            handlerInstance.setMandatoryChecker(true);
-            handlerInstance.setHeader(headerInstance);
-            yield utility_1.Utility.getFields(moduleAPIName);
-            handlerInstance.setModuleAPIName(moduleAPIName);
-            let ActionHandler = require.resolve("./action_handler");
-            return handlerInstance.apiCall(ActionHandler, "application/json");
-        });
+    async updateRecords(moduleAPIName, request, headerInstance) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/");
+        apiPath = apiPath.concat(moduleAPIName.toString());
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_PUT);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_UPDATE);
+        handlerInstance.setContentType("application/json");
+        handlerInstance.setRequest(request);
+        handlerInstance.setHeader(headerInstance);
+        handlerInstance.setModuleAPIName(moduleAPIName);
+        await utility_1.Utility.getFields(moduleAPIName, handlerInstance);
+        let ActionHandler = require.resolve("./action_handler");
+        return handlerInstance.apiCall(ActionHandler, "application/json");
     }
     /**
      * The method to delete records
@@ -184,20 +164,19 @@ class RecordOperations {
      * @returns An instance of APIResponse<ActionHandler>
      * @throws SDKException
      */
-    deleteRecords(moduleAPIName, paramInstance, headerInstance) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/");
-            apiPath = apiPath.concat(moduleAPIName.toString());
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_DELETE);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_METHOD_DELETE);
-            handlerInstance.setParam(paramInstance);
-            handlerInstance.setHeader(headerInstance);
-            let ActionHandler = require.resolve("./action_handler");
-            return handlerInstance.apiCall(ActionHandler, "application/json");
-        });
+    async deleteRecords(moduleAPIName, paramInstance, headerInstance) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/");
+        apiPath = apiPath.concat(moduleAPIName.toString());
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_DELETE);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_METHOD_DELETE);
+        handlerInstance.setParam(paramInstance);
+        handlerInstance.setHeader(headerInstance);
+        await utility_1.Utility.getFields(moduleAPIName, handlerInstance);
+        let ActionHandler = require.resolve("./action_handler");
+        return handlerInstance.apiCall(ActionHandler, "application/json");
     }
     /**
      * The method to upsert records
@@ -207,24 +186,22 @@ class RecordOperations {
      * @returns An instance of APIResponse<ActionHandler>
      * @throws SDKException
      */
-    upsertRecords(moduleAPIName, request, headerInstance) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/");
-            apiPath = apiPath.concat(moduleAPIName.toString());
-            apiPath = apiPath.concat("/upsert");
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_POST);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_ACTION);
-            handlerInstance.setContentType("application/json");
-            handlerInstance.setRequest(request);
-            handlerInstance.setHeader(headerInstance);
-            yield utility_1.Utility.getFields(moduleAPIName);
-            handlerInstance.setModuleAPIName(moduleAPIName);
-            let ActionHandler = require.resolve("./action_handler");
-            return handlerInstance.apiCall(ActionHandler, "application/json");
-        });
+    async upsertRecords(moduleAPIName, request, headerInstance) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/");
+        apiPath = apiPath.concat(moduleAPIName.toString());
+        apiPath = apiPath.concat("/upsert");
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_POST);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_ACTION);
+        handlerInstance.setContentType("application/json");
+        handlerInstance.setRequest(request);
+        handlerInstance.setHeader(headerInstance);
+        handlerInstance.setModuleAPIName(moduleAPIName);
+        await utility_1.Utility.getFields(moduleAPIName, handlerInstance);
+        let ActionHandler = require.resolve("./action_handler");
+        return handlerInstance.apiCall(ActionHandler, "application/json");
     }
     /**
      * The method to get deleted records
@@ -234,21 +211,20 @@ class RecordOperations {
      * @returns An instance of APIResponse<DeletedRecordsHandler>
      * @throws SDKException
      */
-    getDeletedRecords(moduleAPIName, paramInstance, headerInstance) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/");
-            apiPath = apiPath.concat(moduleAPIName.toString());
-            apiPath = apiPath.concat("/deleted");
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_GET);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_READ);
-            handlerInstance.setParam(paramInstance);
-            handlerInstance.setHeader(headerInstance);
-            let DeletedRecordsHandler = require.resolve("./deleted_records_handler");
-            return handlerInstance.apiCall(DeletedRecordsHandler, "application/json");
-        });
+    async getDeletedRecords(moduleAPIName, paramInstance, headerInstance) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/");
+        apiPath = apiPath.concat(moduleAPIName.toString());
+        apiPath = apiPath.concat("/deleted");
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_GET);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_READ);
+        handlerInstance.setParam(paramInstance);
+        handlerInstance.setHeader(headerInstance);
+        await utility_1.Utility.getFields(moduleAPIName, handlerInstance);
+        let DeletedRecordsHandler = require.resolve("./deleted_records_handler");
+        return handlerInstance.apiCall(DeletedRecordsHandler, "application/json");
     }
     /**
      * The method to search records
@@ -258,23 +234,21 @@ class RecordOperations {
      * @returns An instance of APIResponse<ResponseHandler>
      * @throws SDKException
      */
-    searchRecords(moduleAPIName, paramInstance, headerInstance) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/");
-            apiPath = apiPath.concat(moduleAPIName.toString());
-            apiPath = apiPath.concat("/search");
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_GET);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_READ);
-            handlerInstance.setParam(paramInstance);
-            handlerInstance.setHeader(headerInstance);
-            yield utility_1.Utility.getFields(moduleAPIName);
-            handlerInstance.setModuleAPIName(moduleAPIName);
-            let ResponseHandler = require.resolve("./response_handler");
-            return handlerInstance.apiCall(ResponseHandler, "application/json");
-        });
+    async searchRecords(moduleAPIName, paramInstance, headerInstance) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/");
+        apiPath = apiPath.concat(moduleAPIName.toString());
+        apiPath = apiPath.concat("/search");
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_GET);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_READ);
+        handlerInstance.setParam(paramInstance);
+        handlerInstance.setHeader(headerInstance);
+        handlerInstance.setModuleAPIName(moduleAPIName);
+        await utility_1.Utility.getFields(moduleAPIName, handlerInstance);
+        let ResponseHandler = require.resolve("./response_handler");
+        return handlerInstance.apiCall(ResponseHandler, "application/json");
     }
     /**
      * The method to convert lead
@@ -283,23 +257,21 @@ class RecordOperations {
      * @returns An instance of APIResponse<ConvertActionHandler>
      * @throws SDKException
      */
-    convertLead(id, request) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/Leads/");
-            apiPath = apiPath.concat(id.toString());
-            apiPath = apiPath.concat("/actions/convert");
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_POST);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_CREATE);
-            handlerInstance.setContentType("application/json");
-            handlerInstance.setRequest(request);
-            handlerInstance.setMandatoryChecker(true);
-            yield utility_1.Utility.getFields("Deals");
-            let ConvertActionHandler = require.resolve("./convert_action_handler");
-            return handlerInstance.apiCall(ConvertActionHandler, "application/json");
-        });
+    async convertLead(id, request) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/Leads/");
+        apiPath = apiPath.concat(id.toString());
+        apiPath = apiPath.concat("/actions/convert");
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_POST);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_CREATE);
+        handlerInstance.setContentType("application/json");
+        handlerInstance.setRequest(request);
+        handlerInstance.setMandatoryChecker(true);
+        await utility_1.Utility.getFields("Deals", handlerInstance);
+        let ConvertActionHandler = require.resolve("./convert_action_handler");
+        return handlerInstance.apiCall(ConvertActionHandler, "application/json");
     }
     /**
      * The method to get photo
@@ -308,21 +280,20 @@ class RecordOperations {
      * @returns An instance of APIResponse<DownloadHandler>
      * @throws SDKException
      */
-    getPhoto(id, moduleAPIName) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/");
-            apiPath = apiPath.concat(moduleAPIName.toString());
-            apiPath = apiPath.concat("/");
-            apiPath = apiPath.concat(id.toString());
-            apiPath = apiPath.concat("/photo");
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_GET);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_READ);
-            let DownloadHandler = require.resolve("./download_handler");
-            return handlerInstance.apiCall(DownloadHandler, "application/x-download");
-        });
+    async getPhoto(id, moduleAPIName) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/");
+        apiPath = apiPath.concat(moduleAPIName.toString());
+        apiPath = apiPath.concat("/");
+        apiPath = apiPath.concat(id.toString());
+        apiPath = apiPath.concat("/photo");
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_GET);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_READ);
+        await utility_1.Utility.getFields(moduleAPIName, handlerInstance);
+        let DownloadHandler = require.resolve("./download_handler");
+        return handlerInstance.apiCall(DownloadHandler, "application/x-download");
     }
     /**
      * The method to upload photo
@@ -332,25 +303,24 @@ class RecordOperations {
      * @returns An instance of APIResponse<FileHandler>
      * @throws SDKException
      */
-    uploadPhoto(id, moduleAPIName, request) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/");
-            apiPath = apiPath.concat(moduleAPIName.toString());
-            apiPath = apiPath.concat("/");
-            apiPath = apiPath.concat(id.toString());
-            apiPath = apiPath.concat("/photo");
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_POST);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_CREATE);
-            handlerInstance.setContentType("multipart/form-data");
-            handlerInstance.setRequest(request);
-            handlerInstance.setMandatoryChecker(true);
-            yield utility_1.Utility.verifyPhotoSupport(moduleAPIName);
-            let FileHandler = require.resolve("./file_handler");
-            return handlerInstance.apiCall(FileHandler, "application/json");
-        });
+    async uploadPhoto(id, moduleAPIName, request) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/");
+        apiPath = apiPath.concat(moduleAPIName.toString());
+        apiPath = apiPath.concat("/");
+        apiPath = apiPath.concat(id.toString());
+        apiPath = apiPath.concat("/photo");
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_POST);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_CREATE);
+        handlerInstance.setContentType("multipart/form-data");
+        handlerInstance.setRequest(request);
+        handlerInstance.setMandatoryChecker(true);
+        await utility_1.Utility.getFields(moduleAPIName, handlerInstance);
+        await utility_1.Utility.verifyPhotoSupport(moduleAPIName);
+        let FileHandler = require.resolve("./file_handler");
+        return handlerInstance.apiCall(FileHandler, "application/json");
     }
     /**
      * The method to delete photo
@@ -359,21 +329,20 @@ class RecordOperations {
      * @returns An instance of APIResponse<FileHandler>
      * @throws SDKException
      */
-    deletePhoto(id, moduleAPIName) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/");
-            apiPath = apiPath.concat(moduleAPIName.toString());
-            apiPath = apiPath.concat("/");
-            apiPath = apiPath.concat(id.toString());
-            apiPath = apiPath.concat("/photo");
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_DELETE);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_METHOD_DELETE);
-            let FileHandler = require.resolve("./file_handler");
-            return handlerInstance.apiCall(FileHandler, "application/json");
-        });
+    async deletePhoto(id, moduleAPIName) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/");
+        apiPath = apiPath.concat(moduleAPIName.toString());
+        apiPath = apiPath.concat("/");
+        apiPath = apiPath.concat(id.toString());
+        apiPath = apiPath.concat("/photo");
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_DELETE);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_METHOD_DELETE);
+        await utility_1.Utility.getFields(moduleAPIName, handlerInstance);
+        let FileHandler = require.resolve("./file_handler");
+        return handlerInstance.apiCall(FileHandler, "application/json");
     }
     /**
      * The method to mass update records
@@ -382,24 +351,22 @@ class RecordOperations {
      * @returns An instance of APIResponse<MassUpdateActionHandler>
      * @throws SDKException
      */
-    massUpdateRecords(moduleAPIName, request) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/");
-            apiPath = apiPath.concat(moduleAPIName.toString());
-            apiPath = apiPath.concat("/actions/mass_update");
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_POST);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_UPDATE);
-            handlerInstance.setContentType("application/json");
-            handlerInstance.setRequest(request);
-            handlerInstance.setMandatoryChecker(true);
-            yield utility_1.Utility.getFields(moduleAPIName);
-            handlerInstance.setModuleAPIName(moduleAPIName);
-            let MassUpdateActionHandler = require.resolve("./mass_update_action_handler");
-            return handlerInstance.apiCall(MassUpdateActionHandler, "application/json");
-        });
+    async massUpdateRecords(moduleAPIName, request) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/");
+        apiPath = apiPath.concat(moduleAPIName.toString());
+        apiPath = apiPath.concat("/actions/mass_update");
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_POST);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_UPDATE);
+        handlerInstance.setContentType("application/json");
+        handlerInstance.setRequest(request);
+        handlerInstance.setMandatoryChecker(true);
+        handlerInstance.setModuleAPIName(moduleAPIName);
+        await utility_1.Utility.getFields(moduleAPIName, handlerInstance);
+        let MassUpdateActionHandler = require.resolve("./mass_update_action_handler");
+        return handlerInstance.apiCall(MassUpdateActionHandler, "application/json");
     }
     /**
      * The method to get mass update status
@@ -408,20 +375,97 @@ class RecordOperations {
      * @returns An instance of APIResponse<MassUpdateResponseHandler>
      * @throws SDKException
      */
-    getMassUpdateStatus(moduleAPIName, paramInstance) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/");
-            apiPath = apiPath.concat(moduleAPIName.toString());
-            apiPath = apiPath.concat("/actions/mass_update");
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_GET);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_READ);
-            handlerInstance.setParam(paramInstance);
-            let MassUpdateResponseHandler = require.resolve("./mass_update_response_handler");
-            return handlerInstance.apiCall(MassUpdateResponseHandler, "application/json");
-        });
+    async getMassUpdateStatus(moduleAPIName, paramInstance) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/");
+        apiPath = apiPath.concat(moduleAPIName.toString());
+        apiPath = apiPath.concat("/actions/mass_update");
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_GET);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_READ);
+        handlerInstance.setParam(paramInstance);
+        await utility_1.Utility.getFields(moduleAPIName, handlerInstance);
+        let MassUpdateResponseHandler = require.resolve("./mass_update_response_handler");
+        return handlerInstance.apiCall(MassUpdateResponseHandler, "application/json");
+    }
+    /**
+     * The method to get record using external id
+     * @param externalFieldValue A string representing the externalFieldValue
+     * @param moduleAPIName A string representing the moduleAPIName
+     * @param paramInstance An instance of ParameterMap
+     * @param headerInstance An instance of HeaderMap
+     * @returns An instance of APIResponse<ResponseHandler>
+     * @throws SDKException
+     */
+    async getRecordUsingExternalId(externalFieldValue, moduleAPIName, paramInstance, headerInstance) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/");
+        apiPath = apiPath.concat(moduleAPIName.toString());
+        apiPath = apiPath.concat("/");
+        apiPath = apiPath.concat(externalFieldValue.toString());
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_GET);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_READ);
+        handlerInstance.setParam(paramInstance);
+        handlerInstance.setHeader(headerInstance);
+        handlerInstance.setModuleAPIName(moduleAPIName);
+        await utility_1.Utility.getFields(moduleAPIName, handlerInstance);
+        let ResponseHandler = require.resolve("./response_handler");
+        return handlerInstance.apiCall(ResponseHandler, "application/json");
+    }
+    /**
+     * The method to update record using external id
+     * @param externalFieldValue A string representing the externalFieldValue
+     * @param moduleAPIName A string representing the moduleAPIName
+     * @param request An instance of BodyWrapper
+     * @param headerInstance An instance of HeaderMap
+     * @returns An instance of APIResponse<ActionHandler>
+     * @throws SDKException
+     */
+    async updateRecordUsingExternalId(externalFieldValue, moduleAPIName, request, headerInstance) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/");
+        apiPath = apiPath.concat(moduleAPIName.toString());
+        apiPath = apiPath.concat("/");
+        apiPath = apiPath.concat(externalFieldValue.toString());
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_PUT);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_UPDATE);
+        handlerInstance.setContentType("application/json");
+        handlerInstance.setRequest(request);
+        handlerInstance.setHeader(headerInstance);
+        handlerInstance.setModuleAPIName(moduleAPIName);
+        await utility_1.Utility.getFields(moduleAPIName, handlerInstance);
+        let ActionHandler = require.resolve("./action_handler");
+        return handlerInstance.apiCall(ActionHandler, "application/json");
+    }
+    /**
+     * The method to delete record using external id
+     * @param externalFieldValue A string representing the externalFieldValue
+     * @param moduleAPIName A string representing the moduleAPIName
+     * @param paramInstance An instance of ParameterMap
+     * @param headerInstance An instance of HeaderMap
+     * @returns An instance of APIResponse<ActionHandler>
+     * @throws SDKException
+     */
+    async deleteRecordUsingExternalId(externalFieldValue, moduleAPIName, paramInstance, headerInstance) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/");
+        apiPath = apiPath.concat(moduleAPIName.toString());
+        apiPath = apiPath.concat("/");
+        apiPath = apiPath.concat(externalFieldValue.toString());
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_DELETE);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_METHOD_DELETE);
+        handlerInstance.setParam(paramInstance);
+        handlerInstance.setHeader(headerInstance);
+        await utility_1.Utility.getFields(moduleAPIName, handlerInstance);
+        let ActionHandler = require.resolve("./action_handler");
+        return handlerInstance.apiCall(ActionHandler, "application/json");
     }
 }
 exports.MasterModel = RecordOperations;
@@ -477,6 +521,10 @@ class GetRecordsHeader {
 exports.GetRecordsHeader = GetRecordsHeader;
 GetRecordsHeader.IF_MODIFIED_SINCE = new header_1.Header("If-Modified-Since", "com.zoho.crm.api.Record.GetRecordsHeader");
 GetRecordsHeader.X_EXTERNAL = new header_1.Header("X-EXTERNAL", "com.zoho.crm.api.Record.GetRecordsHeader");
+class CreateRecordsHeader {
+}
+exports.CreateRecordsHeader = CreateRecordsHeader;
+CreateRecordsHeader.X_EXTERNAL = new header_1.Header("X-EXTERNAL", "com.zoho.crm.api.Record.CreateRecordsHeader");
 class UpdateRecordsHeader {
 }
 exports.UpdateRecordsHeader = UpdateRecordsHeader;
@@ -515,6 +563,7 @@ SearchRecordsParam.CONVERTED = new param_1.Param("converted", "com.zoho.crm.api.
 SearchRecordsParam.APPROVED = new param_1.Param("approved", "com.zoho.crm.api.Record.SearchRecordsParam");
 SearchRecordsParam.PAGE = new param_1.Param("page", "com.zoho.crm.api.Record.SearchRecordsParam");
 SearchRecordsParam.PER_PAGE = new param_1.Param("per_page", "com.zoho.crm.api.Record.SearchRecordsParam");
+SearchRecordsParam.FIELDS = new param_1.Param("fields", "com.zoho.crm.api.Record.SearchRecordsParam");
 class SearchRecordsHeader {
 }
 exports.SearchRecordsHeader = SearchRecordsHeader;
@@ -523,4 +572,33 @@ class GetMassUpdateStatusParam {
 }
 exports.GetMassUpdateStatusParam = GetMassUpdateStatusParam;
 GetMassUpdateStatusParam.JOB_ID = new param_1.Param("job_id", "com.zoho.crm.api.Record.GetMassUpdateStatusParam");
+class GetRecordUsingExternalIDParam {
+}
+exports.GetRecordUsingExternalIDParam = GetRecordUsingExternalIDParam;
+GetRecordUsingExternalIDParam.APPROVED = new param_1.Param("approved", "com.zoho.crm.api.Record.GetRecordUsingExternalIDParam");
+GetRecordUsingExternalIDParam.CONVERTED = new param_1.Param("converted", "com.zoho.crm.api.Record.GetRecordUsingExternalIDParam");
+GetRecordUsingExternalIDParam.CVID = new param_1.Param("cvid", "com.zoho.crm.api.Record.GetRecordUsingExternalIDParam");
+GetRecordUsingExternalIDParam.UID = new param_1.Param("uid", "com.zoho.crm.api.Record.GetRecordUsingExternalIDParam");
+GetRecordUsingExternalIDParam.FIELDS = new param_1.Param("fields", "com.zoho.crm.api.Record.GetRecordUsingExternalIDParam");
+GetRecordUsingExternalIDParam.STARTDATETIME = new param_1.Param("startDateTime", "com.zoho.crm.api.Record.GetRecordUsingExternalIDParam");
+GetRecordUsingExternalIDParam.ENDDATETIME = new param_1.Param("endDateTime", "com.zoho.crm.api.Record.GetRecordUsingExternalIDParam");
+GetRecordUsingExternalIDParam.TERRITORY_ID = new param_1.Param("territory_id", "com.zoho.crm.api.Record.GetRecordUsingExternalIDParam");
+GetRecordUsingExternalIDParam.INCLUDE_CHILD = new param_1.Param("include_child", "com.zoho.crm.api.Record.GetRecordUsingExternalIDParam");
+class GetRecordUsingExternalIDHeader {
+}
+exports.GetRecordUsingExternalIDHeader = GetRecordUsingExternalIDHeader;
+GetRecordUsingExternalIDHeader.IF_MODIFIED_SINCE = new header_1.Header("If-Modified-Since", "com.zoho.crm.api.Record.GetRecordUsingExternalIDHeader");
+GetRecordUsingExternalIDHeader.X_EXTERNAL = new header_1.Header("X-EXTERNAL", "com.zoho.crm.api.Record.GetRecordUsingExternalIDHeader");
+class UpdateRecordUsingExternalIDHeader {
+}
+exports.UpdateRecordUsingExternalIDHeader = UpdateRecordUsingExternalIDHeader;
+UpdateRecordUsingExternalIDHeader.X_EXTERNAL = new header_1.Header("X-EXTERNAL", "com.zoho.crm.api.Record.UpdateRecordUsingExternalIDHeader");
+class DeleteRecordUsingExternalIDParam {
+}
+exports.DeleteRecordUsingExternalIDParam = DeleteRecordUsingExternalIDParam;
+DeleteRecordUsingExternalIDParam.WF_TRIGGER = new param_1.Param("wf_trigger", "com.zoho.crm.api.Record.DeleteRecordUsingExternalIDParam");
+class DeleteRecordUsingExternalIDHeader {
+}
+exports.DeleteRecordUsingExternalIDHeader = DeleteRecordUsingExternalIDHeader;
+DeleteRecordUsingExternalIDHeader.X_EXTERNAL = new header_1.Header("X-EXTERNAL", "com.zoho.crm.api.Record.DeleteRecordUsingExternalIDHeader");
 //# sourceMappingURL=record_operations.js.map

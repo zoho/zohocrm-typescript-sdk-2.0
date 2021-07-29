@@ -18,34 +18,17 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.OAuthToken = exports.TokenType = void 0;
+exports.OAuthToken = void 0;
 const initializer_1 = require("../../routes/initializer");
 const FormData = require("form-data");
 const constants_1 = require("../../utils/util/constants");
 const Logger = __importStar(require("winston"));
 const sdk_exception_1 = require("../../core/com/zoho/crm/api/exception/sdk_exception");
 const got_1 = __importDefault(require("got"));
-/**
- * This class contains different types of token.
-*/
-class TokenType {
-}
-exports.TokenType = TokenType;
-TokenType.GRANT = 'GRANT';
-TokenType.REFRESH = 'REFRESH';
 /**
  * This class maintains the tokens and authenticates every request.
 */
@@ -54,23 +37,39 @@ class OAuthToken {
      * Creates an OAuthToken class instance with the specified parameters.
      * @param {String} clientID - A String containing the OAuth client id.
      * @param {String} clientSecret - A String containing the OAuth client secret.
-     * @param {String} token - A String containing the REFRESH/GRANT token.
-     * @param {String} type - A TokenType key containing the given token type.
+     * @param {String} grantToken - A String containing the GRANT token.
+     * @param {String} refreshToken - A String containing the REFRESH token.
      * @param {String} redirectURL - A String containing the OAuth redirect URL.
-    */
-    constructor(clientID, clientSecret, token, type, redirectURL) {
+     * @param {String} id - A string
+     */
+    constructor(clientID, clientSecret, grantToken, refreshToken, redirectURL, id) {
         this.clientID = clientID;
         this.clientSecret = clientSecret;
+        this.grantToken = grantToken;
+        this.refreshToken = refreshToken;
         this.redirectURL = redirectURL;
-        this.refreshToken = (type === TokenType.REFRESH) ? token : null;
-        this.grantToken = (type === TokenType.GRANT) ? token : null;
+        this.id = id;
+    }
+    /**
+     * This is a setter method to set OAuth client id.
+     * @param {string} clientID - A String containing the client Id.
+     */
+    setClientId(clientID) {
+        this.clientID = clientID;
     }
     /**
      * This is a getter method to get OAuth client id.
      * @returns A String representing the OAuth client id.
     */
-    getClientID() {
+    getClientId() {
         return this.clientID;
+    }
+    /**
+     * This is a setter method to set OAuth client secret.
+     * @param {string} clientSecret - A String containing the client Secret.
+     */
+    setClientSecret(clientSecret) {
+        this.clientSecret = clientSecret;
     }
     /**
      * This is a getter method to get OAuth client secret.
@@ -80,11 +79,25 @@ class OAuthToken {
         return this.clientSecret;
     }
     /**
+     * This is a setter method to set OAuth redirect URL.
+     * @param {string} redirectURL - A String containing the redirectURL.
+     */
+    setRedirectURL(redirectURL) {
+        this.redirectURL = redirectURL;
+    }
+    /**
      * This is a getter method to get OAuth redirect URL.
      * @returns A String representing the OAuth redirect URL.
     */
     getRedirectURL() {
         return this.redirectURL;
+    }
+    /**
+     * This is a setter method to set grant token.
+     * @param {string} grantToken - A String containing the grantToken.
+     */
+    setGrantToken(grantToken) {
+        this.grantToken = grantToken;
     }
     /**
      * This is a getter method to get grant token.
@@ -163,129 +176,157 @@ class OAuthToken {
     setId(id) {
         this.id = id;
     }
-    authenticate(urlConnection) {
-        return __awaiter(this, void 0, void 0, function* () {
+    async authenticate(urlConnection) {
+        try {
             var token;
-            var initializer = yield initializer_1.Initializer.getInitializer();
+            var initializer = await initializer_1.Initializer.getInitializer();
             var store = initializer.getStore();
             var user = initializer.getUser();
-            var oauthToken = yield store.getToken(user, this);
-            if (oauthToken == null) {
-                token = (this.refreshToken === null) ? (yield this.generateAccessToken(user, store)).getAccessToken() : (yield this.refreshAccessToken(user, store)).getAccessToken();
+            var oauthToken = null;
+            if (this.accessToken == null) {
+                if (this.id != null) {
+                    oauthToken = await store.getTokenById(this.id, this);
+                }
+                else {
+                    oauthToken = await store.getToken(user, this);
+                }
             }
-            else if (oauthToken.getExpiresIn() !== undefined && (parseInt(oauthToken.getExpiresIn()) - (new Date().getTime())) < 5000) {
+            else {
+                oauthToken = this;
+            }
+            if (oauthToken == null) { //first time
+                token = (this.refreshToken === null) ? (await this.generateAccessToken(user, store)).getAccessToken() : (await this.refreshAccessToken(user, store)).getAccessToken();
+            }
+            else if (oauthToken.getExpiresIn() !== undefined && (parseInt(oauthToken.getExpiresIn()) - (new Date().getTime())) < 5000) { //access token will expire in next 5 seconds or less
                 Logger.info(constants_1.Constants.REFRESH_TOKEN_MESSAGE);
-                token = (yield this.refreshAccessToken(user, store)).getAccessToken();
+                token = (await this.refreshAccessToken(user, store)).getAccessToken();
             }
             else {
                 token = this.getAccessToken();
             }
-            if (token !== undefined) {
+            if (token !== null) {
                 urlConnection.addHeader(constants_1.Constants.AUTHORIZATION, constants_1.Constants.OAUTH_HEADER_PREFIX.concat(token));
             }
-        });
+        }
+        catch (error) {
+            if (!(error instanceof sdk_exception_1.SDKException)) {
+                error = new sdk_exception_1.SDKException(null, null, null, error);
+            }
+            throw error;
+        }
     }
-    refreshAccessToken(user, store) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let initializer = yield initializer_1.Initializer.getInitializer();
-            let url = initializer.getEnvironment().getAccountsUrl();
-            var formDataRequestBody = new FormData();
-            formDataRequestBody.append(constants_1.Constants.REFRESH_TOKEN, this.refreshToken);
-            formDataRequestBody.append(constants_1.Constants.CLIENT_ID, this.clientID);
-            formDataRequestBody.append(constants_1.Constants.CLIENT_SECRET, this.clientSecret);
-            formDataRequestBody.append(constants_1.Constants.GRANT_TYPE, constants_1.Constants.REFRESH_TOKEN);
-            if (this.redirectURL !== undefined) {
-                formDataRequestBody.append(constants_1.Constants.REDIRECT_URL, this.redirectURL);
+    async refreshAccessToken(user, store) {
+        let initializer = await initializer_1.Initializer.getInitializer();
+        let url = initializer.getEnvironment().getAccountsUrl();
+        var formDataRequestBody = new FormData();
+        formDataRequestBody.append(constants_1.Constants.REFRESH_TOKEN, this.refreshToken);
+        formDataRequestBody.append(constants_1.Constants.CLIENT_ID, this.clientID);
+        formDataRequestBody.append(constants_1.Constants.CLIENT_SECRET, this.clientSecret);
+        formDataRequestBody.append(constants_1.Constants.GRANT_TYPE, constants_1.Constants.REFRESH_TOKEN);
+        const requestDetails = {
+            method: constants_1.Constants.REQUEST_METHOD_POST,
+            headers: {},
+            body: formDataRequestBody,
+            encoding: "utf8",
+            allowGetBody: true,
+            throwHttpErrors: false
+        };
+        var response = await this.getResponse(url, requestDetails);
+        try {
+            await this.parseResponse(response.body);
+            if (this.id == null) {
+                await this.generateId();
             }
-            const requestDetails = {
-                method: constants_1.Constants.REQUEST_METHOD_POST,
-                headers: {},
-                body: formDataRequestBody,
-                encoding: "utf8",
-                allowGetBody: true,
-                throwHttpErrors: false
-            };
-            var response = yield this.getResponse(url, requestDetails);
-            try {
-                store.saveToken(user, yield this.parseResponse(response.body));
+            store.saveToken(user, this);
+        }
+        catch (error) {
+            if (error instanceof sdk_exception_1.SDKException) {
+                throw error;
             }
-            catch (error) {
-                if (error instanceof sdk_exception_1.SDKException) {
-                    throw error;
-                }
-                else if (error instanceof Error) {
-                    throw new sdk_exception_1.SDKException(constants_1.Constants.SAVE_TOKEN_ERROR, null, null, error);
-                }
+            else if (error instanceof Error) {
+                throw new sdk_exception_1.SDKException(constants_1.Constants.SAVE_TOKEN_ERROR, null, null, error);
             }
-            return this;
-        });
+        }
+        return this;
     }
-    generateAccessToken(user, store) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let initializer = yield initializer_1.Initializer.getInitializer();
-            let url = initializer.getEnvironment().getAccountsUrl();
-            var formDataRequestBody = new FormData();
-            formDataRequestBody.append(constants_1.Constants.REFRESH_TOKEN, this.refreshToken);
-            formDataRequestBody.append(constants_1.Constants.CLIENT_ID, this.clientID);
-            formDataRequestBody.append(constants_1.Constants.CLIENT_SECRET, this.clientSecret);
-            formDataRequestBody.append(constants_1.Constants.GRANT_TYPE, constants_1.Constants.GRANT_TYPE_AUTH_CODE);
-            formDataRequestBody.append(constants_1.Constants.CODE, this.grantToken);
-            const requestDetails = {
-                method: constants_1.Constants.REQUEST_METHOD_POST,
-                headers: {},
-                body: formDataRequestBody,
-                encoding: "utf8",
-                allowGetBody: true,
-                throwHttpErrors: false
-            };
-            var response = yield this.getResponse(url, requestDetails);
-            try {
-                store.saveToken(user, yield this.parseResponse(response.body));
+    async generateAccessToken(user, store) {
+        let initializer = await initializer_1.Initializer.getInitializer();
+        let url = initializer.getEnvironment().getAccountsUrl();
+        var formDataRequestBody = new FormData();
+        formDataRequestBody.append(constants_1.Constants.REFRESH_TOKEN, this.refreshToken);
+        formDataRequestBody.append(constants_1.Constants.CLIENT_ID, this.clientID);
+        formDataRequestBody.append(constants_1.Constants.CLIENT_SECRET, this.clientSecret);
+        if (this.redirectURL != null) {
+            formDataRequestBody.append(constants_1.Constants.REDIRECT_URI, this.redirectURL);
+        }
+        formDataRequestBody.append(constants_1.Constants.GRANT_TYPE, constants_1.Constants.GRANT_TYPE_AUTH_CODE);
+        formDataRequestBody.append(constants_1.Constants.CODE, this.grantToken);
+        const requestDetails = {
+            method: constants_1.Constants.REQUEST_METHOD_POST,
+            headers: {},
+            body: formDataRequestBody,
+            encoding: "utf8",
+            allowGetBody: true,
+            throwHttpErrors: false
+        };
+        var response = await this.getResponse(url, requestDetails);
+        try {
+            await this.parseResponse(response.body);
+            await this.generateId();
+            await store.saveToken(user, this);
+        }
+        catch (error) {
+            if (error instanceof sdk_exception_1.SDKException) {
+                throw error;
             }
-            catch (error) {
-                if (error instanceof sdk_exception_1.SDKException) {
-                    throw error;
-                }
-                else if (error instanceof Error) {
-                    throw new sdk_exception_1.SDKException(constants_1.Constants.SAVE_TOKEN_ERROR, null, null, error);
-                }
+            else if (error instanceof Error) {
+                throw new sdk_exception_1.SDKException(constants_1.Constants.SAVE_TOKEN_ERROR, null, null, error);
             }
-            return this;
-        });
+        }
+        return this;
     }
-    getResponse(url, requestDetails) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield got_1.default(url, requestDetails);
-        });
+    async getResponse(url, requestDetails) {
+        return await got_1.default(url, requestDetails);
     }
-    parseResponse(response) {
-        return __awaiter(this, void 0, void 0, function* () {
-            var responseJSON = JSON.parse(response);
-            if (!responseJSON.hasOwnProperty(constants_1.Constants.ACCESS_TOKEN)) {
-                throw new sdk_exception_1.SDKException(constants_1.Constants.INVALID_CLIENT_ERROR, responseJSON[constants_1.Constants.ERROR_KEY].toString());
-            }
-            this.accessToken = responseJSON[constants_1.Constants.ACCESS_TOKEN];
-            if (responseJSON.hasOwnProperty(constants_1.Constants.REFRESH_TOKEN)) {
-                this.refreshToken = responseJSON[constants_1.Constants.REFRESH_TOKEN];
-            }
-            this.expiresIn = (new Date().getTime() + (yield this.getTokenExpiryTime(responseJSON))).toString();
-            return this;
-        });
+    async parseResponse(response) {
+        var responseJSON = JSON.parse(response);
+        if (!responseJSON.hasOwnProperty(constants_1.Constants.ACCESS_TOKEN)) {
+            throw new sdk_exception_1.SDKException(constants_1.Constants.INVALID_TOKEN_ERROR, responseJSON.hasOwnProperty(constants_1.Constants.ERROR_KEY) ? responseJSON[constants_1.Constants.ERROR_KEY].toString() : constants_1.Constants.NO_ACCESS_TOKEN_ERROR);
+        }
+        this.accessToken = responseJSON[constants_1.Constants.ACCESS_TOKEN];
+        this.expiresIn = (new Date().getTime() + await this.getTokenExpiryTime(responseJSON)).toString();
+        if (responseJSON.hasOwnProperty(constants_1.Constants.REFRESH_TOKEN)) {
+            this.refreshToken = responseJSON[constants_1.Constants.REFRESH_TOKEN];
+        }
+        return this;
     }
     getTokenExpiryTime(response) {
         return response.hasOwnProperty(constants_1.Constants.EXPIRES_IN_SEC) ? response[constants_1.Constants.EXPIRES_IN] : response[constants_1.Constants.EXPIRES_IN] * 1000;
     }
-    remove() {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                let initializer = yield initializer_1.Initializer.getInitializer();
-                yield initializer.getStore().deleteToken(this);
-                return true;
+    async remove() {
+        try {
+            let initializer = await initializer_1.Initializer.getInitializer();
+            await initializer.getStore().deleteToken(this);
+            return true;
+        }
+        catch (error) {
+            if (error instanceof sdk_exception_1.SDKException) {
+                throw error;
             }
-            catch (error) {
-                return false;
+            else if (error instanceof Error) {
+                throw new sdk_exception_1.SDKException(null, null, null, error);
             }
-        });
+        }
+        return false;
+    }
+    async generateId() {
+        let email = (await initializer_1.Initializer.getInitializer()).getUser().getEmail();
+        let builder = "typescript_" + (email).substring(0, (email.indexOf('@'))) + "_";
+        builder = builder + (await initializer_1.Initializer.getInitializer()).getEnvironment().getName() + "_";
+        if (this.refreshToken != null) {
+            builder = builder + this.refreshToken.substring(this.refreshToken.length - 4);
+        }
+        this.id = builder;
     }
 }
 exports.OAuthToken = OAuthToken;

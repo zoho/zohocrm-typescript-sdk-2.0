@@ -2,21 +2,21 @@
  * Common Class to provide or obtain a value, when there are multiple supported values.
  */
 class Choice<T> {
-    private value :T;
+    private value: T;
 
-    constructor(value :T) {
+    constructor(value: T) {
         this.value = value;
     }
 
     /**
      * getValue
      */
-    public getValue() {
+    public getValue(): T {
         return this.value;
     }
 }
 
-export{
+export {
     Choice as MasterModel,
     Choice as Choice
 }

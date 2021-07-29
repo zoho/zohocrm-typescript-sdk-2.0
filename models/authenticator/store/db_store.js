@@ -18,21 +18,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DBStore = void 0;
 const mysql = __importStar(require("mysql"));
 const sdk_exception_1 = require("../../../core/com/zoho/crm/api/exception/sdk_exception");
 const constants_1 = require("../../../utils/util/constants");
 const oauth_token_1 = require("../oauth_token");
+const oauth_builder_1 = require("../oauth_builder");
 /**
  * This class stores the user token details to the MySQL DataBase.
 */
@@ -41,155 +33,155 @@ class DBStore {
      * Creates an DBStore class instance with the specified parameters.
      * @param {string} host - A String containing the DataBase host name. Default value is localhost
      * @param {string} databaseName - A String containing the DataBase name. Default value is zohooauth
+     * @param {string} tableName - A String containing the DataBase table name. Default value is oauthtoken
      * @param {string} userName - A String containing the DataBase user name. Default value is root
      * @param {string} password - A String containing the DataBase password. Default value is an empty string
      * @param {string} portNumber - A String containing the DataBase port number. Default value is 3306
-    */
-    constructor(host, databaseName, userName, password, portNumber) {
-        this.host = (host != undefined) ? host : constants_1.Constants.MYSQL_HOST;
-        this.databaseName = (databaseName != undefined) ? databaseName : constants_1.Constants.MYSQL_DATABASE_NAME;
-        this.userName = (userName != undefined) ? userName : constants_1.Constants.MYSQL_USER_NAME;
-        this.password = (password != undefined) ? password : "";
-        this.portNumber = (portNumber != undefined) ? portNumber : constants_1.Constants.MYSQL_PORT_NUMBER;
+     */
+    constructor(host, databaseName, tableName, userName, password, portNumber) {
+        this.host = host;
+        this.databaseName = databaseName;
+        this.tableName = tableName;
+        this.userName = userName;
+        this.password = password;
+        this.portNumber = portNumber;
     }
-    getToken(user, token) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                var connection = this.getConnection();
-                if (token instanceof oauth_token_1.OAuthToken) {
-                    var sql = this.constructDBQuery(user.getEmail(), token, false);
-                    var oauthToken = token;
-                    return new Promise(function (resolve, reject) {
-                        connection.connect(function (err) {
-                            if (err)
-                                throw err;
-                            connection.query(sql, function (err, result) {
-                                if (err) {
-                                    connection.end();
-                                    throw err;
-                                }
-                                connection.end();
-                                if (result.length != 0) {
-                                    oauthToken.setAccessToken(result[0].access_token);
-                                    oauthToken.setRefreshToken(result[0].refresh_token);
-                                    oauthToken.setExpiresIn(result[0].expiry_time);
-                                    resolve(oauthToken);
-                                }
-                                resolve(undefined);
-                            });
-                        });
-                    });
-                }
-            }
-            catch (error) {
-                throw new sdk_exception_1.SDKException(constants_1.Constants.TOKEN_STORE, constants_1.Constants.GET_TOKEN_DB_ERROR, null, error);
-            }
-        });
-    }
-    saveToken(user, token) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                var connection = this.getConnection();
-                var dbStoreInstance = this;
-                if (token instanceof oauth_token_1.OAuthToken) {
-                    token.setUserMail(user.getEmail());
-                    var sqlQuery = "INSERT INTO oauthtoken(user_mail,client_id,refresh_token,access_token,grant_token,expiry_time) VALUES ('" + user.getEmail() + "'," + "'" + token.getClientID() + "'," + "'" + token.getRefreshToken() + "'," + "'" + token.getAccessToken() + "'," + "'" + token.getGrantToken() + "'," + "'" + token.getExpiresIn() + "')";
-                    new Promise(function (resolve, reject) {
-                        dbStoreInstance.deleteToken(token).then(function () {
-                            connection.connect(function (err) {
-                                if (err) {
-                                    connection.end();
-                                    resolve(undefined);
-                                }
-                                connection.query(sqlQuery, function (err, result) {
-                                    if (err) {
-                                        connection.end();
-                                        throw err;
-                                    }
-                                    connection.end();
-                                    resolve();
-                                });
-                            });
-                        });
-                    });
-                }
-            }
-            catch (error) {
-                throw new sdk_exception_1.SDKException(constants_1.Constants.TOKEN_STORE, constants_1.Constants.SAVE_TOKEN_DB_ERROR, null, error);
-            }
-        });
-    }
-    deleteToken(token) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                var connection = this.getConnection();
-                if (token instanceof oauth_token_1.OAuthToken) {
-                    var sqlQuery = this.constructDBQuery(token.getUserMail(), token, true);
-                    new Promise(function (resolve, reject) {
-                        connection.connect(function (err) {
-                            if (err)
-                                throw err;
-                            connection.query(sqlQuery, function (err, result) {
-                                if (err) {
-                                    throw err;
-                                }
-                                connection.end();
-                                resolve(result);
-                            });
-                        });
-                    });
-                }
-            }
-            catch (error) {
-                throw new sdk_exception_1.SDKException(constants_1.Constants.TOKEN_STORE, constants_1.Constants.DELETE_TOKEN_DB_ERROR, null, error);
-            }
-        });
-    }
-    getTokens() {
-        return __awaiter(this, void 0, void 0, function* () {
-            var tokens = [];
-            try {
-                var connection = this.getConnection();
-                var sqlQuery = "select * from oauthtoken;";
-                var test = new Promise(function (resolve, reject) {
+    async getToken(user, token) {
+        try {
+            var connection = await this.getConnection();
+            if (token instanceof oauth_token_1.OAuthToken) {
+                var oauthToken = token;
+                var sql = await this.constructDBQuery(user.getEmail(), oauthToken, false);
+                return new Promise(function (resolve, reject) {
                     connection.connect(function (err) {
                         if (err)
                             throw err;
-                        connection.query(sqlQuery, function (err, result) {
+                        connection.query(sql, function (err, result) {
                             if (err) {
                                 connection.end();
                                 throw err;
                             }
                             connection.end();
-                            if (result.length > 0) {
-                                for (let row of result) {
-                                    let tokenType = (row.grant_token != null && row.grant_token != constants_1.Constants.NULL_VALUE && row.grant_token.length > 0) ? oauth_token_1.TokenType.GRANT : oauth_token_1.TokenType.REFRESH;
-                                    let tokenValue = (tokenType == oauth_token_1.TokenType.REFRESH) ? row.refresh_token : row.grant_token;
-                                    let token = new oauth_token_1.OAuthToken(row.client_id, "", tokenValue, tokenType);
-                                    token.setId(row.id);
-                                    token.setExpiresIn(row.expiry_time);
-                                    token.setUserMail(row.user_mail);
-                                    token.setAccessToken(row.access_token);
-                                    tokens.push(token);
-                                }
-                                resolve(tokens);
+                            if (result.length != 0) {
+                                oauthToken.setId(result[0].id);
+                                oauthToken.setAccessToken(result[0].access_token);
+                                oauthToken.setExpiresIn(result[0].expiry_time);
+                                oauthToken.setRefreshToken(result[0].refresh_token);
+                                oauthToken.setUserMail(result[0].user_mail);
+                                resolve(oauthToken);
                             }
-                            resolve(null);
+                            resolve(undefined);
                         });
                     });
                 });
             }
-            catch (error) {
-                throw new sdk_exception_1.SDKException(constants_1.Constants.TOKEN_STORE, constants_1.Constants.GET_TOKENS_DB_ERROR, null, error);
-            }
-            return tokens;
-        });
+        }
+        catch (error) {
+            throw new sdk_exception_1.SDKException(constants_1.Constants.TOKEN_STORE, constants_1.Constants.GET_TOKEN_DB_ERROR, null, error);
+        }
     }
-    deleteTokens() {
+    async saveToken(user, token) {
         try {
-            var connection = this.getConnection();
-            var sqlQuery = "delete from oauthtoken";
-            new Promise(function (resolve, reject) {
+            var connection = await this.getConnection();
+            var dbStoreInstance = this;
+            if (token instanceof oauth_token_1.OAuthToken) {
+                token.setUserMail(user.getEmail());
+                var sqlQuery = "INSERT INTO " + this.tableName + "(id,user_mail,client_id,client_secret,refresh_token,access_token,grant_token,expiry_time,redirect_url) VALUES ?";
+                var values = [
+                    [token.getId(), user.getEmail(), token.getClientId(), token.getClientSecret(), token.getRefreshToken(), token.getAccessToken(), token.getGrantToken(), token.getExpiresIn(), token.getRedirectURL()]
+                ];
+                new Promise(function (resolve, reject) {
+                    dbStoreInstance.deleteToken(token).then(function () {
+                        connection.connect(function (err) {
+                            if (err) {
+                                throw err;
+                            }
+                            connection.query(sqlQuery, [values], function (err, result) {
+                                if (err) {
+                                    connection.end();
+                                    throw err;
+                                }
+                                connection.end();
+                                resolve();
+                            });
+                        });
+                    });
+                });
+            }
+        }
+        catch (error) {
+            throw new sdk_exception_1.SDKException(constants_1.Constants.TOKEN_STORE, constants_1.Constants.SAVE_TOKEN_DB_ERROR, null, error);
+        }
+    }
+    async deleteToken(token) {
+        try {
+            var connection = await this.getConnection();
+            if (token instanceof oauth_token_1.OAuthToken) {
+                var sqlQuery = await this.constructDBQuery(token.getUserMail(), token, true);
+                new Promise(function (resolve, reject) {
+                    connection.connect(function (err) {
+                        if (err)
+                            throw err;
+                        connection.query(sqlQuery, function (err, result) {
+                            if (err) {
+                                throw err;
+                            }
+                            connection.end();
+                            resolve(result);
+                        });
+                    });
+                });
+            }
+        }
+        catch (error) {
+            throw new sdk_exception_1.SDKException(constants_1.Constants.TOKEN_STORE, constants_1.Constants.DELETE_TOKEN_DB_ERROR, null, error);
+        }
+    }
+    async getTokens() {
+        var tokens = [];
+        try {
+            var connection = await this.getConnection();
+            var sqlQuery = "select * from " + this.tableName + ";";
+            return new Promise(function (resolve, reject) {
+                connection.connect(function (err) {
+                    if (err)
+                        throw err;
+                    connection.query(sqlQuery, function (err, result) {
+                        if (err) {
+                            connection.end();
+                            throw err;
+                        }
+                        connection.end();
+                        if (result.length > 0) {
+                            for (let row of result) {
+                                let grantToken = (row.grant_token !== null && row.grant_token !== constants_1.Constants.NULL_VALUE && row.grant_token.length > 0) ? row.grant_token : null;
+                                let token = new oauth_builder_1.OAuthBuilder().clientId(row.client_id).clientSecret(row.client_secret).refreshToken(row.refresh_token).build();
+                                token.setId(row.id);
+                                if (grantToken != null) {
+                                    token.setGrantToken(grantToken);
+                                }
+                                token.setUserMail(row.user_mail);
+                                token.setAccessToken(row.access_token);
+                                token.setExpiresIn(row.expiry_time);
+                                token.setRedirectURL(row.redirect_url);
+                                tokens.push(token);
+                            }
+                            resolve(tokens);
+                        }
+                        resolve(undefined);
+                    });
+                });
+            });
+        }
+        catch (error) {
+            throw new sdk_exception_1.SDKException(constants_1.Constants.TOKEN_STORE, constants_1.Constants.GET_TOKENS_DB_ERROR, null, error);
+        }
+    }
+    async deleteTokens() {
+        try {
+            var connection = await this.getConnection();
+            var sqlQuery = "delete from " + this.tableName + ";";
+            return new Promise(function (resolve, reject) {
                 connection.connect(function (err) {
                     if (err)
                         throw err;
@@ -208,8 +200,11 @@ class DBStore {
         }
     }
     constructDBQuery(email, token, isDelete) {
+        if (email == null) {
+            throw new sdk_exception_1.SDKException(constants_1.Constants.USER_MAIL_NULL_ERROR, constants_1.Constants.USER_MAIL_NULL_ERROR_MESSAGE);
+        }
         var query = isDelete ? "delete from " : "select * from ";
-        query += "oauthtoken " + "where user_mail ='" + email + "' and client_id='" + token.getClientID() + "' and ";
+        query += this.tableName + " where user_mail ='" + email + "' and client_id='" + token.getClientId() + "' and ";
         if (token.getGrantToken() != null) {
             query += "grant_token='" + token.getGrantToken() + "'";
         }
@@ -227,6 +222,49 @@ class DBStore {
             port: this.portNumber
         });
         return connection;
+    }
+    async getTokenById(id, token) {
+        try {
+            var connection = await this.getConnection();
+            if (token instanceof oauth_token_1.OAuthToken) {
+                var sql = "select * from " + this.tableName + " where id='" + id + "'";
+                return new Promise(function (resolve, reject) {
+                    connection.connect(function (err) {
+                        if (err)
+                            throw err;
+                        connection.query(sql, function (err, result) {
+                            if (err) {
+                                connection.end();
+                                throw err;
+                            }
+                            connection.end();
+                            if (result.length != 0) {
+                                let grantToken = (result[0].grant_token != null && result[0].grant_token !== constants_1.Constants.NULL_VALUE && result[0].grant_token.length > 0) ? result[0].grant_token : null;
+                                token.setClientId(result[0].client_id);
+                                token.setClientSecret(result[0].client_secret);
+                                token.setRefreshToken(result[0].refresh_token);
+                                token.setId(result[0].id);
+                                if (grantToken != null) {
+                                    token.setGrantToken(grantToken);
+                                }
+                                token.setUserMail(result[0].user_mail);
+                                token.setAccessToken(result[0].access_token);
+                                token.setExpiresIn(result[0].expiry_time);
+                                token.setRedirectURL(result[0].redirect_url);
+                                resolve(token);
+                            }
+                            else {
+                                throw new sdk_exception_1.SDKException(constants_1.Constants.TOKEN_STORE, constants_1.Constants.GET_TOKEN_BY_ID_DB_ERROR);
+                            }
+                            resolve(undefined);
+                        });
+                    });
+                });
+            }
+        }
+        catch (error) {
+            throw new sdk_exception_1.SDKException(constants_1.Constants.TOKEN_STORE, constants_1.Constants.GET_TOKEN_DB_ERROR, null, error);
+        }
     }
 }
 exports.DBStore = DBStore;

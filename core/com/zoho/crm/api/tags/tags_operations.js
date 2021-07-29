@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateTagsParam = exports.GetTagsParam = exports.UpdateTagParam = exports.UpdateTagsParam = exports.GetRecordCountForTagParam = exports.RemoveTagsFromRecordParam = exports.TagsOperations = exports.MasterModel = exports.AddTagsToMultipleRecordsParam = exports.AddTagsToRecordParam = exports.RemoveTagsFromMultipleRecordsParam = void 0;
 const param_1 = require("../../../../../../routes/param");
@@ -20,18 +11,16 @@ class TagsOperations {
      * @returns An instance of APIResponse<ResponseHandler>
      * @throws SDKException
      */
-    getTags(paramInstance) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/settings/tags");
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_GET);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_READ);
-            handlerInstance.setParam(paramInstance);
-            let ResponseHandler = require.resolve("./response_handler");
-            return handlerInstance.apiCall(ResponseHandler, "application/json");
-        });
+    async getTags(paramInstance) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/settings/tags");
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_GET);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_READ);
+        handlerInstance.setParam(paramInstance);
+        let ResponseHandler = require.resolve("./response_handler");
+        return handlerInstance.apiCall(ResponseHandler, "application/json");
     }
     /**
      * The method to create tags
@@ -40,21 +29,19 @@ class TagsOperations {
      * @returns An instance of APIResponse<ActionHandler>
      * @throws SDKException
      */
-    createTags(request, paramInstance) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/settings/tags");
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_POST);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_CREATE);
-            handlerInstance.setContentType("application/json");
-            handlerInstance.setRequest(request);
-            handlerInstance.setMandatoryChecker(true);
-            handlerInstance.setParam(paramInstance);
-            let ActionHandler = require.resolve("./action_handler");
-            return handlerInstance.apiCall(ActionHandler, "application/json");
-        });
+    async createTags(request, paramInstance) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/settings/tags");
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_POST);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_CREATE);
+        handlerInstance.setContentType("application/json");
+        handlerInstance.setRequest(request);
+        handlerInstance.setMandatoryChecker(true);
+        handlerInstance.setParam(paramInstance);
+        let ActionHandler = require.resolve("./action_handler");
+        return handlerInstance.apiCall(ActionHandler, "application/json");
     }
     /**
      * The method to update tags
@@ -63,21 +50,19 @@ class TagsOperations {
      * @returns An instance of APIResponse<ActionHandler>
      * @throws SDKException
      */
-    updateTags(request, paramInstance) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/settings/tags");
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_PUT);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_UPDATE);
-            handlerInstance.setContentType("application/json");
-            handlerInstance.setRequest(request);
-            handlerInstance.setMandatoryChecker(true);
-            handlerInstance.setParam(paramInstance);
-            let ActionHandler = require.resolve("./action_handler");
-            return handlerInstance.apiCall(ActionHandler, "application/json");
-        });
+    async updateTags(request, paramInstance) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/settings/tags");
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_PUT);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_UPDATE);
+        handlerInstance.setContentType("application/json");
+        handlerInstance.setRequest(request);
+        handlerInstance.setMandatoryChecker(true);
+        handlerInstance.setParam(paramInstance);
+        let ActionHandler = require.resolve("./action_handler");
+        return handlerInstance.apiCall(ActionHandler, "application/json");
     }
     /**
      * The method to update tag
@@ -87,21 +72,19 @@ class TagsOperations {
      * @returns An instance of APIResponse<ActionHandler>
      * @throws SDKException
      */
-    updateTag(id, request, paramInstance) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/settings/tags/");
-            apiPath = apiPath.concat(id.toString());
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_PUT);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_UPDATE);
-            handlerInstance.setContentType("application/json");
-            handlerInstance.setRequest(request);
-            handlerInstance.setParam(paramInstance);
-            let ActionHandler = require.resolve("./action_handler");
-            return handlerInstance.apiCall(ActionHandler, "application/json");
-        });
+    async updateTag(id, request, paramInstance) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/settings/tags/");
+        apiPath = apiPath.concat(id.toString());
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_PUT);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_UPDATE);
+        handlerInstance.setContentType("application/json");
+        handlerInstance.setRequest(request);
+        handlerInstance.setParam(paramInstance);
+        let ActionHandler = require.resolve("./action_handler");
+        return handlerInstance.apiCall(ActionHandler, "application/json");
     }
     /**
      * The method to delete tag
@@ -109,18 +92,16 @@ class TagsOperations {
      * @returns An instance of APIResponse<ActionHandler>
      * @throws SDKException
      */
-    deleteTag(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/settings/tags/");
-            apiPath = apiPath.concat(id.toString());
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_DELETE);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_METHOD_DELETE);
-            let ActionHandler = require.resolve("./action_handler");
-            return handlerInstance.apiCall(ActionHandler, "application/json");
-        });
+    async deleteTag(id) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/settings/tags/");
+        apiPath = apiPath.concat(id.toString());
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_DELETE);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_METHOD_DELETE);
+        let ActionHandler = require.resolve("./action_handler");
+        return handlerInstance.apiCall(ActionHandler, "application/json");
     }
     /**
      * The method to merge tags
@@ -129,22 +110,20 @@ class TagsOperations {
      * @returns An instance of APIResponse<ActionHandler>
      * @throws SDKException
      */
-    mergeTags(id, request) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/settings/tags/");
-            apiPath = apiPath.concat(id.toString());
-            apiPath = apiPath.concat("/actions/merge");
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_POST);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_CREATE);
-            handlerInstance.setContentType("application/json");
-            handlerInstance.setRequest(request);
-            handlerInstance.setMandatoryChecker(true);
-            let ActionHandler = require.resolve("./action_handler");
-            return handlerInstance.apiCall(ActionHandler, "application/json");
-        });
+    async mergeTags(id, request) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/settings/tags/");
+        apiPath = apiPath.concat(id.toString());
+        apiPath = apiPath.concat("/actions/merge");
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_POST);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_CREATE);
+        handlerInstance.setContentType("application/json");
+        handlerInstance.setRequest(request);
+        handlerInstance.setMandatoryChecker(true);
+        let ActionHandler = require.resolve("./action_handler");
+        return handlerInstance.apiCall(ActionHandler, "application/json");
     }
     /**
      * The method to add tags to record
@@ -154,23 +133,21 @@ class TagsOperations {
      * @returns An instance of APIResponse<RecordActionHandler>
      * @throws SDKException
      */
-    addTagsToRecord(recordId, moduleAPIName, paramInstance) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/");
-            apiPath = apiPath.concat(moduleAPIName.toString());
-            apiPath = apiPath.concat("/");
-            apiPath = apiPath.concat(recordId.toString());
-            apiPath = apiPath.concat("/actions/add_tags");
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_POST);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_CREATE);
-            handlerInstance.setMandatoryChecker(true);
-            handlerInstance.setParam(paramInstance);
-            let RecordActionHandler = require.resolve("./record_action_handler");
-            return handlerInstance.apiCall(RecordActionHandler, "application/json");
-        });
+    async addTagsToRecord(recordId, moduleAPIName, paramInstance) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/");
+        apiPath = apiPath.concat(moduleAPIName.toString());
+        apiPath = apiPath.concat("/");
+        apiPath = apiPath.concat(recordId.toString());
+        apiPath = apiPath.concat("/actions/add_tags");
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_POST);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_CREATE);
+        handlerInstance.setMandatoryChecker(true);
+        handlerInstance.setParam(paramInstance);
+        let RecordActionHandler = require.resolve("./record_action_handler");
+        return handlerInstance.apiCall(RecordActionHandler, "application/json");
     }
     /**
      * The method to remove tags from record
@@ -180,23 +157,21 @@ class TagsOperations {
      * @returns An instance of APIResponse<RecordActionHandler>
      * @throws SDKException
      */
-    removeTagsFromRecord(recordId, moduleAPIName, paramInstance) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/");
-            apiPath = apiPath.concat(moduleAPIName.toString());
-            apiPath = apiPath.concat("/");
-            apiPath = apiPath.concat(recordId.toString());
-            apiPath = apiPath.concat("/actions/remove_tags");
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_POST);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_CREATE);
-            handlerInstance.setMandatoryChecker(true);
-            handlerInstance.setParam(paramInstance);
-            let RecordActionHandler = require.resolve("./record_action_handler");
-            return handlerInstance.apiCall(RecordActionHandler, "application/json");
-        });
+    async removeTagsFromRecord(recordId, moduleAPIName, paramInstance) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/");
+        apiPath = apiPath.concat(moduleAPIName.toString());
+        apiPath = apiPath.concat("/");
+        apiPath = apiPath.concat(recordId.toString());
+        apiPath = apiPath.concat("/actions/remove_tags");
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_POST);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_CREATE);
+        handlerInstance.setMandatoryChecker(true);
+        handlerInstance.setParam(paramInstance);
+        let RecordActionHandler = require.resolve("./record_action_handler");
+        return handlerInstance.apiCall(RecordActionHandler, "application/json");
     }
     /**
      * The method to add tags to multiple records
@@ -205,21 +180,19 @@ class TagsOperations {
      * @returns An instance of APIResponse<RecordActionHandler>
      * @throws SDKException
      */
-    addTagsToMultipleRecords(moduleAPIName, paramInstance) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/");
-            apiPath = apiPath.concat(moduleAPIName.toString());
-            apiPath = apiPath.concat("/actions/add_tags");
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_POST);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_CREATE);
-            handlerInstance.setMandatoryChecker(true);
-            handlerInstance.setParam(paramInstance);
-            let RecordActionHandler = require.resolve("./record_action_handler");
-            return handlerInstance.apiCall(RecordActionHandler, "application/json");
-        });
+    async addTagsToMultipleRecords(moduleAPIName, paramInstance) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/");
+        apiPath = apiPath.concat(moduleAPIName.toString());
+        apiPath = apiPath.concat("/actions/add_tags");
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_POST);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_CREATE);
+        handlerInstance.setMandatoryChecker(true);
+        handlerInstance.setParam(paramInstance);
+        let RecordActionHandler = require.resolve("./record_action_handler");
+        return handlerInstance.apiCall(RecordActionHandler, "application/json");
     }
     /**
      * The method to remove tags from multiple records
@@ -228,21 +201,19 @@ class TagsOperations {
      * @returns An instance of APIResponse<RecordActionHandler>
      * @throws SDKException
      */
-    removeTagsFromMultipleRecords(moduleAPIName, paramInstance) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/");
-            apiPath = apiPath.concat(moduleAPIName.toString());
-            apiPath = apiPath.concat("/actions/remove_tags");
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_POST);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_CREATE);
-            handlerInstance.setMandatoryChecker(true);
-            handlerInstance.setParam(paramInstance);
-            let RecordActionHandler = require.resolve("./record_action_handler");
-            return handlerInstance.apiCall(RecordActionHandler, "application/json");
-        });
+    async removeTagsFromMultipleRecords(moduleAPIName, paramInstance) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/");
+        apiPath = apiPath.concat(moduleAPIName.toString());
+        apiPath = apiPath.concat("/actions/remove_tags");
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_POST);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_CREATE);
+        handlerInstance.setMandatoryChecker(true);
+        handlerInstance.setParam(paramInstance);
+        let RecordActionHandler = require.resolve("./record_action_handler");
+        return handlerInstance.apiCall(RecordActionHandler, "application/json");
     }
     /**
      * The method to get record count for tag
@@ -251,20 +222,18 @@ class TagsOperations {
      * @returns An instance of APIResponse<CountHandler>
      * @throws SDKException
      */
-    getRecordCountForTag(id, paramInstance) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/settings/tags/");
-            apiPath = apiPath.concat(id.toString());
-            apiPath = apiPath.concat("/actions/records_count");
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_GET);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_READ);
-            handlerInstance.setParam(paramInstance);
-            let CountHandler = require.resolve("./count_handler");
-            return handlerInstance.apiCall(CountHandler, "application/json");
-        });
+    async getRecordCountForTag(id, paramInstance) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/settings/tags/");
+        apiPath = apiPath.concat(id.toString());
+        apiPath = apiPath.concat("/actions/records_count");
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_GET);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_READ);
+        handlerInstance.setParam(paramInstance);
+        let CountHandler = require.resolve("./count_handler");
+        return handlerInstance.apiCall(CountHandler, "application/json");
     }
 }
 exports.MasterModel = TagsOperations;

@@ -18,15 +18,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Converter = void 0;
 const sdk_exception_1 = require("../../core/com/zoho/crm/api/exception/sdk_exception");
@@ -55,140 +46,136 @@ class Converter {
      * @returns A Boolean representing the key value is expected pattern, unique, length, and values.
      * @throws {SDKException}
      */
-    valueChecker(className, memberName, keyDetails, value, uniqueValuesMap, instanceNumber) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let detailsJO = {};
-            var name = keyDetails[constants_1.Constants.NAME];
-            var type = keyDetails[constants_1.Constants.TYPE];
-            var valueType = Object.prototype.toString.call(value);
-            let check = true;
-            let givenType = null;
-            if (constants_1.Constants.TYPE_VS_DATATYPE.has(type.toLowerCase())) {
-                if (Array.isArray(value) && keyDetails.hasOwnProperty(constants_1.Constants.STRUCTURE_NAME)) {
-                    let structureName = keyDetails[constants_1.Constants.STRUCTURE_NAME];
-                    let index = 0;
-                    let className = (yield Promise.resolve().then(() => __importStar(require("../../" + structureName)))).MasterModel;
-                    for (let data of value) {
-                        if (!(data instanceof className)) {
-                            check = false;
-                            instanceNumber = index;
-                            let baseName = structureName.split("/").pop();
-                            let classNameSplit = baseName.split("_");
-                            let expectedClassName = "";
-                            for (var nameIndex = 0; nameIndex < classNameSplit.length; nameIndex++) {
-                                var fieldName = classNameSplit[nameIndex];
-                                var firstLetterUppercase = fieldName[0].toUpperCase() + fieldName.slice(1);
-                                expectedClassName = expectedClassName.concat(firstLetterUppercase);
-                            }
-                            type = constants_1.Constants.ARRAY_KEY + "(" + expectedClassName + ")";
-                            givenType = constants_1.Constants.ARRAY_KEY + "(" + data.constructor.name + ")";
-                            break;
+    async valueChecker(className, memberName, keyDetails, value, uniqueValuesMap, instanceNumber) {
+        let detailsJO = {};
+        var name = keyDetails[constants_1.Constants.NAME];
+        var type = keyDetails[constants_1.Constants.TYPE];
+        var valueType = Object.prototype.toString.call(value);
+        let check = true;
+        let givenType = null;
+        if (constants_1.Constants.TYPE_VS_DATATYPE.has(type.toLowerCase())) {
+            if (Array.isArray(value) && keyDetails.hasOwnProperty(constants_1.Constants.STRUCTURE_NAME)) {
+                let structureName = keyDetails[constants_1.Constants.STRUCTURE_NAME];
+                let index = 0;
+                let className = (await Promise.resolve().then(() => __importStar(require("../../" + structureName)))).MasterModel;
+                for (let data of value) {
+                    if (!(data instanceof className)) {
+                        check = false;
+                        instanceNumber = index;
+                        let baseName = structureName.split("/").pop();
+                        let classNameSplit = baseName.split("_");
+                        let expectedClassName = "";
+                        for (var nameIndex = 0; nameIndex < classNameSplit.length; nameIndex++) {
+                            var fieldName = classNameSplit[nameIndex];
+                            var firstLetterUppercase = fieldName[0].toUpperCase() + fieldName.slice(1);
+                            expectedClassName = expectedClassName.concat(firstLetterUppercase);
                         }
-                        index = index + 1;
+                        type = constants_1.Constants.ARRAY_KEY + "(" + expectedClassName + ")";
+                        givenType = constants_1.Constants.ARRAY_KEY + "(" + data.constructor.name + ")";
+                        break;
                     }
-                }
-                else if (value != null) { //TypeScript don't have int type
-                    check = (valueType != constants_1.Constants.TYPE_VS_DATATYPE.get(type.toLowerCase()) ? false : true);
-                    givenType = Object.getPrototypeOf(value).constructor.name;
+                    index = index + 1;
                 }
             }
-            else if (value != null && type.toLowerCase() !== constants_1.Constants.OBJECT_KEY) {
-                let expectedStructure = keyDetails[constants_1.Constants.TYPE];
-                let className = (yield Promise.resolve().then(() => __importStar(require("../../" + expectedStructure)))).MasterModel;
-                if (!(value instanceof className)) {
-                    check = false;
-                    type = expectedStructure;
-                    givenType = value.constructor.name;
-                }
+            else if (value != null) { //TypeScript don't have int type
+                check = (valueType != constants_1.Constants.TYPE_VS_DATATYPE.get(type.toLowerCase()) ? false : true);
+                givenType = Object.getPrototypeOf(value).constructor.name;
             }
-            if (!check) {
-                detailsJO[constants_1.Constants.ERROR_HASH_FIELD] = name;
+        }
+        else if (value != null && type.toLowerCase() !== constants_1.Constants.OBJECT_KEY) {
+            let expectedStructure = keyDetails[constants_1.Constants.TYPE];
+            let className = (await Promise.resolve().then(() => __importStar(require("../../" + expectedStructure)))).MasterModel;
+            if (!(value instanceof className)) {
+                check = false;
+                type = expectedStructure;
+                givenType = value.constructor.name;
+            }
+        }
+        if (!check) {
+            detailsJO[constants_1.Constants.ERROR_HASH_FIELD] = name;
+            detailsJO[constants_1.Constants.ERROR_HASH_CLASS] = className;
+            detailsJO[constants_1.Constants.ACCEPTED_TYPE] = constants_1.Constants.SPECIAL_TYPES.has(type) ? constants_1.Constants.SPECIAL_TYPES.get(type) : type;
+            detailsJO[constants_1.Constants.GIVEN_TYPE] = givenType;
+            if (instanceNumber != null) {
+                detailsJO[constants_1.Constants.INDEX] = instanceNumber;
+            }
+            throw new sdk_exception_1.SDKException(constants_1.Constants.TYPE_ERROR, null, detailsJO);
+        }
+        let initializer = await initializer_1.Initializer.getInitializer();
+        if (keyDetails.hasOwnProperty(constants_1.Constants.VALUES) && (!keyDetails.hasOwnProperty(constants_1.Constants.PICKLIST) || (keyDetails[constants_1.Constants.PICKLIST] && initializer.getSDKConfig().getPickListValidation() == true))) {
+            let valuesJA = keyDetails[constants_1.Constants.VALUES];
+            if (value instanceof choice_1.Choice) {
+                value = value.getValue();
+            }
+            if (!valuesJA.toString().includes(value)) {
+                detailsJO[constants_1.Constants.ERROR_HASH_FIELD] = memberName;
                 detailsJO[constants_1.Constants.ERROR_HASH_CLASS] = className;
-                detailsJO[constants_1.Constants.ACCEPTED_TYPE] = constants_1.Constants.SPECIAL_TYPES.has(type) ? constants_1.Constants.SPECIAL_TYPES.get(type) : type;
-                detailsJO[constants_1.Constants.GIVEN_TYPE] = givenType;
                 if (instanceNumber != null) {
                     detailsJO[constants_1.Constants.INDEX] = instanceNumber;
                 }
-                throw new sdk_exception_1.SDKException(constants_1.Constants.TYPE_ERROR, null, detailsJO);
+                detailsJO[constants_1.Constants.ACCEPTED_VALUES] = valuesJA;
+                throw new sdk_exception_1.SDKException(constants_1.Constants.UNACCEPTED_VALUES_ERROR, null, detailsJO);
             }
-            let initializer = yield initializer_1.Initializer.getInitializer();
-            if (keyDetails.hasOwnProperty(constants_1.Constants.VALUES) && (!keyDetails.hasOwnProperty(constants_1.Constants.PICKLIST)) || (keyDetails[constants_1.Constants.PICKLIST] && initializer.getSDKConfig().getPickListValidation() == true)) {
-                let valuesJA = keyDetails[constants_1.Constants.VALUES];
-                if (value instanceof choice_1.Choice) {
-                    value = value.getValue();
-                }
-                if (!valuesJA.toString().includes(value)) {
-                    detailsJO[constants_1.Constants.ERROR_HASH_FIELD] = memberName;
-                    detailsJO[constants_1.Constants.ERROR_HASH_CLASS] = className;
-                    if (instanceNumber != null) {
-                        detailsJO[constants_1.Constants.INDEX] = instanceNumber;
-                    }
-                    detailsJO[constants_1.Constants.ACCEPTED_VALUES] = valuesJA;
-                    throw new sdk_exception_1.SDKException(constants_1.Constants.UNACCEPTED_VALUES_ERROR, null, detailsJO);
-                }
+        }
+        if (keyDetails.hasOwnProperty(constants_1.Constants.UNIQUE)) {
+            let valuesArray = uniqueValuesMap.get(name);
+            if (valuesArray !== undefined && valuesArray.includes(value)) {
+                detailsJO[constants_1.Constants.ERROR_HASH_FIELD] = memberName;
+                detailsJO[constants_1.Constants.ERROR_HASH_CLASS] = className;
+                detailsJO[constants_1.Constants.FIRST_INDEX] = valuesArray.indexOf(value);
+                detailsJO[constants_1.Constants.NEXT_INDEX] = instanceNumber;
+                throw new sdk_exception_1.SDKException(constants_1.Constants.UNIQUE_KEY_ERROR, null, detailsJO);
             }
-            if (keyDetails.hasOwnProperty(constants_1.Constants.UNIQUE)) {
-                let valuesArray = uniqueValuesMap.get(name);
-                if (valuesArray !== undefined && valuesArray.includes(value)) {
-                    detailsJO[constants_1.Constants.ERROR_HASH_FIELD] = memberName;
-                    detailsJO[constants_1.Constants.ERROR_HASH_CLASS] = className;
-                    detailsJO[constants_1.Constants.FIRST_INDEX] = valuesArray.indexOf(value);
-                    detailsJO[constants_1.Constants.NEXT_INDEX] = instanceNumber;
-                    throw new sdk_exception_1.SDKException(constants_1.Constants.UNIQUE_KEY_ERROR, null, detailsJO);
+            else {
+                if (valuesArray === undefined) {
+                    valuesArray = [];
                 }
-                else {
-                    if (valuesArray === undefined) {
-                        valuesArray = [];
-                    }
-                    valuesArray.push(value);
-                    uniqueValuesMap.set(name, valuesArray);
-                }
+                valuesArray.push(value);
+                uniqueValuesMap.set(name, valuesArray);
             }
-            if (keyDetails.hasOwnProperty(constants_1.Constants.MIN_LENGTH) || keyDetails.hasOwnProperty(constants_1.Constants.MAX_LENGTH)) {
-                let count = value.toString().length;
-                if (Array.isArray(value)) {
-                    count = value.length;
-                }
-                if (keyDetails.hasOwnProperty(constants_1.Constants.MAX_LENGTH) && (count > keyDetails[constants_1.Constants.MAX_LENGTH])) {
-                    detailsJO[constants_1.Constants.ERROR_HASH_FIELD] = memberName;
-                    detailsJO[constants_1.Constants.ERROR_HASH_CLASS] = className;
-                    detailsJO[constants_1.Constants.GIVEN_LENGTH] = count;
-                    detailsJO[constants_1.Constants.ERROR_HASH_MAXIMUM_LENGTH] = keyDetails[constants_1.Constants.MAX_LENGTH];
-                    throw new sdk_exception_1.SDKException(constants_1.Constants.MAXIMUM_LENGTH_ERROR, null, detailsJO);
-                }
-                if (keyDetails.hasOwnProperty(constants_1.Constants.MIN_LENGTH) && count < keyDetails[constants_1.Constants.MIN_LENGTH]) {
-                    detailsJO[constants_1.Constants.ERROR_HASH_FIELD] = memberName;
-                    detailsJO[constants_1.Constants.ERROR_HASH_CLASS] = className;
-                    detailsJO[constants_1.Constants.GIVEN_LENGTH] = count;
-                    detailsJO[constants_1.Constants.ERROR_HASH_MINIMUM_LENGTH] = keyDetails[constants_1.Constants.MIN_LENGTH];
-                    throw new sdk_exception_1.SDKException(constants_1.Constants.MINIMUM_LENGTH_ERROR, null, detailsJO);
-                }
+        }
+        if (keyDetails.hasOwnProperty(constants_1.Constants.MIN_LENGTH) || keyDetails.hasOwnProperty(constants_1.Constants.MAX_LENGTH)) {
+            let count = value.toString().length;
+            if (Array.isArray(value)) {
+                count = value.length;
             }
-            if (keyDetails.hasOwnProperty(constants_1.Constants.REGEX)) {
-                if (!keyDetails[constants_1.Constants.REGEX].match(value)) {
-                    detailsJO[constants_1.Constants.ERROR_HASH_FIELD] = memberName;
-                    detailsJO[constants_1.Constants.ERROR_HASH_CLASS] = className;
-                    if (instanceNumber != null) {
-                        detailsJO[constants_1.Constants.INDEX] = instanceNumber;
-                    }
-                    throw new sdk_exception_1.SDKException(constants_1.Constants.REGEX_MISMATCH_ERROR, null, detailsJO);
-                }
+            if (keyDetails.hasOwnProperty(constants_1.Constants.MAX_LENGTH) && (count > keyDetails[constants_1.Constants.MAX_LENGTH])) {
+                detailsJO[constants_1.Constants.ERROR_HASH_FIELD] = memberName;
+                detailsJO[constants_1.Constants.ERROR_HASH_CLASS] = className;
+                detailsJO[constants_1.Constants.GIVEN_LENGTH] = count;
+                detailsJO[constants_1.Constants.ERROR_HASH_MAXIMUM_LENGTH] = keyDetails[constants_1.Constants.MAX_LENGTH];
+                throw new sdk_exception_1.SDKException(constants_1.Constants.MAXIMUM_LENGTH_ERROR, null, detailsJO);
             }
-            return true;
-        });
+            if (keyDetails.hasOwnProperty(constants_1.Constants.MIN_LENGTH) && count < keyDetails[constants_1.Constants.MIN_LENGTH]) {
+                detailsJO[constants_1.Constants.ERROR_HASH_FIELD] = memberName;
+                detailsJO[constants_1.Constants.ERROR_HASH_CLASS] = className;
+                detailsJO[constants_1.Constants.GIVEN_LENGTH] = count;
+                detailsJO[constants_1.Constants.ERROR_HASH_MINIMUM_LENGTH] = keyDetails[constants_1.Constants.MIN_LENGTH];
+                throw new sdk_exception_1.SDKException(constants_1.Constants.MINIMUM_LENGTH_ERROR, null, detailsJO);
+            }
+        }
+        if (keyDetails.hasOwnProperty(constants_1.Constants.REGEX)) {
+            if (!keyDetails[constants_1.Constants.REGEX].match(value)) {
+                detailsJO[constants_1.Constants.ERROR_HASH_FIELD] = memberName;
+                detailsJO[constants_1.Constants.ERROR_HASH_CLASS] = className;
+                if (instanceNumber != null) {
+                    detailsJO[constants_1.Constants.INDEX] = instanceNumber;
+                }
+                throw new sdk_exception_1.SDKException(constants_1.Constants.REGEX_MISMATCH_ERROR, null, detailsJO);
+            }
+        }
+        return true;
     }
     /**
      * getEncodedFileName
      */
-    static getEncodedFileName() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let initializer = yield initializer_1.Initializer.getInitializer();
-            var fileName = initializer.getUser().getEmail();
-            fileName = (fileName).substring(0, (fileName.indexOf('@'))) + initializer.getEnvironment().getUrl();
-            var input = this.toUTF8Array(fileName);
-            var str = Buffer.from(input).toString('base64');
-            return str.concat(".json");
-        });
+    static async getEncodedFileName() {
+        let initializer = await initializer_1.Initializer.getInitializer();
+        var fileName = initializer.getUser().getEmail();
+        fileName = (fileName).substring(0, (fileName.indexOf('@'))) + initializer.getEnvironment().getUrl();
+        var input = this.toUTF8Array(fileName);
+        var str = Buffer.from(input).toString('base64');
+        return str.concat(".json");
     }
     static toUTF8Array(str) {
         var utf8 = [];

@@ -7,7 +7,7 @@ class MassUpdateBodyWrapper implements Model{
 
 	private data: Array<Record>;
 	private cvid: string;
-	private ids: Array<bigint>;
+	private ids: Array<string>;
 	private territory: Territory;
 	private overWrite: boolean;
 	private criteria: Array<Criteria>;
@@ -54,7 +54,7 @@ class MassUpdateBodyWrapper implements Model{
 	 * The method to get the ids
 	 * @returns An Array representing the ids
 	 */
-	public getIds(): Array<bigint>	{
+	public getIds(): Array<string>	{
 		return this.ids;
 
 	}
@@ -63,7 +63,7 @@ class MassUpdateBodyWrapper implements Model{
 	 * The method to set the value to ids
 	 * @param ids An Array representing the ids
 	 */
-	public setIds(ids: Array<bigint>): void	{
+	public setIds(ids: Array<string>): void	{
 		this.ids = ids;
 		this.keyModified.set("ids", 1);
 

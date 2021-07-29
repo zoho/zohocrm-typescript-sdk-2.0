@@ -1,4 +1,4 @@
-# ZOHO CRM TYPESCRIPT SDK
+# ZOHO CRM TYPESCRIPT SDK - 2.0
 
 ## Table Of Contents
 
@@ -89,18 +89,27 @@ Token persistence refers to storing and utilizing the authentication tokens that
 
 Once the application is authorized, OAuth access and refresh tokens can be used for subsequent user data requests to Zoho CRM. Hence, they need to be persisted by the client app.
 
-The persistence is achieved by writing an implementation of the inbuilt **[TokenStore](models/authenticator/store/token_store.ts) Class**, which has the following callback methods.
+The persistence is achieved by writing an implementation of the inbuilt **TokenStore Class**, which has the following callback methods.
 
-- **getToken(user : [UserSignature](routes/user_signature.ts), token : [Token](models/authenticator/token.ts))** - invoked before firing a request to fetch the saved tokens. This method should return implementation **Token Class** object for the library to process it.
+- **getToken(user : UserSignature, token : Token)** - invoked before firing a request to fetch the saved tokens. This method should return implementation **Token Class** object for the library to process it.
 
-- **saveToken(user: [UserSignature](routes/user_signature.ts), token : [Token](models/authenticator/token.ts))** - invoked after fetching access and refresh tokens from Zoho.
+- **saveToken(user: UserSignature, token : Token)** - invoked after fetching access and refresh tokens from Zoho.
 
-- **deleteToken(token : [Token](models/authenticator/token.ts))** - invoked before saving the latest tokens.
+- **deleteToken(token : Token)** - invoked before saving the latest tokens.
 
 - **getTokens()** - The method to retrieve all the stored tokens.
 
 - **deleteTokens()** - The method to delete all the stored tokens.
 
+- **getTokenById(id, token)** - This method is used to retrieve the user token details based on unique ID.
+
+Note:
+
+- **id** is a string.
+
+- **user** is an instance of **UserSignature**.
+
+- **token** is an instance of **Token** interface.
 
 ### DataBase Persistence
 
@@ -110,9 +119,13 @@ In case the user prefers to use default DataBase persistence, **MySQL** can be u
 
 - There must be a table name **oauthtoken** with columns.
 
+   - id varchar(255)
+
   - user_mail varchar(255)
 
   - client_id varchar(255)
+
+  - client_secret varchar(255)
 
   - refresh_token varchar(255)
 
@@ -122,47 +135,77 @@ In case the user prefers to use default DataBase persistence, **MySQL** can be u
 
   - expiry_time varchar(20)
 
+  - redirect_url varchar(255)
+
+Note:
+- Custom database name and table name can be set in DBStore instance
+
 #### MySQL Query
 
 ```sql
-create table oauthtoken(id int(11) not null auto_increment, user_mail varchar(255) not null, client_id varchar(255), refresh_token varchar(255), access_token varchar(255), grant_token varchar(255), expiry_time varchar(20), primary key (id));
-
-alter table oauthtoken auto_increment = 1;
+CREATE TABLE oauthtoken (
+  id varchar(255) NOT NULL,
+  user_mail varchar(255) NOT NULL,
+  client_id varchar(255),
+  client_secret varchar(255),
+  refresh_token varchar(255),
+  access_token varchar(255),
+  grant_token varchar(255),
+  expiry_time varchar(20),
+  redirect_url varchar(255),
+  primary key (id)
+);
 ```
 
 #### Create DBStore object
 
 ```ts
-import {DBStore} from "@zohocrm/typescript-sdk-2.0/models/authenticator/store/db_store";
+import {DBBuilder} from "@zohocrm/typescript-sdk-2.0/models/authenticator/store/db_builder";
+
 /*
- * DBStore takes the following parameters
- * 1 -> DataBase host name. Default value "localhost"
- * 2 -> DataBase name. Default  value "zohooauth"
- * 3 -> DataBase user name. Default value "root"
- * 4 -> DataBase password. Default value ""
- * 5 -> DataBase port number. Default value "3306"
+* hostName -> DataBase host name. Default value "localhost"
+* databaseName -> DataBase name. Default  value "zohooauth"
+* userName -> DataBase user name. Default value "root"
+* password -> DataBase password. Default value ""
+* portNumber -> DataBase port number. Default value "3306"
+* tableName -> Table Name. Default value "oauthtoken"
 */
+let tokenstore: DBStore = new DBStore().build();
 
-let tokenstore: DBStore = new DBStore();
-
-let tokenstore: DBStore = new DBStore("hostName", "dataBaseName", "userName", "password", "portNumber");
+let tokenstore: DBStore = new DBBuilder()
+.host("hostName")
+.databaseName("databaseName")
+.userName("userName")
+.portNumber("portNumber")
+.tableName("tableName")
+.password("password")
+.build();
 ```
 
 ### File Persistence
 
-In case of default File Persistence, the user can persist tokens in the local drive, by providing the the absolute file path to the FileStore object. The File contains the following
+In case of default File Persistence, the user can persist tokens in the local drive, by providing the the absolute file path to the FileStore object.
 
-- user_mail
+- The File contains
+  
+  - id
 
-- client_id
+  - user_mail
 
-- refresh_token
+  - client_id
 
-- access_token
+  - client_secret
 
-- grant_token
+  - refresh_token
 
-- expiry_time
+  - access_token
+
+  - grant_token
+
+  - expiry_time
+
+  - redirect_url
+
 
 #### Create FileStore object
 
@@ -222,7 +265,7 @@ export class CustomStore implements TokenStore {
      * @returns {Array} - An array of Token class instances
      * @throws {SDKException}
      */
-    async getTokens(): Promise<Token[]> {
+    async getTokens(): Promise<Array<Token> | undefined> {
         //Add code to retrieve all the stored tokens.
     }
 
@@ -232,9 +275,18 @@ export class CustomStore implements TokenStore {
     deleteTokens(): void {
         //Add code to delete all the stored tokens.
     }
-}
 
-module.exports = {CustomStore}
+    /**
+     * This method is used to retrieve the user token details based on unique ID
+     * @param {String} id - A String representing the unique ID
+     * @param {Token} token - A Token class instance.
+     * @return {Token} A Token class instance representing the user token details.
+     * @throws SDKException
+     */
+    getTokenById(id: string, token: Token): Promise<Token | undefined> {
+      // Add code to get the token using unique id
+    }
+}
 ```
 
 ## Configuration
@@ -244,15 +296,19 @@ Before you get started with creating your TypeScript application, you need to re
 - Create an instance of **[Logger](routes/logger/logger.ts)** Class to log exception and API information.
     ```ts
     import {Levels,Logger} from "@zohocrm/typescript-sdk-2.0/routes/logger/logger"
+    import {LogBuilder} from "@zohocrm/typescript-sdk-2.0/routes/logger/log_builder"
     /*
-     * Create an instance of Logger Class that takes two parameters
-     * 1 -> Level of the log messages to be logged. Can be configured by typing Levels "." and choose any level from the list displayed.
-     * 2 -> Absolute file path, where messages need to be logged.
+    * Create an instance of Logger Class that takes two parameters
+    * level -> Level of the log messages to be logged. Can be configured by typing Levels "." and choose any level from the list displayed.
+    * filePath -> Absolute file path, where messages need to be logged.
     */
-    let logger: Logger = Logger.getInstance(Levels.INFO, "/Users/user_name/Documents/ts_sdk_log.log");
+    let logger: Logger = new LogBuilder()
+    .level(Levels.INFO)
+    .filePath("/Users/user_name/Documents/node_sdk_logs.log")
+    .build();
     ```
 
-- Create an instance of **[UserSignature](routes/user_signature.ts)** Class that identifies the current user.
+- Create an instance of **UserSignature** Class that identifies the current user.
     ```ts
     import {UserSignature} from "@zohocrm/typescript-sdk-2.0/routes/user_signature"
     //Create an UserSignature instance that takes user Email as parameter
@@ -271,38 +327,70 @@ Before you get started with creating your TypeScript application, you need to re
     let environment: Environment = USDataCenter.PRODUCTION();
     ```
 
-- Create an instance of **[OAuthToken](models/authenticator/oauth_token.ts)** with the information that you get after registering your Zoho client.
+- Create an instance of **OAuthToken** with the information that you get after registering your Zoho client.
     ```ts
-    import { OAuthToken,TokenType } from "@zohocrm/typescript-sdk-2.0/models/authenticator/oauth_token"
+    import { OAuthToken } from "@zohocrm/typescript-sdk-2.0/models/authenticator/oauth_token"
+    import { OAuthBuilder } from "@zohocrm/typescript-sdk-2.0/models/authenticator/oauth_builder"
+    
     /*
-     * Create a Token instance
-     * 1 -> OAuth client id.
-     * 2 -> OAuth client secret.
-     * 3 -> REFRESH/GRANT token.
-     * 4 -> token type.
-     * 5 -> OAuth redirect URL.
+    * Create a Token instance that requires the following
+    * clientId -> OAuth client id.
+    * clientSecret -> OAuth client secret.
+    * refreshToken -> REFRESH token.
+    * grantToken -> GRANT token.
+    * id -> User unique id.
+    * redirectURL -> OAuth redirect URL.
     */
-    let token: OAuthToken = new OAuthToken("clientId", "clientSecret", "REFRESH/ GRANT Token", TokenType.REFRESH/TokenType.GRANT, "redirectURL");
+    //Create a Token instance
+    // if refresh token is available
+    // The SDK throws an exception, if the given id is invalid.
+    let token: OAuthToken = new OAuthBuilder()
+    .id("id")
+    .build();
+
+    // if grant token is available
+    let token: OAuthToken = new OAuthBuilder()
+    .clientId("clientId")
+    .clientSecret("clientSecret")
+    .grantToken("grantToken")
+    .redirectURL("redirectURL")
+    .build();
+    
+    // if ID (obtained from persistence) is available
+    let token: OAuthToken= new OAuthBuilder()
+    .clientId("clientId")
+    .clientSecret("clientSecret")
+    .refreshToken("refreshToken")
+    .redirectURL("redirectURL")
+    .build();
     ```
 
 - Create an instance of **[TokenStore](models/authenticator/store/token_store.ts)** to persist tokens, used for authenticating all the requests.
     ```ts
     import {DBStore} from "@zohocrm/typescript-sdk-2.0/models/authenticator/store/db_store"
     import {FileStore} from "@zohocrm/typescript-sdk-2.0/models/authenticator/store/file_store"
+    import {DBBuilder} from "@zohocrm/typescript-sdk-2.0/models/authenticator/store/db_builder";
+    
     /*
-     * DBStore takes the following parameters
-     * 1 -> DataBase host name. Default value "localhost"
-     * 2 -> DataBase name. Default  value "zohooauth"
-     * 3 -> DataBase user name. Default value "root"
-     * 4 -> DataBase password. Default value ""
-     * 5 -> DataBase port number. Default value "3306"
+    * hostName -> DataBase host name. Default value "localhost"
+    * databaseName -> DataBase name. Default  value "zohooauth"
+    * userName -> DataBase user name. Default value "root"
+    * password -> DataBase password. Default value ""
+    * portNumber -> DataBase port number. Default value "3306"
+    * tableName -> Table Name. Default value "oauthtoken"
     */
+    let tokenstore: DBStore = new DBStore().build();
 
-    let tokenstore: DBStore = new DBStore();
+    let tokenstore: DBStore = new DBBuilder()
+    .host("hostName")
+    .databaseName("databaseName")
+    .userName("userName")
+    .portNumber("portNumber")
+    .tableName("tableName")
+    .password("password")
+    .build();
 
-    let tokenstore: DBStore = new DBStore("hostName", "dataBaseName", "userName", "password", "portNumber");
-
-    //let tokenstore: FileStore = new FileStore("/Users/userName/Documents/tssdk-tokens.txt")
+    //let tokenstore: FileStore = new FileStore("/Users/userName/tssdk-tokens.txt")
     ```
 
 - Create an instance of **SDKConfig** containing the SDK configuration.
@@ -320,7 +408,27 @@ Before you get started with creating your TypeScript application, you need to re
      * if true - the SDK validates the input. If the value does not exist in the pick list, the SDK throws an error.
      * if false - the SDK does not validate the input and makes the API request with the user’s input to the pick list
      */
-    let sdkConfig: SDKConfig = new SDKConfigBuilder().setPickListValidation(false).setAutoRefreshFields(true).build();
+    let sdkConfig: SDKConfig = new SDKConfigBuilder().pickListValidation(false).autoRefreshFields(true).build();
+    ```
+
+- Create an instance of [RequestProxy](routes/request_proxy.ts) containing the proxy properties of the user.
+    ```ts
+    import { RequestProxy} from "@zohocrm/typescript-sdk-2.0/routes/request_proxy"
+    import { ProxyBuilder} from "@zohocrm/typescript-sdk-2.0/routes/proxy_builder"
+
+    /*
+     * RequestProxy class takes the following parameters
+     * host -> Host
+     * port -> Port Number
+     * user -> User Name. Default null.
+     * password -> Password. Default null
+     */
+    let requestProxy: RequestProxy = new ProxyBuilder()
+    .host("proxyHost")
+    .port("proxyPort")
+    .user("proxyUser")
+    .password("password")
+    .build();
     ```
 
 - The path containing the absolute directory path (in the key resourcePath) to store user-specific files containing information about fields in modules.
@@ -328,47 +436,39 @@ Before you get started with creating your TypeScript application, you need to re
     let resourcePath: string = "/Users/user_name/Documents/typescript-app";
     ```
 
-- Create an instance of [RequestProxy](routes/request_proxy.ts) containing the proxy properties of the user.
-    ```ts
-    import { RequestProxy} from "@zohocrm/typescript-sdk-2.0/routes/request_proxy";
-
-    /*
-     * RequestProxy class takes the following parameters
-     * 1 -> Host
-     * 2 -> Port Number
-     * 3 -> User Name. Default null.
-     * 4 -> Password. Default null
-     */
-    let requestProxy: RequestProxy = new RequestProxy("proxyHost", 80, "proxyUser", "password");
-    ```
-
 ## Initializing the Application
 
 Initialize the SDK using the following code.
 
 ```ts
-    import {UserSignature} from "@zohocrm/typescript-sdk-2.0/routes/user_signature"
-    import {SDKConfigBuilder} from "@zohocrm/typescript-sdk-2.0/routes/sdk_config_builder"
-    import {DBStore} from "@zohocrm/typescript-sdk-2.0/models/authenticator/store/db_store"
-    import {FileStore} from "@zohocrm/typescript-sdk-2.0/models/authenticator/store/file_store"
-    import {SDKConfig} from "@zohocrm/typescript-sdk-2.0/routes/sdk_config"
-    import {Levels,Logger} from "@zohocrm/typescript-sdk-2.0/routes/logger/logger"
-    import {Environment} from "@zohocrm/typescript-sdk-2.0/routes/dc/environment"
-    import {USDataCenter} from "@zohocrm/typescript-sdk-2.0/routes/dc/us_data_center"
-    import {OAuthToken,TokenType} from "@zohocrm/typescript-sdk-2.0/models/authenticator/oauth_token"
-    import {Initializer} from "@zohocrm/typescript-sdk-2.0/routes/initializer"
-    import {RequestProxy} from "@zohocrm/typescript-sdk-2.0/routes/request_proxy"
+    import { UserSignature } from "@zohocrm/typescript-sdk-2.0/routes/user_signature"
+    import { SDKConfigBuilder } from "@zohocrm/typescript-sdk-2.0/routes/sdk_config_builder"
+    import { DBStore } from "@zohocrm/typescript-sdk-2.0/models/authenticator/store/db_store"
+    import { FileStore } from "@zohocrm/typescript-sdk-2.0/models/authenticator/store/file_store"
+    import { SDKConfig } from "@zohocrm/typescript-sdk-2.0/routes/sdk_config"
+    import { Levels, Logger } from "@zohocrm/typescript-sdk-2.0/routes/logger/logger"
+    import { LogBuilder } from "@zohocrm/typescript-sdk-2.0/routes/logger/log_builder"
+    import { Environment } from "@zohocrm/typescript-sdk-2.0/routes/dc/environment"
+    import { USDataCenter } from "@zohocrm/typescript-sdk-2.0/routes/dc/us_data_center"
+    import { OAuthBuilder } from "@zohocrm/typescript-sdk-2.0/models/authenticator/oauth_builder"
+    import { InitializeBuilder } from "@zohocrm/typescript-sdk-2.0/routes/initialize_builder"
+    import { RequestProxy } from "@zohocrm/typescript-sdk-2.0/routes/request_proxy"
+    import { ProxyBuilder } from "@zohocrm/typescript-sdk-2.0/routes/proxy_builder"
+    import { DBBuilder } from "@zohocrm/typescript-sdk-2.0/models/authenticator/store/db_builder";
 
-    export class Initializer{
+    export class Initializer {
 
-        public static async initialize(){
+        public static async initialize() {
 
             /*
-    * Create an instance of Logger Class that takes two parameters
-    * 1 -> Level of the log messages to be logged. Can be configured by typing Levels "." and choose any level from the list displayed.
-    * 2 -> Absolute file path, where messages need to be logged.
-    */
-            let logger: Logger = Logger.getInstance(Levels.INFO, "/Users/user_name/Documents/ts_sdk_log.log");
+            * Create an instance of Logger Class that takes two parameters
+            * level -> Level of the log messages to be logged. Can be configured by typing Levels "." and choose any level from the list displayed.
+            * filePath -> Absolute file path, where messages need to be logged.
+            */
+            let logger: Logger = new LogBuilder()
+            .level(Levels.INFO)
+            .filePath("/Users/user_name/Documents/ts_sdk_log.log")
+            .build();
 
             /*
             * Create an UserSignature instance that takes user Email as parameter
@@ -376,84 +476,110 @@ Initialize the SDK using the following code.
             let user: UserSignature = new UserSignature("abc@zoho.com");
 
             /*
-    * Configure the environment
-    * which is of the pattern Domain.Environment
-    * Available Domains: USDataCenter, EUDataCenter, INDataCenter, CNDataCenter, AUDataCenter
-    * Available Environments: PRODUCTION(), DEVELOPER(), SANDBOX()
-    */
+            * Configure the environment
+            * which is of the pattern Domain.Environment
+            * Available Domains: USDataCenter, EUDataCenter, INDataCenter, CNDataCenter, AUDataCenter
+            * Available Environments: PRODUCTION(), DEVELOPER(), SANDBOX()
+            */
             let environment: Environment = USDataCenter.PRODUCTION();
 
-            /*
-    * Create a Token instance
-    * 1 -> OAuth client id.
-    * 2 -> OAuth client secret.
-    * 3 -> REFRESH/GRANT token.
-    * 4 -> token type.
-            * 5 -> OAuth redirect URL. Default value is null
-    */
-            let token: OAuthToken = new OAuthToken("clientId", "clientSecret", "REFRESH/ GRANT Token", TokenType.REFRESH/TokenType.GRANT, "redirectURL");
+           /*
+            * Create a Token instance that requires the following
+            * clientId -> OAuth client id.
+            * clientSecret -> OAuth client secret.
+            * refreshToken -> REFRESH token.
+            * grantToken -> GRANT token.
+            * id -> User unique id.
+            * redirectURL -> OAuth redirect URL.
+            */
+            // if ID (obtained from persistence) is available
+            let token: OAuthToken= new OAuthBuilder()
+            .clientId("clientId")
+            .clientSecret("clientSecret")
+            .refreshToken("refreshToken")
+            .redirectURL("redirectURL")
+            .build();
 
             /*
-    * Create an instance of TokenStore.
-    * 1 -> DataBase host name. Default "localhost"
-    * 2 -> DataBase name. Default "zohooauth"
-    * 3 -> DataBase user name. Default "root"
-    * 4 -> DataBase password. Default ""
-    * 5 -> DataBase port number. Default "3306"
-    */
-            // let tokenstore = new DBStore();
+            * hostName -> DataBase host name. Default value "localhost"
+            * databaseName -> DataBase name. Default  value "zohooauth"
+            * userName -> DataBase user name. Default value "root"
+            * password -> DataBase password. Default value ""
+            * portNumber -> DataBase port number. Default value "3306"
+            * tableName -> Table Name. Default value "oauthtoken"
+            */
+            let tokenstore: DBStore = new DBBuilder()
+            .host("hostName")
+            .databaseName("databaseName")
+            .userName("userName")
+            .portNumber("portNumber")
+            .tableName("tableName")
+            .password("password")
+            .build();
 
-            let tokenstore: DBStore = new DBStore("hostName", "dataBaseName", "userName", "password", "portNumber");
+                /*
+            * Create an instance of FileStore that takes absolute file path as parameter
+            */
+            // let store = new FileStore("/Users/userName/ts_sdk_tokens.txt");
 
             /*
-    * Create an instance of FileStore that takes absolute file path as parameter
-    */
-            // let tokenstore: FileStore = new FileStore("/Users/username/Documents/ts_sdk_tokens.txt");
-
-            /*
-    * autoRefreshFields
-            * if true - all the modules' fields will be auto-refreshed in the background, every    hour.
-    * if false - the fields will not be auto-refreshed in the background. The user can manually delete the file(s) or refresh the fields using methods from ModuleFieldsHandler(utils/util/module_fields_handler.ts)
-    *
-    * pickListValidation
-    * if true - value for any picklist field will be validated with the available values.
-    * if false - value for any picklist field will not be validated, resulting in creation of a new value.
-    */
-    let sdkConfig: SDKConfig = new SDKConfigBuilder().setPickListValidation(false).setAutoRefreshFields(true).build();
+            * autoRefreshFields
+            * if true - all the modules' fields will be auto-refreshed in the background, every hour.
+            * if false - the fields will not be auto-refreshed in the background. The user can manually delete the file(s) or refresh the fields using methods from ModuleFieldsHandler(utils/util/module_fields_handler.js)
+            * 
+            * pickListValidation
+            * A boolean field that validates user input for a pick list field and allows or disallows the addition of a new value to the list.
+            * if true - the SDK validates the input. If the value does not exist in the pick list, the SDK throws an error.
+            * if false - the SDK does not validate the input and makes the API request with the user’s input to the pick list
+            */
+            let sdkConfig: SDKConfig = new SDKConfigBuilder().pickListValidation(false).autoRefreshFields(true).build();
 
             /*
             * The path containing the absolute directory path to store user specific JSON files containing module fields information.
             */
-            let resourcePath: string = "/Users/user_name/Documents/tsssdk-application";
+            let resourcePath: string = "/Users/user_name/tsssdk-application";
 
             /*
-    * Create an instance of RequestProxy class that takes the following parameters
-    * 1 -> Host
-    * 2 -> Port Number
-    * 3 -> User Name
-    * 4 -> Password
-    */
-            let proxy: RequestProxy = new RequestProxy("proxyHost", 80);
-
-            let proxy: RequestProxy = new RequestProxy("proxyHost", 80, "proxyUser", "password");
-
-            /*
-            * Call the static initialize method of Initializer class that takes the following arguments
-            * 1 -> UserSignature instance
-            * 2 -> Environment instance
-            * 3 -> Token instance
-            * 4 -> TokenStore instance
-            * 5 -> SDKConfig instance
-            * 6 -> resourcePath
-            * 7 -> Logger instance. Default value is null
-            * 8 -> RequestProxy instance. Default value is null
+            * RequestProxy class takes the following parameters
+            * host -> Host
+            * port -> Port Number
+            * user -> User Name. Default null.
+            * password -> Password. Default null
             */
-            // The SDK can be initialized by any of the following methods
-            // await Initializer.initialize(user, environment, token, store, sdkConfig, resourcePath)
+            let requestProxy: RequestProxy = new ProxyBuilder()
+            .host("proxyHost")
+            .port("proxyPort")
+            .user("proxyUser")
+            .password("password")
+            .build();
 
-            await Initializer.initialize(user, environment, token, store, sdkConfig, resourcePath, logger, proxy);
+           /*
+            * Call the static initialize method of Initializer class that takes the following arguments
+            * user -> UserSignature instance
+            * environment -> Environment instance
+            * token -> Token instance
+            * store -> TokenStore instance
+            * SDKConfig -> SDKConfig instance
+            * resourcePath -> resourcePath
+            * logger -> Logger instance
+            */
+            try {
+                (await new InitializeBuilder())
+                    .user(user)
+                    .environment(environment)
+                    .token(token)
+                    .store(tokenstore)
+                    .SDKConfig(sdkConfig)
+                    .resourcePath(resourcePath)
+                    .logger(logger)
+                    .initialize();
+            } catch (error) {
+                console.log(error);
+            }
+
         }
     }
+
     Initializer.initialize()
 ```
 
@@ -538,11 +664,12 @@ The **TypeScript SDK** (from version 1.x.x) supports both single-user and multi-
 Multi-users functionality is achieved using Initializer's static **switchUser()** method.
 
 ```ts
-//If proxy needs to be configured for the User
-await Initializer.switchUser(user, environment, token, sdkConfig, requestProxy)
-
-//Without proxy
-await Initializer.switchUser(user, environment, token, sdkConfig)
+(await new InitializeBuilder())
+    .user(user)
+    .environment(environment)
+    .token(token)
+    .SDKConfig(sdkConfig)
+    .switchUser();
 ```
 
 To Remove a user's configuration in SDK. Use the below code
@@ -553,40 +680,46 @@ await Initializer.removeUserConfiguration(user, environment)
 ### Sample Multi-user code
 
 ```ts
-    import {UserSignature} from "@zohocrm/typescript-sdk-2.0/routes/user_signature"
-    import {SDKConfigBuilder} from "@zohocrm/typescript-sdk-2.0/routes/sdk_config_builder"
-    import {DBStore} from "@zohocrm/typescript-sdk-2.0/models/authenticator/store/db_store"
-    import {FileStore} from "@zohocrm/typescript-sdk-2.0/models/authenticator/store/file_store"
-    import {SDKConfig} from "@zohocrm/typescript-sdk-2.0/routes/sdk_config"
-    import {Levels,Logger} from "@zohocrm/typescript-sdk-2.0/routes/logger/logger"
-    import {Environment} from "@zohocrm/typescript-sdk-2.0/routes/dc/environment"
-    import {USDataCenter} from "@zohocrm/typescript-sdk-2.0/routes/dc/us_data_center"
-    import {EUDataCenter} from "@zohocrm/typescript-sdk-2.0/routes/dc/eu_data_center"
-    import { OAuthToken,TokenType } from "@zohocrm/typescript-sdk-2.0/models/authenticator/oauth_token"
-    import { Initializer} from "@zohocrm/typescript-sdk-2.0/routes/initializer"
-    import { RequestProxy} from "@zohocrm/typescript-sdk-2.0/routes/request_proxy"
+    import { UserSignature } from "@zohocrm/typescript-sdk-2.0/routes/user_signature"
+    import { SDKConfigBuilder } from "@zohocrm/typescript-sdk-2.0/routes/sdk_config_builder"
+    import { DBStore } from "@zohocrm/typescript-sdk-2.0/models/authenticator/store/db_store"
+    import { DBBuilder } from "@zohocrm/typescript-sdk-2.0/models/authenticator/store/db_builder"
+    import { FileStore } from "@zohocrm/typescript-sdk-2.0/models/authenticator/store/file_store"
+    import { SDKConfig } from "@zohocrm/typescript-sdk-2.0/routes/sdk_config"
+    import { Levels, Logger } from "@zohocrm/typescript-sdk-2.0/routes/logger/logger"
+    import { LogBuilder } from "@zohocrm/typescript-sdk-2.0/routes/logger/log_builder"
+    import { Environment } from "@zohocrm/typescript-sdk-2.0/routes/dc/environment"
+    import { USDataCenter } from "@zohocrm/typescript-sdk-2.0/routes/dc/us_data_center"
+    import { EUDataCenter } from "@zohocrm/typescript-sdk-2.0/routes/dc/eu_data_center"
+    import { OAuthToken } from "@zohocrm/typescript-sdk-2.0/models/authenticator/oauth_token"
+    import { OAuthBuilder } from "@zohocrm/typescript-sdk-2.0/models/authenticator/oauth_builder"
+    import { InitializeBuilder } from "@zohocrm/typescript-sdk-2.0/routes/initialize_builder"
+    import { Initializer } from "@zohocrm/typescript-sdk-2.0/routes/initializer"
+    import { RequestProxy } from "@zohocrm/typescript-sdk-2.0/routes/request_proxy"
 
-    import {RecordOperations, GetRecordsHeader, GetRecordsParam} from "@zohocrm/typescript-sdk-2.0/core/com/zoho/crm/api/record/record_operations";
-    import {ResponseWrapper} from  "@zohocrm/typescript-sdk-2.0/core/com/zoho/crm/api/record/response_wrapper";
-    import {ResponseHandler} from  "@zohocrm/typescript-sdk-2.0/core/com/zoho/crm/api/record/response_handler";
-    import {Record} from "@zohocrm/typescript-sdk-2.0/core/com/zoho/crm/api/record/record";
-    import {Tag} from "@zohocrm/typescript-sdk-2.0/core/com/zoho/crm/api/tags/tag";
+    import { RecordOperations, GetRecordsHeader, GetRecordsParam } from "@zohocrm/typescript-sdk-2.0/core/com/zoho/crm/api/record/record_operations";
+    import { ResponseWrapper } from "@zohocrm/typescript-sdk-2.0/core/com/zoho/crm/api/record/response_wrapper";
+    import { ResponseHandler } from "@zohocrm/typescript-sdk-2.0/core/com/zoho/crm/api/record/response_handler";
+    import { Record } from "@zohocrm/typescript-sdk-2.0/core/com/zoho/crm/api/record/record";
+    import { Tag } from "@zohocrm/typescript-sdk-2.0/core/com/zoho/crm/api/tags/tag";
 
-    import {APIResponse} from "@zohocrm/typescript-sdk-2.0/routes/controllers/api_response";
+    import { APIResponse } from "@zohocrm/typescript-sdk-2.0/routes/controllers/api_response";
     import { SDKException } from "@zohocrm/typescript-sdk-2.0/core/com/zoho/crm/api/exception/sdk_exception";
-    import {ParameterMap} from "@zohocrm/typescript-sdk-2.0/routes/parameter_map";
-    import {HeaderMap} from "@zohocrm/typescript-sdk-2.0/routes/header_map";
+    import { ParameterMap } from "@zohocrm/typescript-sdk-2.0/routes/parameter_map";
+    import { HeaderMap } from "@zohocrm/typescript-sdk-2.0/routes/header_map";
+    class SampleRecord {
 
-    class SampleRecord{
+        public static async call() {
 
-        public static async call(){
-
-            /*
+           /*
             * Create an instance of Logger Class that takes two parameters
-            * 1 -> Level of the log messages to be logged. Can be configured by typing Levels "." and choose any level from the list displayed.
-            * 2 -> Absolute file path, where messages need to be logged.
+            * level -> Level of the log messages to be logged. Can be configured by typing Levels "." and choose any level from the list displayed.
+            * filePath -> Absolute file path, where messages need to be logged.
             */
-            let logger = Logger.getInstance(Levels.INFO, "/Users/user_name/Documents/ts_sdk_log.log");
+            let logger: Logger= new LogBuilder()
+            .level(Levels.INFO)
+            .filePath("/Users/user_name/Documents/ts_sdk_log.log")
+            .build();
 
             /*
             * Create an UserSignature instance that takes user Email as parameter
@@ -603,30 +736,43 @@ await Initializer.removeUserConfiguration(user, environment)
 
             /*
             * Create a Token instance
-            * 1 -> OAuth client id.
-            * 2 -> OAuth client secret.
-            * 3 -> REFRESH/GRANT token.
-            * 4 -> token type.
-            * 5 -> OAuth redirect URL. Default value is null
+            * clientId -> OAuth client id.
+            * clientSecret -> OAuth client secret.
+            * grantToken -> OAuth Grant Token. 
+            * refreshToken -> OAuth Refresh Token token.
+            * redirectURL -> OAuth Redirect URL.
             */
-            let token1 = new OAuthToken("clientId1", "clientSecret1", "REFRESH/ GRANT Token", TokenType.REFRESH/TokenType.GRANT, "redirectURL");
+            let token1: OAuthToken = new OAuthBuilder()
+            .clientId("clientId")
+            .clientSecret("clientSecret")
+            .refreshToken("refreshToken")
+            .redirectURL("redirectURL")
+            .build();
 
             /*
             * Create an instance of TokenStore.
-            * 1 -> DataBase host name. Default "localhost"
-            * 2 -> DataBase name. Default "zohooauth"
-            * 3 -> DataBase user name. Default "root"
-            * 4 -> DataBase password. Default ""
-            * 5 -> DataBase port number. Default "3306"
+            * host -> DataBase host name. Default "localhost"
+            * databaseName -> DataBase name. Default "zohooauth"
+            * userName -> DataBase user name. Default "root"
+            * password -> DataBase password. Default ""
+            * portNumber -> DataBase port number. Default "3306"
+            * tableName -> DataBase table name. Default "oauthtoken"
             */
-            let store: DBStore = new DBStore();
+            // let store: DBStore = new DBBuilder().build();;
 
-            let store: DBStore = new DBStore("hostName", "dataBaseName", "userName", "password", "portNumber");
+            // let tokenstore = new DBBuilder()
+            // .host("hostName")
+            // .databaseName("databaseName")
+            // .userName("userName")
+            // .portNumber("portNumber")
+            // .tableName("tableName")
+            // .password("password")
+            // .build();
 
             /*
             * Create an instance of FileStore that takes absolute file path as parameter
             */
-            let store: FileStore = new FileStore("/Users/username/Documents/ts_sdk_tokens.txt");
+            let store: FileStore = new FileStore("/Users/username/ts_sdk_tokens.txt");
 
             /*
             * autoRefreshFields
@@ -638,7 +784,7 @@ await Initializer.removeUserConfiguration(user, environment)
             * True - the SDK validates the input. If the value does not exist in the pick list, the SDK throws an error.
             * False - the SDK does not validate the input and makes the API request with the user’s input to the pick list
             */
-            let sdkConfig: SDKConfig = new SDKConfigBuilder().setPickListValidation(false).setAutoRefreshFields(true).build();
+            let sdkConfig: SDKConfig = new SDKConfigBuilder().pickListValidation(false).autoRefreshFields(true).build();
 
             /*
             * The path containing the absolute directory path to store user specific JSON files containing module fields information.
@@ -647,16 +793,27 @@ await Initializer.removeUserConfiguration(user, environment)
 
             /*
             * Call the static initialize method of Initializer class that takes the following arguments
-            * 1 -> UserSignature instance
-            * 2 -> Environment instance
-            * 3 -> Token instance
-            * 4 -> TokenStore instance
-            * 5 -> SDKConfig instance
-            * 6 -> resourcePath
-            * 7 -> Logger instance. Default value is null
-            * 8 -> RequestProxy instance. Default value is null
+            * user -> UserSignature instance
+            * environment -> Environment instance
+            * token -> Token instance
+            * store -> TokenStore instance
+            * SDKConfig -> SDKConfig instance
+            * resourcePath -> resourcePath
+            * logger -> Logger instance
             */
-            await Initializer.initialize(user1, environment1, token1, store, sdkConfig, resourcePath, logger);
+            try {
+                (await new InitializeBuilder())
+                    .user(user1)
+                    .environment(environment1)
+                    .token(token1)
+                    .store(store)
+                    .SDKConfig(sdkConfig)
+                    .resourcePath(resourcePath)
+                    .logger(logger)
+                    .initialize();
+            } catch (error) {
+                console.log(error);
+            }
 
             await SampleRecord.getRecords("Leads");
 
@@ -666,18 +823,26 @@ await Initializer.removeUserConfiguration(user, environment)
 
             let environment2: Environment = EUDataCenter.SANDBOX();
 
-            let token2: OAuthToken = new OAuthToken("clientId2", "clientSecret2", "REFRESH/ GRANT Token", TokenType.REFRESH, "redirectURL");
+            let token2: OAuthToken= = new OAuthBuilder()
+            .clientId("clientId")
+            .clientSecret("clientSecret")
+            .refreshToken("refreshToken")
+            .redirectURL("redirectURL")
+            .build();
 
-            let requestProxy: RequestProxy = new RequestProxy("proxyHost", 80, "proxyUser", "password");
+            let sdkConfig2: SDKConfig = new SDKConfigBuilder().pickListValidation(true).autoRefreshFields(true).build();
 
-            let sdkConfig2: SDKConfig = new SDKConfigBuilder().setPickListValidation(true).setAutoRefreshFields(true).build();
-
-            await Initializer.switchUser(user2, environment2, token2, sdkConfig2, requestProxy);
+            (await new InitializeBuilder())
+            .user(user2)
+            .environment(environment2)
+            .token(token2)
+            .SDKConfig(sdkConfig2)
+            .switchUser();
 
             await SampleRecord.getRecords("Leads");
         }
 
-        static async getRecords(moduleAPIName: string){
+        static async getRecords(moduleAPIName: string) {
             try {
                 let moduleAPIName = "Leads";
                 //Get instance of RecordOperations Class
@@ -781,16 +946,20 @@ await Initializer.removeUserConfiguration(user, environment)
 ## SDK Sample code
 
 ```js
-    import {UserSignature} from "@zohocrm/typescript-sdk-2.0/routes/user_signature"
-    import {SDKConfigBuilder} from "@zohocrm/typescript-sdk-2.0/routes/sdk_config_builder"
-    import {DBStore} from "@zohocrm/typescript-sdk-2.0/models/authenticator/store/db_store"
-    import {FileStore} from "@zohocrm/typescript-sdk-2.0/models/authenticator/store/file_store"
-    import {SDKConfig} from "@zohocrm/typescript-sdk-2.0/routes/sdk_config"
-    import {Levels,Logger} from "@zohocrm/typescript-sdk-2.0/routes/logger/logger"
-    import {Environment} from "@zohocrm/typescript-sdk-2.0/routes/dc/environment"
-    import {USDataCenter} from "@zohocrm/typescript-sdk-2.0/routes/dc/us_data_center"
-    import { OAuthToken,TokenType } from "@zohocrm/typescript-sdk-2.0/models/authenticator/oauth_token"
-    import { Initializer} from "@zohocrm/typescript-sdk-2.0/routes/initializer"
+    import { UserSignature } from "@zohocrm/typescript-sdk-2.0/routes/user_signature"
+    import { SDKConfigBuilder } from "@zohocrm/typescript-sdk-2.0/routes/sdk_config_builder"
+    import { DBStore } from "@zohocrm/typescript-sdk-2.0/models/authenticator/store/db_store"
+    import { FileStore } from "@zohocrm/typescript-sdk-2.0/models/authenticator/store/file_store"
+    import { SDKConfig } from "@zohocrm/typescript-sdk-2.0/routes/sdk_config"
+    import { Levels, Logger } from "@zohocrm/typescript-sdk-2.0/routes/logger/logger"
+    import { LogBuilder } from "@zohocrm/typescript-sdk-2.0/routes/logger/log_builder"
+    import { Environment } from "@zohocrm/typescript-sdk-2.0/routes/dc/environment"
+    import { USDataCenter } from "@zohocrm/typescript-sdk-2.0/routes/dc/us_data_center"
+    import { OAuthBuilder } from "@zohocrm/typescript-sdk-2.0/models/authenticator/oauth_builder"
+    import { InitializeBuilder } from "@zohocrm/typescript-sdk-2.0/routes/initialize_builder"
+    import { RequestProxy } from "@zohocrm/typescript-sdk-2.0/routes/request_proxy"
+    import { ProxyBuilder } from "@zohocrm/typescript-sdk-2.0/routes/proxy_builder"
+    import { DBBuilder } from "@zohocrm/typescript-sdk-2.0/models/authenticator/store/db_builder";
 
     import {RecordOperations, GetRecordsHeader, GetRecordsParam} from "@zohocrm/typescript-sdk-2.0/core/com/zoho/crm/api/record/record_operations";
     import {ParameterMap} from "@zohocrm/typescript-sdk-2.0/routes/parameter_map";
@@ -806,13 +975,40 @@ await Initializer.removeUserConfiguration(user, environment)
         public static async getRecords(){
 
             let user: UserSignature = new UserSignature("abc@zoho.com");
-            let myLogger: Logger = Logger.getInstance(Levels.INFO, "/Users/user_name/Documents/ts_sdk_log.log");
+
+            let myLogger: Logger = new LogBuilder()
+            .level(Levels.INFO)
+            .filePath("/Users/user_name/Documents/ts_sdk_log.log")
+            .build();
+
             let dc: Environment = USDataCenter.PRODUCTION();
-            let sdkConfig: SDKConfig = new SDKConfigBuilder().setAutoRefreshFields(false).setPickListValidation(true).build();
+
+            let sdkConfig: SDKConfig = new SDKConfigBuilder().autoRefreshFields(false).pickListValidation(true).build();
+
             let store: FileStore = new FileStore("/Users/username/Documents/ts_sdk_tokens.txt");
-            let oauth: OAuthToken = new OAuthToken("clientId", "clientSecret", "REFRESH/ GRANT Token", TokenType.REFRESH/TokenType.GRANT);
+
+            let token: OAuthToken= new OAuthBuilder()
+            .clientId("clientId")
+            .clientSecret("clientSecret")
+            .refreshToken("refreshToken")
+            .redirectURL("redirectURL")
+            .build();
+
             let path: string = "/Users/user_name/Documents/ts-app";
-            await Initializer.initialize(user, dc, oauth, store, sdkConfig, path, myLogger);
+
+            try {
+            (await new InitializeBuilder())
+                .user(user)
+                .environment(dc)
+                .token(token)
+                .store(store)
+                .SDKConfig(sdkConfig)
+                .resourcePath(path)
+                .logger(myLogger)
+                .initialize();
+            } catch (error) {
+                console.log(error);
+            }
 
             try {
                 let moduleAPIName = "Leads";

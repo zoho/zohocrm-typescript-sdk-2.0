@@ -18,15 +18,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Downloader = exports.MasterModel = void 0;
 const initializer_1 = require("../../routes/initializer");
@@ -41,59 +32,51 @@ class Downloader extends converter_1.Converter {
     constructor(commonAPIHandler) {
         super(commonAPIHandler);
     }
-    appendToRequest(requestBase) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return null;
-        });
+    async appendToRequest(requestBase) {
+        return null;
     }
-    formRequest(requestInstance, pack, instanceNumber, classMemberDetail) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return null;
-        });
+    async formRequest(requestInstance, pack, instanceNumber, classMemberDetail) {
+        return null;
     }
-    getWrappedResponse(response, pack) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return this.getResponse(response, pack);
-        });
+    async getWrappedResponse(response, pack) {
+        return this.getResponse(response, pack);
     }
-    getResponse(response, pack) {
-        return __awaiter(this, void 0, void 0, function* () {
-            var instance = null;
-            var instanceValue = null;
-            var classDetail = initializer_1.Initializer.jsonDetails[pack];
-            if (classDetail.hasOwnProperty(constants_1.Constants.INTERFACE) && classDetail[constants_1.Constants.INTERFACE]) {
-                let classes = classDetail[constants_1.Constants.CLASSES];
-                for (let index = 0; index < classes.length; index++) {
-                    let eachClass = classes[index];
-                    if (eachClass.toString().includes(constants_1.Constants.FILE_BODY_WRAPPER)) {
-                        return this.getResponse(response, eachClass);
-                    }
+    async getResponse(response, pack) {
+        var instance = null;
+        var instanceValue = null;
+        var recordJsonDetails = initializer_1.Initializer.jsonDetails[pack];
+        if (recordJsonDetails.hasOwnProperty(constants_1.Constants.INTERFACE) && recordJsonDetails[constants_1.Constants.INTERFACE]) {
+            let classes = recordJsonDetails[constants_1.Constants.CLASSES];
+            for (let index = 0; index < classes.length; index++) {
+                let className = classes[index];
+                if (className.toString().includes(constants_1.Constants.FILE_BODY_WRAPPER)) {
+                    return this.getResponse(response, className);
                 }
             }
-            else {
-                let ClassName = (yield Promise.resolve().then(() => __importStar(require("../../" + pack)))).MasterModel;
-                instance = new ClassName();
-                for (let memberName in classDetail) {
-                    var memberDetail = classDetail[memberName];
-                    var type = memberDetail[constants_1.Constants.TYPE];
-                    if (type === constants_1.Constants.STREAM_WRAPPER_CLASS_PATH) {
-                        var fileName = "";
-                        let contentDisposition = (response.headers[constants_1.Constants.CONTENT_DISPOSITION]).toString();
-                        if (contentDisposition.includes("'")) {
-                            let start_index = contentDisposition.lastIndexOf("'");
-                            fileName = contentDisposition.substring(start_index + 1);
-                        }
-                        else if (contentDisposition.includes("\"")) {
-                            let start_index = contentDisposition.lastIndexOf("=");
-                            fileName = contentDisposition.substring(start_index + 1).replace(/"/g, "");
-                        }
-                        instanceValue = new stream_wrapper_1.StreamWrapper(fileName, response.rawBody, null);
+        }
+        else {
+            let ClassName = (await Promise.resolve().then(() => __importStar(require("../../" + pack)))).MasterModel;
+            instance = new ClassName();
+            for (let memberName in recordJsonDetails) {
+                var memberJsonDetails = recordJsonDetails[memberName];
+                var type = memberJsonDetails[constants_1.Constants.TYPE];
+                if (type === constants_1.Constants.STREAM_WRAPPER_CLASS_PATH) {
+                    var fileName = "";
+                    let contentDisposition = (response.headers[constants_1.Constants.CONTENT_DISPOSITION]).toString();
+                    if (contentDisposition.includes("'")) {
+                        let start_index = contentDisposition.lastIndexOf("'");
+                        fileName = contentDisposition.substring(start_index + 1);
                     }
-                    Reflect.set(instance, memberName, instanceValue);
+                    else if (contentDisposition.includes("\"")) {
+                        let start_index = contentDisposition.lastIndexOf("=");
+                        fileName = contentDisposition.substring(start_index + 1).replace(/"/g, "");
+                    }
+                    instanceValue = new stream_wrapper_1.StreamWrapper(fileName, response.rawBody, null);
                 }
+                Reflect.set(instance, memberName, instanceValue);
             }
-            return instance;
-        });
+        }
+        return instance;
     }
 }
 exports.MasterModel = Downloader;

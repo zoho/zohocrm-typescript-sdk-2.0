@@ -2,9 +2,23 @@
  * This class represents the Logger level and the file path.
  */
 export class Logger {
-    private level :string;
+    private level: string;
 
-    private filePath :string;
+    private filePath: string;
+
+    private constructor(level: string, filePath: string) {
+        this.level = level;
+        this.filePath = filePath;
+    }
+
+    /**
+     * Creates an Logger class instance with the specified log level and file path.
+     * @param {Levels} level A Levels class member containing log level.
+     * @param {String} filePath A string containing absolute file path to write logs.
+     */
+    public static getInstance(level: string, filePath: string): Logger {
+        return new Logger(level, filePath);
+    }
 
     /**
      * The method to get the logger level
@@ -20,20 +34,6 @@ export class Logger {
      */
     public getFilePath(): string {
         return this.filePath;
-    }
-
-    /**
-     * Creates an Logger class instance with the specified log level and file path.
-     * @param {Levels} level A Levels class member containing log level.
-     * @param {String} filePath A string containing absolute file path to write logs.
-     */
-    public static getInstance(level: string, filePath: string): Logger {
-        return new Logger(level, filePath);
-    }
-
-    private constructor(level: string, filePath: string) {
-        this.level = level;
-        this.filePath = filePath;
     }
 }
 

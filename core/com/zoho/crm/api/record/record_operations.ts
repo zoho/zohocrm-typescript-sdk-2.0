@@ -42,8 +42,8 @@ class RecordOperations{
 		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_READ);
 		handlerInstance.setParam(paramInstance);
 		handlerInstance.setHeader(headerInstance);
-		await Utility.getFields(moduleAPIName);
 		handlerInstance.setModuleAPIName(moduleAPIName);
+		await Utility.getFields(moduleAPIName, handlerInstance);
 		let ResponseHandler = require.resolve("./response_handler");
 		return handlerInstance.apiCall<ResponseHandler>(ResponseHandler, "application/json");
 
@@ -71,8 +71,8 @@ class RecordOperations{
 		handlerInstance.setContentType("application/json");
 		handlerInstance.setRequest(request);
 		handlerInstance.setHeader(headerInstance);
-		await Utility.getFields(moduleAPIName);
 		handlerInstance.setModuleAPIName(moduleAPIName);
+		await Utility.getFields(moduleAPIName, handlerInstance);
 		let ActionHandler = require.resolve("./action_handler");
 		return handlerInstance.apiCall<ActionHandler>(ActionHandler, "application/json");
 
@@ -99,6 +99,7 @@ class RecordOperations{
 		handlerInstance.setCategoryMethod(Constants.REQUEST_METHOD_DELETE);
 		handlerInstance.setParam(paramInstance);
 		handlerInstance.setHeader(headerInstance);
+		await Utility.getFields(moduleAPIName, handlerInstance);
 		let ActionHandler = require.resolve("./action_handler");
 		return handlerInstance.apiCall<ActionHandler>(ActionHandler, "application/json");
 
@@ -122,8 +123,8 @@ class RecordOperations{
 		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_READ);
 		handlerInstance.setParam(paramInstance);
 		handlerInstance.setHeader(headerInstance);
-		await Utility.getFields(moduleAPIName);
 		handlerInstance.setModuleAPIName(moduleAPIName);
+		await Utility.getFields(moduleAPIName, handlerInstance);
 		let ResponseHandler = require.resolve("./response_handler");
 		return handlerInstance.apiCall<ResponseHandler>(ResponseHandler, "application/json");
 
@@ -133,10 +134,11 @@ class RecordOperations{
 	 * The method to create records
 	 * @param moduleAPIName A string representing the moduleAPIName
 	 * @param request An instance of BodyWrapper
+	 * @param headerInstance An instance of HeaderMap
 	 * @returns An instance of APIResponse<ActionHandler>
 	 * @throws SDKException
 	 */
-	public async createRecords(moduleAPIName: string, request: BodyWrapper): Promise<APIResponse<ActionHandler>>	{
+	public async createRecords(moduleAPIName: string, request: BodyWrapper, headerInstance?: HeaderMap): Promise<APIResponse<ActionHandler>>	{
 		let handlerInstance: CommonAPIHandler = new CommonAPIHandler();
 		let apiPath: string = '';
 		apiPath = apiPath.concat("/crm/v2/");
@@ -146,9 +148,9 @@ class RecordOperations{
 		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_CREATE);
 		handlerInstance.setContentType("application/json");
 		handlerInstance.setRequest(request);
-		handlerInstance.setMandatoryChecker(true);
-		await Utility.getFields(moduleAPIName);
+		handlerInstance.setHeader(headerInstance);
 		handlerInstance.setModuleAPIName(moduleAPIName);
+		await Utility.getFields(moduleAPIName, handlerInstance);
 		let ActionHandler = require.resolve("./action_handler");
 		return handlerInstance.apiCall<ActionHandler>(ActionHandler, "application/json");
 
@@ -172,10 +174,9 @@ class RecordOperations{
 		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_UPDATE);
 		handlerInstance.setContentType("application/json");
 		handlerInstance.setRequest(request);
-		handlerInstance.setMandatoryChecker(true);
 		handlerInstance.setHeader(headerInstance);
-		await Utility.getFields(moduleAPIName);
 		handlerInstance.setModuleAPIName(moduleAPIName);
+		await Utility.getFields(moduleAPIName, handlerInstance);
 		let ActionHandler = require.resolve("./action_handler");
 		return handlerInstance.apiCall<ActionHandler>(ActionHandler, "application/json");
 
@@ -199,6 +200,7 @@ class RecordOperations{
 		handlerInstance.setCategoryMethod(Constants.REQUEST_METHOD_DELETE);
 		handlerInstance.setParam(paramInstance);
 		handlerInstance.setHeader(headerInstance);
+		await Utility.getFields(moduleAPIName, handlerInstance);
 		let ActionHandler = require.resolve("./action_handler");
 		return handlerInstance.apiCall<ActionHandler>(ActionHandler, "application/json");
 
@@ -224,8 +226,8 @@ class RecordOperations{
 		handlerInstance.setContentType("application/json");
 		handlerInstance.setRequest(request);
 		handlerInstance.setHeader(headerInstance);
-		await Utility.getFields(moduleAPIName);
 		handlerInstance.setModuleAPIName(moduleAPIName);
+		await Utility.getFields(moduleAPIName, handlerInstance);
 		let ActionHandler = require.resolve("./action_handler");
 		return handlerInstance.apiCall<ActionHandler>(ActionHandler, "application/json");
 
@@ -250,6 +252,7 @@ class RecordOperations{
 		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_READ);
 		handlerInstance.setParam(paramInstance);
 		handlerInstance.setHeader(headerInstance);
+		await Utility.getFields(moduleAPIName, handlerInstance);
 		let DeletedRecordsHandler = require.resolve("./deleted_records_handler");
 		return handlerInstance.apiCall<DeletedRecordsHandler>(DeletedRecordsHandler, "application/json");
 
@@ -274,8 +277,8 @@ class RecordOperations{
 		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_READ);
 		handlerInstance.setParam(paramInstance);
 		handlerInstance.setHeader(headerInstance);
-		await Utility.getFields(moduleAPIName);
 		handlerInstance.setModuleAPIName(moduleAPIName);
+		await Utility.getFields(moduleAPIName, handlerInstance);
 		let ResponseHandler = require.resolve("./response_handler");
 		return handlerInstance.apiCall<ResponseHandler>(ResponseHandler, "application/json");
 
@@ -300,7 +303,7 @@ class RecordOperations{
 		handlerInstance.setContentType("application/json");
 		handlerInstance.setRequest(request);
 		handlerInstance.setMandatoryChecker(true);
-		await Utility.getFields("Deals");
+		await Utility.getFields("Deals", handlerInstance);
 		let ConvertActionHandler = require.resolve("./convert_action_handler");
 		return handlerInstance.apiCall<ConvertActionHandler>(ConvertActionHandler, "application/json");
 
@@ -324,6 +327,7 @@ class RecordOperations{
 		handlerInstance.setAPIPath(apiPath);
 		handlerInstance.setHttpMethod(Constants.REQUEST_METHOD_GET);
 		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_READ);
+		await Utility.getFields(moduleAPIName, handlerInstance);
 		let DownloadHandler = require.resolve("./download_handler");
 		return handlerInstance.apiCall<DownloadHandler>(DownloadHandler, "application/x-download");
 
@@ -351,6 +355,7 @@ class RecordOperations{
 		handlerInstance.setContentType("multipart/form-data");
 		handlerInstance.setRequest(request);
 		handlerInstance.setMandatoryChecker(true);
+		await Utility.getFields(moduleAPIName, handlerInstance);
 		await Utility.verifyPhotoSupport(moduleAPIName);
 		let FileHandler = require.resolve("./file_handler");
 		return handlerInstance.apiCall<FileHandler>(FileHandler, "application/json");
@@ -375,6 +380,7 @@ class RecordOperations{
 		handlerInstance.setAPIPath(apiPath);
 		handlerInstance.setHttpMethod(Constants.REQUEST_METHOD_DELETE);
 		handlerInstance.setCategoryMethod(Constants.REQUEST_METHOD_DELETE);
+		await Utility.getFields(moduleAPIName, handlerInstance);
 		let FileHandler = require.resolve("./file_handler");
 		return handlerInstance.apiCall<FileHandler>(FileHandler, "application/json");
 
@@ -399,8 +405,8 @@ class RecordOperations{
 		handlerInstance.setContentType("application/json");
 		handlerInstance.setRequest(request);
 		handlerInstance.setMandatoryChecker(true);
-		await Utility.getFields(moduleAPIName);
 		handlerInstance.setModuleAPIName(moduleAPIName);
+		await Utility.getFields(moduleAPIName, handlerInstance);
 		let MassUpdateActionHandler = require.resolve("./mass_update_action_handler");
 		return handlerInstance.apiCall<MassUpdateActionHandler>(MassUpdateActionHandler, "application/json");
 
@@ -423,8 +429,93 @@ class RecordOperations{
 		handlerInstance.setHttpMethod(Constants.REQUEST_METHOD_GET);
 		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_READ);
 		handlerInstance.setParam(paramInstance);
+		await Utility.getFields(moduleAPIName, handlerInstance);
 		let MassUpdateResponseHandler = require.resolve("./mass_update_response_handler");
 		return handlerInstance.apiCall<MassUpdateResponseHandler>(MassUpdateResponseHandler, "application/json");
+
+	}
+
+	/**
+	 * The method to get record using external id
+	 * @param externalFieldValue A string representing the externalFieldValue
+	 * @param moduleAPIName A string representing the moduleAPIName
+	 * @param paramInstance An instance of ParameterMap
+	 * @param headerInstance An instance of HeaderMap
+	 * @returns An instance of APIResponse<ResponseHandler>
+	 * @throws SDKException
+	 */
+	public async getRecordUsingExternalId(externalFieldValue: string, moduleAPIName: string, paramInstance?: ParameterMap, headerInstance?: HeaderMap): Promise<APIResponse<ResponseHandler>>	{
+		let handlerInstance: CommonAPIHandler = new CommonAPIHandler();
+		let apiPath: string = '';
+		apiPath = apiPath.concat("/crm/v2/");
+		apiPath = apiPath.concat(moduleAPIName.toString());
+		apiPath = apiPath.concat("/");
+		apiPath = apiPath.concat(externalFieldValue.toString());
+		handlerInstance.setAPIPath(apiPath);
+		handlerInstance.setHttpMethod(Constants.REQUEST_METHOD_GET);
+		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_READ);
+		handlerInstance.setParam(paramInstance);
+		handlerInstance.setHeader(headerInstance);
+		handlerInstance.setModuleAPIName(moduleAPIName);
+		await Utility.getFields(moduleAPIName, handlerInstance);
+		let ResponseHandler = require.resolve("./response_handler");
+		return handlerInstance.apiCall<ResponseHandler>(ResponseHandler, "application/json");
+
+	}
+
+	/**
+	 * The method to update record using external id
+	 * @param externalFieldValue A string representing the externalFieldValue
+	 * @param moduleAPIName A string representing the moduleAPIName
+	 * @param request An instance of BodyWrapper
+	 * @param headerInstance An instance of HeaderMap
+	 * @returns An instance of APIResponse<ActionHandler>
+	 * @throws SDKException
+	 */
+	public async updateRecordUsingExternalId(externalFieldValue: string, moduleAPIName: string, request: BodyWrapper, headerInstance?: HeaderMap): Promise<APIResponse<ActionHandler>>	{
+		let handlerInstance: CommonAPIHandler = new CommonAPIHandler();
+		let apiPath: string = '';
+		apiPath = apiPath.concat("/crm/v2/");
+		apiPath = apiPath.concat(moduleAPIName.toString());
+		apiPath = apiPath.concat("/");
+		apiPath = apiPath.concat(externalFieldValue.toString());
+		handlerInstance.setAPIPath(apiPath);
+		handlerInstance.setHttpMethod(Constants.REQUEST_METHOD_PUT);
+		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_UPDATE);
+		handlerInstance.setContentType("application/json");
+		handlerInstance.setRequest(request);
+		handlerInstance.setHeader(headerInstance);
+		handlerInstance.setModuleAPIName(moduleAPIName);
+		await Utility.getFields(moduleAPIName, handlerInstance);
+		let ActionHandler = require.resolve("./action_handler");
+		return handlerInstance.apiCall<ActionHandler>(ActionHandler, "application/json");
+
+	}
+
+	/**
+	 * The method to delete record using external id
+	 * @param externalFieldValue A string representing the externalFieldValue
+	 * @param moduleAPIName A string representing the moduleAPIName
+	 * @param paramInstance An instance of ParameterMap
+	 * @param headerInstance An instance of HeaderMap
+	 * @returns An instance of APIResponse<ActionHandler>
+	 * @throws SDKException
+	 */
+	public async deleteRecordUsingExternalId(externalFieldValue: string, moduleAPIName: string, paramInstance?: ParameterMap, headerInstance?: HeaderMap): Promise<APIResponse<ActionHandler>>	{
+		let handlerInstance: CommonAPIHandler = new CommonAPIHandler();
+		let apiPath: string = '';
+		apiPath = apiPath.concat("/crm/v2/");
+		apiPath = apiPath.concat(moduleAPIName.toString());
+		apiPath = apiPath.concat("/");
+		apiPath = apiPath.concat(externalFieldValue.toString());
+		handlerInstance.setAPIPath(apiPath);
+		handlerInstance.setHttpMethod(Constants.REQUEST_METHOD_DELETE);
+		handlerInstance.setCategoryMethod(Constants.REQUEST_METHOD_DELETE);
+		handlerInstance.setParam(paramInstance);
+		handlerInstance.setHeader(headerInstance);
+		await Utility.getFields(moduleAPIName, handlerInstance);
+		let ActionHandler = require.resolve("./action_handler");
+		return handlerInstance.apiCall<ActionHandler>(ActionHandler, "application/json");
 
 	}
 
@@ -455,7 +546,7 @@ class UpdateRecordHeader{
 
 class DeleteRecordParam{
 
-	public static WF_TRIGGER: Param<string> = new Param<string>("wf_trigger", "com.zoho.crm.api.Record.DeleteRecordParam");
+	public static WF_TRIGGER: Param<boolean> = new Param<boolean>("wf_trigger", "com.zoho.crm.api.Record.DeleteRecordParam");
 }
 
 class DeleteRecordHeader{
@@ -468,7 +559,7 @@ class GetRecordsParam{
 	public static APPROVED: Param<string> = new Param<string>("approved", "com.zoho.crm.api.Record.GetRecordsParam");
 	public static CONVERTED: Param<string> = new Param<string>("converted", "com.zoho.crm.api.Record.GetRecordsParam");
 	public static CVID: Param<string> = new Param<string>("cvid", "com.zoho.crm.api.Record.GetRecordsParam");
-	public static IDS: Param<bigint> = new Param<bigint>("ids", "com.zoho.crm.api.Record.GetRecordsParam");
+	public static IDS: Param<string> = new Param<string>("ids", "com.zoho.crm.api.Record.GetRecordsParam");
 	public static UID: Param<string> = new Param<string>("uid", "com.zoho.crm.api.Record.GetRecordsParam");
 	public static FIELDS: Param<string> = new Param<string>("fields", "com.zoho.crm.api.Record.GetRecordsParam");
 	public static SORT_BY: Param<string> = new Param<string>("sort_by", "com.zoho.crm.api.Record.GetRecordsParam");
@@ -487,6 +578,11 @@ class GetRecordsHeader{
 	public static X_EXTERNAL: Header<string> = new Header<string>("X-EXTERNAL", "com.zoho.crm.api.Record.GetRecordsHeader");
 }
 
+class CreateRecordsHeader{
+
+	public static X_EXTERNAL: Header<string> = new Header<string>("X-EXTERNAL", "com.zoho.crm.api.Record.CreateRecordsHeader");
+}
+
 class UpdateRecordsHeader{
 
 	public static X_EXTERNAL: Header<string> = new Header<string>("X-EXTERNAL", "com.zoho.crm.api.Record.UpdateRecordsHeader");
@@ -494,8 +590,8 @@ class UpdateRecordsHeader{
 
 class DeleteRecordsParam{
 
-	public static IDS: Param<bigint> = new Param<bigint>("ids", "com.zoho.crm.api.Record.DeleteRecordsParam");
-	public static WF_TRIGGER: Param<string> = new Param<string>("wf_trigger", "com.zoho.crm.api.Record.DeleteRecordsParam");
+	public static IDS: Param<string> = new Param<string>("ids", "com.zoho.crm.api.Record.DeleteRecordsParam");
+	public static WF_TRIGGER: Param<boolean> = new Param<boolean>("wf_trigger", "com.zoho.crm.api.Record.DeleteRecordsParam");
 }
 
 class DeleteRecordsHeader{
@@ -530,6 +626,7 @@ class SearchRecordsParam{
 	public static APPROVED: Param<string> = new Param<string>("approved", "com.zoho.crm.api.Record.SearchRecordsParam");
 	public static PAGE: Param<number> = new Param<number>("page", "com.zoho.crm.api.Record.SearchRecordsParam");
 	public static PER_PAGE: Param<number> = new Param<number>("per_page", "com.zoho.crm.api.Record.SearchRecordsParam");
+	public static FIELDS: Param<string> = new Param<string>("fields", "com.zoho.crm.api.Record.SearchRecordsParam");
 }
 
 class SearchRecordsHeader{
@@ -542,12 +639,50 @@ class GetMassUpdateStatusParam{
 	public static JOB_ID: Param<string> = new Param<string>("job_id", "com.zoho.crm.api.Record.GetMassUpdateStatusParam");
 }
 
+class GetRecordUsingExternalIDParam{
+
+	public static APPROVED: Param<string> = new Param<string>("approved", "com.zoho.crm.api.Record.GetRecordUsingExternalIDParam");
+	public static CONVERTED: Param<string> = new Param<string>("converted", "com.zoho.crm.api.Record.GetRecordUsingExternalIDParam");
+	public static CVID: Param<string> = new Param<string>("cvid", "com.zoho.crm.api.Record.GetRecordUsingExternalIDParam");
+	public static UID: Param<string> = new Param<string>("uid", "com.zoho.crm.api.Record.GetRecordUsingExternalIDParam");
+	public static FIELDS: Param<string> = new Param<string>("fields", "com.zoho.crm.api.Record.GetRecordUsingExternalIDParam");
+	public static STARTDATETIME: Param<Date> = new Param<Date>("startDateTime", "com.zoho.crm.api.Record.GetRecordUsingExternalIDParam");
+	public static ENDDATETIME: Param<Date> = new Param<Date>("endDateTime", "com.zoho.crm.api.Record.GetRecordUsingExternalIDParam");
+	public static TERRITORY_ID: Param<string> = new Param<string>("territory_id", "com.zoho.crm.api.Record.GetRecordUsingExternalIDParam");
+	public static INCLUDE_CHILD: Param<string> = new Param<string>("include_child", "com.zoho.crm.api.Record.GetRecordUsingExternalIDParam");
+}
+
+class GetRecordUsingExternalIDHeader{
+
+	public static IF_MODIFIED_SINCE: Header<Date> = new Header<Date>("If-Modified-Since", "com.zoho.crm.api.Record.GetRecordUsingExternalIDHeader");
+	public static X_EXTERNAL: Header<string> = new Header<string>("X-EXTERNAL", "com.zoho.crm.api.Record.GetRecordUsingExternalIDHeader");
+}
+
+class UpdateRecordUsingExternalIDHeader{
+
+	public static X_EXTERNAL: Header<string> = new Header<string>("X-EXTERNAL", "com.zoho.crm.api.Record.UpdateRecordUsingExternalIDHeader");
+}
+
+class DeleteRecordUsingExternalIDParam{
+
+	public static WF_TRIGGER: Param<boolean> = new Param<boolean>("wf_trigger", "com.zoho.crm.api.Record.DeleteRecordUsingExternalIDParam");
+}
+
+class DeleteRecordUsingExternalIDHeader{
+
+	public static X_EXTERNAL: Header<string> = new Header<string>("X-EXTERNAL", "com.zoho.crm.api.Record.DeleteRecordUsingExternalIDHeader");
+}
+
 export {
 	GetRecordParam as GetRecordParam,
+	CreateRecordsHeader as CreateRecordsHeader,
 	UpsertRecordsHeader as UpsertRecordsHeader,
+	DeleteRecordUsingExternalIDParam as DeleteRecordUsingExternalIDParam,
 	GetRecordsHeader as GetRecordsHeader,
 	GetRecordHeader as GetRecordHeader,
+	GetRecordUsingExternalIDParam as GetRecordUsingExternalIDParam,
 	GetDeletedRecordsParam as GetDeletedRecordsParam,
+	UpdateRecordUsingExternalIDHeader as UpdateRecordUsingExternalIDHeader,
 	GetMassUpdateStatusParam as GetMassUpdateStatusParam,
 	UpdateRecordHeader as UpdateRecordHeader,
 	GetRecordsParam as GetRecordsParam,
@@ -560,5 +695,7 @@ export {
 	DeleteRecordsHeader as DeleteRecordsHeader,
 	RecordOperations as MasterModel,
 	RecordOperations as RecordOperations,
-	GetDeletedRecordsHeader as GetDeletedRecordsHeader
+	GetDeletedRecordsHeader as GetDeletedRecordsHeader,
+	DeleteRecordUsingExternalIDHeader as DeleteRecordUsingExternalIDHeader,
+	GetRecordUsingExternalIDHeader as GetRecordUsingExternalIDHeader
 }

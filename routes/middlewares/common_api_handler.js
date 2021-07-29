@@ -18,15 +18,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MasterModel = exports.CommonAPIHandler = void 0;
 const sdk_exception_1 = require("../../core/com/zoho/crm/api/exception/sdk_exception");
@@ -51,7 +42,7 @@ const downloader_1 = require("../../utils/util/downloader");
 */
 class CommonAPIHandler {
     constructor() {
-        this.parameters = new parameter_map_1.ParameterMap();
+        this.param = new parameter_map_1.ParameterMap();
         this.headers = new header_map_1.HeaderMap();
         this.moduleAPIName = null;
         this.mandatoryChecker = null;
@@ -64,11 +55,60 @@ class CommonAPIHandler {
         this.contentType = contentType;
     }
     /**
-     * This is a setter method to set the Zoho CRM module API name.
-     * @param {string} moduleAPIName - A String containing the Zoho CRM module API name.
+     * This is a setter method to set the API request URL.
+     * @param {string} apiPath - A String containing the API request URL.
      */
-    setModuleAPIName(moduleAPIName) {
-        this.moduleAPIName = moduleAPIName;
+    setAPIPath(apiPath) {
+        this.apiPath = apiPath;
+    }
+    /**
+     * This method is to add an API request parameter.
+     * @param {Param} paramInstance - A Param instance containing the API request parameter.
+     * @param {object} paramValue - An object containing the API request parameter value.
+     * @throws {SDKException}
+     */
+    async addParam(paramInstance, paramValue) {
+        if (paramValue === undefined || paramValue === null) {
+            return;
+        }
+        if (this.param === null || this.param === undefined) {
+            this.param = new parameter_map_1.ParameterMap();
+        }
+        await this.param.add(paramInstance, paramValue);
+    }
+    /**
+     * This method is to add an API request header.
+     * @param {Header} headerInstance - A Header instance containing the API request header.
+     * @param {object} headerValue - An object containing the API request header value.
+     * @throws {SDKException}
+     */
+    async addHeader(headerInstance, headerValue) {
+        if (headerValue === undefined || headerValue === null) {
+            return;
+        }
+        if (this.headers === null || this.headers === undefined) {
+            this.headers = new header_map_1.HeaderMap();
+        }
+        await this.headers.add(headerInstance, headerValue);
+    }
+    /**
+     * This is a setter method to set the API request parameter map.
+     * @param {ParameterMap} param - A ParameterMap class instance containing the API request parameter.
+     */
+    setParam(param) {
+        if (param == undefined || param == null) {
+            return;
+        }
+        if (this.param.getParameterMap() != null && this.param.getParameterMap().size > 0) {
+            param.getParameterMap().forEach((value, key) => {
+                if (value !== undefined) {
+                    this.param.getParameterMap().set(key, value);
+                }
+            });
+        }
+        else {
+            this.param = param;
+        }
     }
     /**
      * This is a getter method to get the Zoho CRM module API name.
@@ -78,78 +118,18 @@ class CommonAPIHandler {
         return this.moduleAPIName;
     }
     /**
-     * This is a setter method to set the API request URL.
-     * @param {string} apiPath - A String containing the API request URL.
+     * This is a setter method to set the Zoho CRM module API name.
+     * @param {string} moduleAPIName - A String containing the Zoho CRM module API name.
      */
-    setAPIPath(apiPath) {
-        this.apiPath = apiPath;
-    }
-    /**
-     * This is a getter method to get the API request URL.
-     * @returns {String} A String containing the API request URL.
-     */
-    getAPIPath() {
-        return this.apiPath;
-    }
-    /**
-     * This is a setter method to set the API request parameter map.
-     * @param {ParameterMap} param - A ParameterMap class instance containing the API request parameter.
-     */
-    setParam(param) {
-        if (param == undefined) {
-            return;
-        }
-        if (this.parameters.getParameterMap() != null && this.parameters.getParameterMap().size > 0) {
-            param.getParameterMap().forEach((value, key) => {
-                if (value !== undefined) {
-                    this.parameters.getParameterMap().set(key, value);
-                }
-            });
-        }
-        else {
-            this.parameters = param;
-        }
-    }
-    /**
-     * This method is to add an API request parameter.
-     * @param {Param} paramInstance - A Param instance containing the API request parameter.
-     * @param {object} paramValue - An object containing the API request parameter value.
-     * @throws {SDKException}
-     */
-    addParam(paramInstance, paramValue) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (paramValue === undefined || paramValue === null) {
-                return;
-            }
-            if (this.parameters === null || this.parameters === undefined) {
-                this.parameters = new parameter_map_1.ParameterMap();
-            }
-            yield this.parameters.add(paramInstance, paramValue);
-        });
-    }
-    /**
-     * This method is to add an API request header.
-     * @param {Header} headerInstance - A Header instance containing the API request header.
-     * @param {object} headerValue - An object containing the API request header value.
-     * @throws {SDKException}
-     */
-    addHeader(headerInstance, headerValue) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (headerValue === undefined || headerValue === null) {
-                return;
-            }
-            if (this.headers === null || this.headers === undefined) {
-                this.headers = new header_map_1.HeaderMap();
-            }
-            yield this.headers.add(headerInstance, headerValue);
-        });
+    setModuleAPIName(moduleAPIName) {
+        this.moduleAPIName = moduleAPIName;
     }
     /**
      * This is a setter method to set the API request header map.
      * @param {HeaderMap} header - A HeaderMap class instance containing the API request header.
      */
     setHeader(header) {
-        if (header === undefined) {
+        if (header === undefined || header === null) {
             return;
         }
         if (this.headers.getHeaderMap() != null && this.headers.getHeaderMap().size > 0) {
@@ -178,13 +158,6 @@ class CommonAPIHandler {
         this.httpMethod = httpMethod;
     }
     /**
-     * This is a getter method to get the HTTP API request method.
-     * @returns {string} A String containing the HTTP API request method.
-     */
-    getHttpMethod() {
-        return this.httpMethod;
-    }
-    /**
      * This method is used in constructing API request and response details. To make the Zoho CRM API calls.
      * @param {string} className - A Class containing the method return type.
      * @param {string} encodeType - A String containing the expected API response content type.
@@ -192,138 +165,106 @@ class CommonAPIHandler {
      * @returns {APIResponse} An instance of APIResponse representing the Zoho CRM API response
      * @throws {SDKException}
      */
-    apiCall(className, encodeType) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let initializer = yield initializer_1.Initializer.getInitializer();
-            if (initializer == null) {
-                throw new sdk_exception_1.SDKException(constants_1.Constants.SDK_UNINITIALIZATION_ERROR, constants_1.Constants.SDK_UNINITIALIZATION_MESSAGE);
+    async apiCall(className, encodeType) {
+        let initializer = await initializer_1.Initializer.getInitializer();
+        if (initializer == null) {
+            throw new sdk_exception_1.SDKException(constants_1.Constants.SDK_UNINITIALIZATION_ERROR, constants_1.Constants.SDK_UNINITIALIZATION_MESSAGE);
+        }
+        var connector = new api_http_connector_1.APIHTTPConnector();
+        try {
+            await this.setAPIUrl(connector);
+        }
+        catch (error) {
+            if (!(error instanceof sdk_exception_1.SDKException)) {
+                error = new sdk_exception_1.SDKException(null, null, null, error);
             }
-            var connector = new api_http_connector_1.APIHTTPConnector();
+            Logger.error(constants_1.Constants.SET_API_URL_EXCEPTION, error);
+            throw error;
+        }
+        connector.setRequestMethod(this.httpMethod);
+        connector.setContentType(this.contentType);
+        if (this.headers != null && this.headers.getHeaderMap().size > 0) {
+            connector.setHeaders(this.headers.getHeaderMap());
+        }
+        if (this.param != null && this.param.getParameterMap().size > 0) {
+            connector.setParams(this.param.getParameterMap());
+        }
+        try {
+            await initializer.getToken().authenticate(connector);
+        }
+        catch (error) {
+            if (!(error instanceof sdk_exception_1.SDKException)) {
+                error = new sdk_exception_1.SDKException(null, null, null, error);
+            }
+            Logger.error(constants_1.Constants.AUTHENTICATION_EXCEPTION, error);
+            throw error;
+        }
+        let baseName = className.replace(/\\/gm, '/').split('/');
+        let fileName = path.basename(className).split('.').slice(0, -1).join('.');
+        let index = baseName.indexOf(constants_1.Constants.CORE);
+        let packageNames = baseName.slice(index, baseName.length - 1);
+        packageNames.push(fileName);
+        var pack = packageNames.join("/");
+        var returnObject = null;
+        var converterInstance = null;
+        if (this.contentType != null && constants_1.Constants.IS_GENERATE_REQUEST_BODY.includes(this.httpMethod.toUpperCase())) {
+            let requestObject = null;
+            let baseName = pack.split("/");
+            baseName.pop();
             try {
-                yield this.setAPIUrl(connector);
+                converterInstance = this.getConverterClassInstance(this.contentType.toLowerCase());
+                if (converterInstance !== null) {
+                    var classFileName = converterInstance.getFileName(this.request.constructor.name);
+                    baseName.push(classFileName);
+                    requestObject = await converterInstance.formRequest(this.request, baseName.join("/"), null, null);
+                }
             }
             catch (error) {
                 if (!(error instanceof sdk_exception_1.SDKException)) {
                     error = new sdk_exception_1.SDKException(null, null, null, error);
                 }
-                Logger.error(constants_1.Constants.SET_API_URL_EXCEPTION, error);
+                Logger.error(constants_1.Constants.FORM_REQUEST_EXCEPTION, error);
                 throw error;
             }
-            connector.setRequestMethod(this.httpMethod);
-            if (this.headers != null && this.headers.getHeaderMap().size > 0) {
-                connector.setHeaders(this.headers.getHeaderMap());
+            if (requestObject !== null) {
+                connector.setRequestBody(requestObject);
             }
-            if (this.parameters != null && this.parameters.getParameterMap().size > 0) {
-                connector.setParams(this.parameters.getParameterMap());
-            }
-            try {
-                yield initializer.getToken().authenticate(connector);
-            }
-            catch (error) {
-                if (!(error instanceof sdk_exception_1.SDKException)) {
-                    error = new sdk_exception_1.SDKException(null, null, null, error);
-                }
-                Logger.error(constants_1.Constants.AUTHENTICATION_EXCEPTION, error);
-                throw error;
-            }
-            let baseName = className.replace(/\\/gm, '/').split('/');
-            let fileName = path.basename(className).split('.').slice(0, -1).join('.');
-            let index = baseName.indexOf(constants_1.Constants.CORE);
-            let packageNames = baseName.slice(index, baseName.length - 1);
-            packageNames.push(fileName);
-            var pack = packageNames.join("/");
-            var returnObject = null;
-            var converterInstance = null;
-            if (this.contentType != null && constants_1.Constants.IS_GENERATE_REQUEST_BODY.includes(this.httpMethod.toUpperCase())) {
-                let request = null;
-                let baseName = pack.split("/");
-                baseName.pop();
-                try {
-                    converterInstance = this.getConverterClassInstance(this.contentType.toLowerCase());
+        }
+        try {
+            connector.addHeader(constants_1.Constants.ZOHO_SDK, os.platform() + "/" + os.release() + "/" + constants_1.Constants.SDK_NAME + "/" + process.version + ":" + constants_1.Constants.SDK_VERSION);
+            let response = await connector.fireRequest(converterInstance);
+            let headerMap = await this.getHeaders(response.headers);
+            if (response.headers.hasOwnProperty(constants_1.Constants.CONTENT_TYPE_HEADER.toLowerCase())) {
+                let contentTypeHeader = response.headers[constants_1.Constants.CONTENT_TYPE_HEADER.toLowerCase()];
+                if (contentTypeHeader !== undefined && !Array.isArray(contentTypeHeader)) {
+                    let contentType = contentTypeHeader.split(";")[0];
+                    converterInstance = this.getConverterClassInstance(contentType.toLowerCase());
                     if (converterInstance !== null) {
-                        var classFileName = converterInstance.getFileName(this.request.constructor.name);
-                        baseName.push(classFileName);
-                        request = yield converterInstance.formRequest(this.request, baseName.join("/"), null, null);
+                        returnObject = await converterInstance.getWrappedResponse(response, pack);
                     }
-                }
-                catch (error) {
-                    if (!(error instanceof sdk_exception_1.SDKException)) {
-                        error = new sdk_exception_1.SDKException(null, null, null, error);
-                    }
-                    Logger.error(constants_1.Constants.FORM_REQUEST_EXCEPTION, error);
-                    throw error;
-                }
-                if (request !== null) {
-                    connector.setRequestBody(request);
-                }
-            }
-            try {
-                connector.addHeader(constants_1.Constants.ZOHO_SDK, os.platform() + "/" + os.release() + "/" + constants_1.Constants.SDK_NAME + "/" + process.version + ":" + constants_1.Constants.SDK_VERSION);
-                let response = yield connector.fireRequest(converterInstance);
-                let headerMap = yield this.getHeaders(response.headers);
-                if (response.headers.hasOwnProperty(constants_1.Constants.CONTENT_TYPE_HEADER.toLowerCase())) {
-                    let contentTypeHeader = response.headers[constants_1.Constants.CONTENT_TYPE_HEADER.toLowerCase()];
-                    if (contentTypeHeader !== undefined && !Array.isArray(contentTypeHeader)) {
-                        let contentType = contentTypeHeader.split(";")[0];
-                        converterInstance = this.getConverterClassInstance(contentType.toLowerCase());
-                        if (converterInstance !== null) {
-                            returnObject = yield converterInstance.getWrappedResponse(response, pack);
-                        }
-                    }
-                }
-                else {
-                    Logger.info(constants_1.Constants.API_ERROR_RESPONSE + response.statusCode.toString());
-                }
-                return new api_response_1.APIResponse(headerMap, response.statusCode, returnObject);
-            }
-            catch (error) {
-                if (!(error instanceof sdk_exception_1.SDKException)) {
-                    error = new sdk_exception_1.SDKException(null, null, null, error);
-                }
-                Logger.error(constants_1.Constants.API_CALL_EXCEPTION, error);
-                throw error;
-            }
-        });
-    }
-    getHeaders(headers) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let headerMap = new Map();
-            if (Object.keys(headers).length > 0) {
-                for (let key in headers) {
-                    headerMap.set(key, headers[key]);
-                }
-            }
-            return headerMap;
-        });
-    }
-    setAPIUrl(connector) {
-        return __awaiter(this, void 0, void 0, function* () {
-            var apiPath = "";
-            let initializer = yield initializer_1.Initializer.getInitializer();
-            if (this.apiPath.includes(constants_1.Constants.HTTP)) {
-                if (this.apiPath.includes(constants_1.Constants.CONTENT_API_URL)) {
-                    apiPath = apiPath.concat(initializer.getEnvironment().getFileUploadUrl());
-                    try {
-                        const myURL = new URL(this.apiPath);
-                        apiPath = apiPath.concat(myURL.pathname);
-                    }
-                    catch (error) {
-                        throw new sdk_exception_1.SDKException(constants_1.Constants.INVALID_URL_ERROR, null, null, error);
-                    }
-                }
-                else {
-                    if (this.apiPath.substring(0, 1) === "/") {
-                        this.apiPath = this.apiPath.substring(1);
-                    }
-                    apiPath = apiPath.concat(this.apiPath);
                 }
             }
             else {
-                apiPath = apiPath.concat(initializer.getEnvironment().getUrl());
-                apiPath = apiPath.concat(this.apiPath);
+                Logger.info(constants_1.Constants.API_ERROR_RESPONSE + response.statusCode.toString());
             }
-            connector.setUrl(apiPath);
-        });
+            return new api_response_1.APIResponse(headerMap, response.statusCode, returnObject);
+        }
+        catch (error) {
+            if (!(error instanceof sdk_exception_1.SDKException)) {
+                error = new sdk_exception_1.SDKException(null, null, null, error);
+            }
+            Logger.error(constants_1.Constants.API_CALL_EXCEPTION, error);
+            throw error;
+        }
+    }
+    async getHeaders(headers) {
+        let headerMap = new Map();
+        if (Object.keys(headers).length > 0) {
+            for (let key in headers) {
+                headerMap.set(key, headers[key]);
+            }
+        }
+        return headerMap;
     }
     /**
      * This method is used to get a Converter class instance.
@@ -393,6 +334,40 @@ class CommonAPIHandler {
         }
         return type;
     }
+    async setAPIUrl(connector) {
+        var apiPath = "";
+        let initializer = await initializer_1.Initializer.getInitializer();
+        if (this.apiPath.includes(constants_1.Constants.HTTP)) {
+            if (this.apiPath.includes(constants_1.Constants.CONTENT_API_URL)) {
+                apiPath = apiPath.concat(initializer.getEnvironment().getFileUploadUrl());
+                try {
+                    const myURL = new URL(this.apiPath);
+                    apiPath = apiPath.concat(myURL.pathname);
+                }
+                catch (error) {
+                    throw new sdk_exception_1.SDKException(constants_1.Constants.INVALID_URL_ERROR, null, null, error);
+                }
+            }
+            else {
+                if (this.apiPath.substring(0, 1) === "/") {
+                    this.apiPath = this.apiPath.substring(1);
+                }
+                apiPath = apiPath.concat(this.apiPath);
+            }
+        }
+        else {
+            apiPath = apiPath.concat(initializer.getEnvironment().getUrl());
+            apiPath = apiPath.concat(this.apiPath);
+        }
+        connector.setUrl(apiPath);
+    }
+    /**
+     * This is a getter method to get mandatoryChecker
+     * @returns {Boolean} - A Boolean value representing mandatoryChecker
+     */
+    isMandatoryChecker() {
+        return this.mandatoryChecker;
+    }
     /**
      * This is a setter method to set mandatoryChecker
      * @param {Bool} mandatoryChecker - A Boolean value
@@ -401,11 +376,18 @@ class CommonAPIHandler {
         this.mandatoryChecker = mandatoryChecker;
     }
     /**
-     * This is a getter method to get mandatoryChecker
-     * @returns {Boolean} - A Boolean value representing mandatoryChecker
+     * This is a getter method to get the HTTP API request method.
+     * @returns {string} A String containing the HTTP API request method.
      */
-    getMandatoryChecker() {
-        return this.mandatoryChecker;
+    getHttpMethod() {
+        return this.httpMethod;
+    }
+    /**
+     * This is a getter method to get categoryMethod
+     * @returns {String} - A String value representing categoryMethod
+     */
+    getCategoryMethod() {
+        return this.categoryMethod;
     }
     /**
      * This is a setter method to set categoryMethod
@@ -415,11 +397,11 @@ class CommonAPIHandler {
         this.categoryMethod = categoryMethod;
     }
     /**
-     * This is a getter method to get categoryMethod
-     * @returns {String} - A String value representing categoryMethod
+     * This is a getter method to get the API request URL.
+     * @returns {String} A String containing the API request URL.
      */
-    getCategoryMethod() {
-        return this.categoryMethod;
+    getAPIPath() {
+        return this.apiPath;
     }
 }
 exports.CommonAPIHandler = CommonAPIHandler;

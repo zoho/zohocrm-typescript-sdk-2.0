@@ -32,7 +32,7 @@ Constants.EXPIRES_IN_SEC = "expires_in_sec";
 Constants.REFRESH_TOKEN = "refresh_token";
 Constants.CLIENT_ID = "client_id";
 Constants.CLIENT_SECRET = "client_secret";
-Constants.REDIRECT_URL = "redirect_uri";
+Constants.REDIRECT_URL = "redirect_url";
 Constants.REQUEST_METHOD_POST = "POST";
 Constants.REQUEST_METHOD_PATCH = "PATCH";
 Constants.CODE = "code";
@@ -43,7 +43,7 @@ Constants.REQUEST_METHOD_PUT = "PUT";
 Constants.REQUEST_METHOD_DELETE = "DELETE";
 Constants.REQUEST_METHOD_GET = "GET";
 Constants.ZOHO_SDK = "X-ZOHO-SDK";
-Constants.SDK_VERSION = "1.0.0";
+Constants.SDK_VERSION = "2.0.0";
 Constants.MYSQL_HOST = "localhost";
 Constants.MYSQL_DATABASE_NAME = "zohooauth";
 Constants.MYSQL_USER_NAME = "root";
@@ -286,4 +286,55 @@ Constants.USER_SIGNATURE_ERROR = "USERSIGNATURE ERROR";
 Constants.REGULAR_EXPRESSION = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 Constants.SDK_NAME = "typescript-2.0";
 Constants.RESOURCE_PATH_INVALID_ERROR_MESSAGE = "Resource Path MUST be a valid directory.";
+Constants.MYSQL_TABLE_NAME = "oauthtoken";
+Constants.USER_MAIL_NULL_ERROR = "USER MAIL NULL ERROR";
+Constants.USER_MAIL_NULL_ERROR_MESSAGE = "User Mail MUST NOT be null. Use userMail setter to set value.";
+Constants.GET_TOKEN_BY_ID_FILE_ERROR = "Exception in getTokenById - FileStore : Given ID is invalid";
+Constants.CLIENT_ID_NULL_ERROR_MESSAGE = "ClientID MUST NOT be null";
+Constants.CLIENT_SECRET_NULL_ERROR_MESSAGE = "ClientSecret MUST NOT be null";
+Constants.OAUTH_MANDATORY_KEYS = ["grantToken", "refreshToken", "id"];
+Constants.REDIRECT_URI = "redirect_uri";
+Constants.INVALID_TOKEN_ERROR = "INVALID TOKEN ERROR";
+Constants.NO_ACCESS_TOKEN_ERROR = "ACCESS TOKEN IS NOT PRESENT IN RESPONSE";
+Constants.GET_TOKEN_BY_ID_DB_ERROR = "Exception in getTokenById - DBStore : Given ID is invalid";
+Constants.USERSIGNATURE_ERROR_MESSAGE = "UserSignature MUST NOT be null.";
+Constants.ENVIRONMENT_ERROR_MESSAGE = "Environment MUST NOT be null.";
+Constants.TOKEN_ERROR_MESSAGE = "Token MUST NOT be null.";
+Constants.STORE_ERROR_MESSAGE = "Store MUST NOT be null.";
+Constants.SDK_CONFIG_ERROR_MESSAGE = "sdkConfig MUST NOT be null.";
+Constants.REQUEST_PROXY_ERROR = "REQUEST_PROXY ERROR";
+Constants.FLOAT_NAMESPACE = 'Float';
+Constants.OBJECT_NAMESPACE = 'Object';
+Constants.DEFAULT_MODULENAME_VS_APINAME = new Map([
+    ["leads", "Leads"],
+    ["contacts", "Contacts"],
+    ["accounts", "Accounts"],
+    ["deals", "Deals"],
+    ["tasks", "Tasks"],
+    ["events", "Events"],
+    ["activities", "Activities"],
+    ["calls", "Calls"],
+    ["products", "Products"],
+    ["quotes", "Quotes"],
+    ["sales_orders", "Sales_Orders"],
+    ["purchase_orders", "Purchase_Orders"],
+    ["invoices", "Invoices"],
+    ["campaigns", "Campaigns"],
+    ["vendors", "Vendors"],
+    ["price_books", "Price_Books"],
+    ["cases", "Cases"],
+    ["solutions", "Solutions"],
+    ["visits", "Visits"],
+    ["approvals", "Approvals"],
+    ["notes", "Notes"],
+    ["attachments", "Attachments"],
+    ["actions_performed", "Actions_Performed"]
+]);
+Constants.SDK_MODULE_METADATA = "SDK-MODULE-METADATA";
+Constants.SKIP_MODULES = ["deals"];
+Constants.PHOTO_SUPPORTED_MODULES = ["leads", "contacts", "accounts", "products", "vendors"];
+Constants.GENERATED_TYPE = "generated_type";
+Constants.GENERATED_TYPE_CUSTOM = "custom";
+Constants.UPLOAD_PHOTO_UNSUPPORTED_ERROR = "UPLOAD PHOTO UNSUPPORTED MODULE";
+Constants.UPLOAD_PHOTO_UNSUPPORTED_MESSAGE = "Photo Upload Operation is not supported by the module: ";
 //# sourceMappingURL=constants.js.map

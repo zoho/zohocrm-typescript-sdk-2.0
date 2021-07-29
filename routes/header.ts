@@ -4,16 +4,17 @@
 class Header<T> {
     private name: string;
 
-    private className?: string;
+    private className?: string | null;
 
     /**
 	 * Creates a Header class instance with the specified header name.
 	 * @param {string} name - A String containing the header name.
-	 * @param {string} className - A String containing the class name.
+	 * @param {string | null} className - A String containing the class name.
 	 */
-    constructor(name: string, className?: string) {
+    constructor(name: string, className?: string | null) {
         this.name = name;
-        this.className =className;
+        
+        this.className = className;
     }
 
     /**
@@ -26,9 +27,9 @@ class Header<T> {
 
     /**
 	 * This is a getter method to get the class name.
-	 * @returns A String representing the class name.
+	 * @returns {string | undefined | null} A String representing the class name.
 	 */
-    public getClassName() : string|undefined {
+    public getClassName() : string | undefined | null {
         return this.className;
     }
 }

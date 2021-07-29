@@ -18,21 +18,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FileStore = void 0;
 const fs = __importStar(require("fs"));
 const sdk_exception_1 = require("../../../core/com/zoho/crm/api/exception/sdk_exception");
 const constants_1 = require("../../../utils/util/constants");
 const oauth_token_1 = require("../oauth_token");
+const oauth_builder_1 = require("../oauth_builder");
 /**
  * This class stores the user token details to the file.
 */
@@ -43,100 +35,105 @@ class FileStore {
     */
     constructor(filePath) {
         this.filePath = filePath;
-        this.headers = [constants_1.Constants.USER_MAIL, constants_1.Constants.CLIENT_ID, constants_1.Constants.REFRESH_TOKEN, constants_1.Constants.ACCESS_TOKEN, constants_1.Constants.GRANT_TOKEN, constants_1.Constants.EXPIRY_TIME];
+        this.headers = [constants_1.Constants.ID, constants_1.Constants.USER_MAIL, constants_1.Constants.CLIENT_ID, constants_1.Constants.CLIENT_SECRET, constants_1.Constants.REFRESH_TOKEN, constants_1.Constants.ACCESS_TOKEN, constants_1.Constants.GRANT_TOKEN, constants_1.Constants.EXPIRY_TIME, constants_1.Constants.REDIRECT_URL];
         if (!fs.existsSync(this.filePath) || (fs.existsSync(this.filePath) && fs.readFileSync(this.filePath, 'utf-8') === "")) {
             fs.writeFileSync(filePath, this.headers.join(), 'utf-8');
         }
     }
-    getToken(user, token) {
-        return __awaiter(this, void 0, void 0, function* () {
-            var oauth = undefined;
-            try {
-                var array = fs.readFileSync(this.filePath, 'utf-8').toString().split("\n");
-                if (token instanceof oauth_token_1.OAuthToken) {
-                    for (var i = 0; i < array.length; i++) {
-                        var line = array[i];
-                        var nextRecord = line.split(",");
-                        if (this.checkTokenExists(user.getEmail(), token, nextRecord)) {
-                            oauth = token;
-                            oauth.setRefreshToken(nextRecord[2]);
-                            oauth.setAccessToken(nextRecord[3]);
-                            oauth.setExpiresIn(nextRecord[5]);
-                            break;
-                        }
+    async getToken(user, token) {
+        var oauth = undefined;
+        try {
+            var array = fs.readFileSync(this.filePath, 'utf-8').toString().split("\n");
+            if (token instanceof oauth_token_1.OAuthToken) {
+                for (var i = 0; i < array.length; i++) {
+                    var line = array[i];
+                    var nextRecord = line.split(",");
+                    if (this.checkTokenExists(user.getEmail(), token, nextRecord)) {
+                        token.setAccessToken(nextRecord[5]);
+                        token.setExpiresIn(nextRecord[7]);
+                        token.setRefreshToken(nextRecord[4]);
+                        token.setId(nextRecord[0]);
+                        token.setUserMail(nextRecord[1]);
+                        return token;
                     }
                 }
             }
-            catch (error) {
-                throw new sdk_exception_1.SDKException(constants_1.Constants.TOKEN_STORE, constants_1.Constants.GET_TOKEN_FILE_ERROR, null, error);
-            }
-            return oauth;
-        });
+        }
+        catch (error) {
+            throw new sdk_exception_1.SDKException(constants_1.Constants.TOKEN_STORE, constants_1.Constants.GET_TOKEN_FILE_ERROR, null, error);
+        }
+        return oauth;
     }
-    saveToken(user, token) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                if (token instanceof oauth_token_1.OAuthToken) {
-                    token.setUserMail(user.getEmail());
-                    yield this.deleteToken(token);
-                    var data = [];
-                    data[0] = user.getEmail();
-                    data[1] = token.getClientID();
-                    data[2] = token.getRefreshToken();
-                    data[3] = token.getAccessToken();
-                    data[4] = token.getGrantToken();
-                    data[5] = token.getExpiresIn();
-                    fs.appendFileSync(this.filePath, "\n" + data.join());
-                }
+    async saveToken(user, token) {
+        try {
+            if (token instanceof oauth_token_1.OAuthToken) {
+                token.setUserMail(user.getEmail());
+                await this.deleteToken(token);
+                var data = [];
+                data[0] = token.getId();
+                data[1] = user.getEmail();
+                data[2] = token.getClientId();
+                data[3] = token.getClientSecret();
+                data[4] = token.getRefreshToken();
+                data[5] = token.getAccessToken();
+                data[6] = token.getGrantToken();
+                data[7] = token.getExpiresIn();
+                data[8] = token.getRedirectURL();
+                fs.appendFileSync(this.filePath, "\n" + data.join());
             }
-            catch (e) {
-                throw new sdk_exception_1.SDKException(constants_1.Constants.TOKEN_STORE, constants_1.Constants.SAVE_TOKEN_FILE_ERROR, null, e);
-            }
-        });
+        }
+        catch (e) {
+            throw new sdk_exception_1.SDKException(constants_1.Constants.TOKEN_STORE, constants_1.Constants.SAVE_TOKEN_FILE_ERROR, null, e);
+        }
     }
-    deleteToken(token) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                var array = [];
-                array = fs.readFileSync(this.filePath, 'utf-8').toString().split("\n");
-                if (token instanceof oauth_token_1.OAuthToken) {
-                    for (var i = 0; i < array.length; i++) {
-                        var nextRecord = array[i].toString().split(",");
-                        if (this.checkTokenExists(token.getUserMail(), token, nextRecord)) {
-                            array.splice(i, 1);
-                            break;
-                        }
+    async deleteToken(token) {
+        try {
+            var array = [];
+            array = fs.readFileSync(this.filePath, 'utf-8').toString().split("\n");
+            let deleted = false;
+            if (token instanceof oauth_token_1.OAuthToken) {
+                for (var i = 0; i < array.length; i++) {
+                    var nextRecord = array[i].toString().split(",");
+                    if (this.checkTokenExists(token.getUserMail(), token, nextRecord)) {
+                        array.splice(i, 1);
+                        deleted = true;
+                        break; // Stop searching after we found the email
                     }
+                }
+                // Rewrite the file if we deleted the user account details.
+                if (deleted) {
                     fs.writeFileSync(this.filePath, array.join("\n"), 'utf8');
                 }
             }
-            catch (e) {
-                throw new sdk_exception_1.SDKException(constants_1.Constants.TOKEN_STORE, constants_1.Constants.DELETE_TOKEN_FILE_ERROR, null, e);
-            }
-        });
+        }
+        catch (e) {
+            throw new sdk_exception_1.SDKException(constants_1.Constants.TOKEN_STORE, constants_1.Constants.DELETE_TOKEN_FILE_ERROR, null, e);
+        }
     }
-    getTokens() {
-        return __awaiter(this, void 0, void 0, function* () {
+    async getTokens() {
+        try {
             var tokens = [];
-            try {
-                var array = fs.readFileSync(this.filePath, 'utf-8').toString().split("\n");
-                for (var i = 1; i < array.length; i++) {
-                    let line = array[i];
-                    let nextRecord = line.split(",");
-                    let tokenType = (nextRecord[4] != null && nextRecord[4].length > 0) ? oauth_token_1.TokenType.GRANT : oauth_token_1.TokenType.REFRESH;
-                    let tokenValue = (tokenType == oauth_token_1.TokenType.REFRESH) ? nextRecord[2] : nextRecord[4];
-                    let token = new oauth_token_1.OAuthToken(nextRecord[1], "", tokenValue, tokenType);
-                    token.setUserMail(nextRecord[0]);
-                    token.setExpiresIn(nextRecord[5]);
-                    token.setAccessToken(nextRecord[3]);
-                    tokens.push(token);
+            var array = fs.readFileSync(this.filePath, 'utf-8').toString().split("\n");
+            for (var i = 1; i < array.length; i++) {
+                let allContents = array[i];
+                let nextRecord = allContents.split(",");
+                let grantToken = (nextRecord[6] != null && nextRecord[6].length > 0) ? nextRecord[6] : null;
+                let token = new oauth_builder_1.OAuthBuilder().clientId(nextRecord[2]).clientSecret(nextRecord[3]).refreshToken(nextRecord[4]).build();
+                token.setId(nextRecord[0]);
+                if (grantToken != null) {
+                    token.setGrantToken(grantToken);
                 }
-            }
-            catch (error) {
-                throw new sdk_exception_1.SDKException(constants_1.Constants.TOKEN_STORE, constants_1.Constants.GET_TOKENS_FILE_ERROR, null, error);
+                token.setUserMail(nextRecord[1]);
+                token.setAccessToken(nextRecord[5]);
+                token.setExpiresIn(nextRecord[7]);
+                token.setRedirectURL(nextRecord[8]);
+                tokens.push(token);
             }
             return tokens;
-        });
+        }
+        catch (error) {
+            throw new sdk_exception_1.SDKException(constants_1.Constants.TOKEN_STORE, constants_1.Constants.GET_TOKENS_FILE_ERROR, null, error);
+        }
     }
     deleteTokens() {
         try {
@@ -147,14 +144,54 @@ class FileStore {
         }
     }
     checkTokenExists(email, token, row) {
-        var clientId = token.getClientID();
+        if (email == null) {
+            throw new sdk_exception_1.SDKException(constants_1.Constants.USER_MAIL_NULL_ERROR, constants_1.Constants.USER_MAIL_NULL_ERROR_MESSAGE);
+        }
+        var clientId = token.getClientId();
         var grantToken = token.getGrantToken();
         var refreshToken = token.getRefreshToken();
-        var tokenCheck = grantToken != null ? grantToken === row[4] : refreshToken === row[2];
-        if (row[0] === email && row[1] === clientId && tokenCheck) {
+        var tokenCheck = grantToken != null ? grantToken === row[6] : refreshToken === row[4];
+        if (row[1] === email && row[2] === clientId && tokenCheck) {
             return true;
         }
         return false;
+    }
+    async getTokenById(id, token) {
+        var oauth = undefined;
+        try {
+            var array = fs.readFileSync(this.filePath, 'utf-8').toString().split("\n");
+            if (token instanceof oauth_token_1.OAuthToken) {
+                let isRowPresent = false;
+                for (var i = 0; i < array.length; i++) {
+                    var allContents = array[i];
+                    var nextRecord = allContents.split(",");
+                    if (nextRecord[0] == id) {
+                        isRowPresent = true;
+                        let grantToken = (nextRecord[6] != null && nextRecord[6].length > 0) ? nextRecord[6] : null;
+                        let redirectURL = (nextRecord[8] != null && nextRecord[8].length > 0) ? nextRecord[8] : null;
+                        token.setClientId(nextRecord[2]);
+                        token.setClientSecret(nextRecord[3]);
+                        token.setRefreshToken(nextRecord[4]);
+                        token.setId(id);
+                        if (grantToken != null) {
+                            token.setGrantToken(grantToken);
+                        }
+                        token.setUserMail(nextRecord[1]);
+                        token.setAccessToken(nextRecord[5]);
+                        token.setExpiresIn(nextRecord[7]);
+                        token.setRedirectURL(redirectURL);
+                        return token;
+                    }
+                }
+                if (!isRowPresent) {
+                    throw new sdk_exception_1.SDKException(constants_1.Constants.TOKEN_STORE, constants_1.Constants.GET_TOKEN_BY_ID_FILE_ERROR);
+                }
+            }
+        }
+        catch (error) {
+            throw new sdk_exception_1.SDKException(constants_1.Constants.TOKEN_STORE, constants_1.Constants.GET_TOKEN_FILE_ERROR, null, error);
+        }
+        return oauth;
     }
 }
 exports.FileStore = FileStore;

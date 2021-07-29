@@ -8,7 +8,7 @@ class Header {
     /**
      * Creates a Header class instance with the specified header name.
      * @param {string} name - A String containing the header name.
-     * @param {string} className - A String containing the class name.
+     * @param {string | null} className - A String containing the class name.
      */
     constructor(name, className) {
         this.name = name;
@@ -23,7 +23,7 @@ class Header {
     }
     /**
      * This is a getter method to get the class name.
-     * @returns A String representing the class name.
+     * @returns {string | undefined | null} A String representing the class name.
      */
     getClassName() {
         return this.className;

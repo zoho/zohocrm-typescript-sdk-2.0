@@ -8,7 +8,7 @@ class Param {
     /**
      * Creates an Param class instance with the specified parameter name.
      * @param {string} name - A String containing the parameter name.
-     * @param {string} className - A String containing the class name.
+     * @param {string | null} className - A String containing the class name.
      */
     constructor(name, className) {
         this.name = name;
@@ -23,7 +23,7 @@ class Param {
     }
     /**
      * This is a getter method to get class name.
-     * @returns {string} A String representing the class name.
+     * @returns {string | undefined | null} A String representing the class name.
      */
     getClassName() {
         return this.className;

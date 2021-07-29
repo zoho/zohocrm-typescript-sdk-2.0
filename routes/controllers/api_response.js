@@ -8,8 +8,8 @@ class APIResponse {
     /**
      * Creates an APIResponse class instance with the specified parameters.
      * @param {Map} headers The map containing the API Response headers
-     * @param {Integer} statusCode The integer containing the API response HTTP status code.
-     * @param {Object} object The object containing the API response class instance.
+     * @param {number} statusCode The integer containing the API response HTTP status code.
+     * @param {Model | null | any} object The object containing the API response class instance.
     */
     constructor(headers, statusCode, object) {
         this.headers = headers;
@@ -18,7 +18,7 @@ class APIResponse {
     }
     /**
      * The method to get the API response HTTP status code.
-     * @returns {Integer} The integer containing the API response HTTP status code.
+     * @returns {number} The integer containing the API response HTTP status code.
     */
     getStatusCode() {
         return this.statusCode;
@@ -32,7 +32,7 @@ class APIResponse {
     }
     /**
      * The method to get the API response class instance.
-     * @returns {Object} The object containing the API response class instance.
+     * @returns {Model | null | any} The object containing the API response class instance.
     */
     getObject() {
         return this.object;

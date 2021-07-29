@@ -1,10 +1,12 @@
 import {ActionHandler} from "./action_handler";
 import {ActionResponse} from "./action_response";
+import {RecordActionHandler} from "./record_action_handler";
+import {RecordResponseHandler} from "./record_response_handler";
 import {ResponseHandler} from "./response_handler";
 import {Choice} from "../../../../../../utils/util/choice";
 import {Model} from "../../../../../../utils/util/model";
 
-class APIException implements Model, ResponseHandler, ActionResponse, ActionHandler{
+class APIException implements Model, ResponseHandler, ActionResponse, ActionHandler, RecordResponseHandler, RecordActionHandler{
 
 	private status: Choice<string>;
 	private code: Choice<string>;

@@ -3,8 +3,10 @@
  */
 export class SDKConfig {
     private autoRefreshFields: boolean;
+
     private pickListValidation: boolean;
-    private _timeout : number = 0;
+
+    private _timeout: number = 0;
 
     /**
      * Creates an instance of SDKConfig with the given parameters
@@ -12,9 +14,11 @@ export class SDKConfig {
      * @param {Boolean} pickListValidation A boolean representing pickListValidation
      * @param {number} timeout A Integer representing timeout
      */
-    constructor(autoRefreshFields: boolean, pickListValidation: boolean, timeout : number) {
+    constructor(autoRefreshFields: boolean, pickListValidation: boolean, timeout: number) {
         this.autoRefreshFields = autoRefreshFields;
+
         this.pickListValidation = pickListValidation;
+
         this._timeout = timeout;
     }
 
@@ -38,7 +42,7 @@ export class SDKConfig {
      *  This is a getter method to get timeout.
      * @returns {number} A Integer representing API timeout
      */
-    public timeout(): number {
+    public getTimeout(): number {
         return this._timeout;
     }
 }

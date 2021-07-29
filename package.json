@@ -1,8 +1,8 @@
 {
     "name": "@zohocrm/typescript-sdk-2.0",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "TypeScript SDK for Zoho CRM",
-    "main": "routes/initializer.ts",
+    "main": "routes/initializer.js",
     "keywords": [
         "Node",
         "Zoho",
@@ -24,7 +24,6 @@
         "winston": "^3.2.1"
     },
     "devDependencies": {
-        "@types/node": "^15.12.5",
         "date": "^1.0.2",
         "string-format": "^2.0.0",
         "utils": "^0.3.1"

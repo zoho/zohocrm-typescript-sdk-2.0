@@ -1,6 +1,6 @@
 export class Constants {
     public static TYPE_VS_DATATYPE = new Map([
-        ["map","[object Map]"],
+        ["map", "[object Map]"],
         ["hashmap", "[object Map]"],
         ["string", "[object String]"],
         ["list", "[object Array]"],
@@ -12,6 +12,7 @@ export class Constants {
         ["datetime", "[object Date]"],
         ["date", "[object Date]"]
     ]);
+
     public static SPECIAL_TYPES = new Map([
         ["DateTime", "Date"],
         ["Date", "Date"],
@@ -38,7 +39,7 @@ export class Constants {
 
     public static CLIENT_SECRET = "client_secret";
 
-    public static REDIRECT_URL = "redirect_uri";
+    public static REDIRECT_URL = "redirect_url";
 
     public static REQUEST_METHOD_POST = "POST";
 
@@ -60,13 +61,13 @@ export class Constants {
 
     public static ZOHO_SDK = "X-ZOHO-SDK";
 
-    public static SDK_VERSION = "1.0.0";
+    public static SDK_VERSION = "2.0.0";
 
     public static MYSQL_HOST = "localhost";
 
-	public static MYSQL_DATABASE_NAME = "zohooauth";
+    public static MYSQL_DATABASE_NAME = "zohooauth";
 
-	public static MYSQL_USER_NAME = "root";
+    public static MYSQL_USER_NAME = "root";
 
     public static MYSQL_PORT_NUMBER = 3306;
 
@@ -76,7 +77,7 @@ export class Constants {
 
     public static DELETE_TOKEN_DB_ERROR = "Exception in deleteToken - DBStore : ";
 
-	public static DELETE_TOKENS_DB_ERROR = "Exception in deleteTokens - DBStore : ";
+    public static DELETE_TOKENS_DB_ERROR = "Exception in deleteTokens - DBStore : ";
 
     public static SAVE_TOKEN_DB_ERROR = "Exception in saveToken - DBStore : ";
 
@@ -336,7 +337,7 @@ export class Constants {
 
     public static PRODUCT_DETAILS = "Product_Details";
 
-	public static PRICING_DETAILS = "Pricing_Details";
+    public static PRICING_DETAILS = "Pricing_Details";
 
     public static PARTICIPANT_API_NAME = "Participants";
 
@@ -350,7 +351,7 @@ export class Constants {
 
     public static ATTACHMENTS = "$attachments";
 
-    public static INVENTORY_MODULES = ["invoices", "sales_orders","purchase_orders","quotes"];
+    public static INVENTORY_MODULES = ["invoices", "sales_orders", "purchase_orders", "quotes"];
 
     public static PRICE_BOOKS = "price_books";
 
@@ -366,7 +367,7 @@ export class Constants {
 
     public static SUBFORM = "subform";
 
-	public static LOOKUP = "lookup";
+    public static LOOKUP = "lookup";
 
     public static SE_MODULE = "se_module";
 
@@ -390,9 +391,9 @@ export class Constants {
 
     public static SET_API_URL_EXCEPTION = "Exception in setting API URL : ";
 
-	public static AUTHENTICATION_EXCEPTION = "Exception in authenticating current request : ";
+    public static AUTHENTICATION_EXCEPTION = "Exception in authenticating current request : ";
 
-	public static FORM_REQUEST_EXCEPTION = "Exception in forming request body : ";
+    public static FORM_REQUEST_EXCEPTION = "Exception in forming request body : ";
 
     public static API_CALL_EXCEPTION = "Exception in current API call execution : ";
 
@@ -408,7 +409,7 @@ export class Constants {
 
     public static FILE_BODY_WRAPPER = "file_body_wrapper";
 
-    public static USER_NOT_FOUND_ERROR_MESSAGE  = "Given user not found in SDK configuration details";
+    public static USER_NOT_FOUND_ERROR_MESSAGE = "Given user not found in SDK configuration details";
 
     public static USER_NOT_FOUND_ERROR = "USER NOT FOUND ERROR";
 
@@ -432,17 +433,17 @@ export class Constants {
 
     public static URL = "URL";
 
-	public static HEADERS = "HEADERS";
+    public static HEADERS = "HEADERS";
 
     public static PARAMS = "PARAMS";
 
     public static REQUEST_METHOD = "REQUEST-METHOD";
 
-	public static RELATED_LISTS = "Related_Lists";
+    public static RELATED_LISTS = "Related_Lists";
 
-	public static API_NAME = "api_name";
+    public static API_NAME = "api_name";
 
-	public static HREF = "href";
+    public static HREF = "href";
 
     public static NO_CONTENT_STATUS_CODE = 204;
 
@@ -520,9 +521,9 @@ export class Constants {
 
     public static PROXY_SETTINGS = "Proxy settings - ";
 
-	public static PROXY_HOST = "Host: ";
+    public static PROXY_HOST = "Host: ";
 
-	public static PROXY_PORT = "Port: ";
+    public static PROXY_PORT = "Port: ";
 
     public static PROXY_USER = "User: ";
 
@@ -545,4 +546,82 @@ export class Constants {
     public static SDK_NAME = "typescript-2.0";
 
     public static RESOURCE_PATH_INVALID_ERROR_MESSAGE = "Resource Path MUST be a valid directory.";
+
+    public static MYSQL_TABLE_NAME = "oauthtoken";
+
+    public static USER_MAIL_NULL_ERROR = "USER MAIL NULL ERROR";
+
+    public static USER_MAIL_NULL_ERROR_MESSAGE = "User Mail MUST NOT be null. Use userMail setter to set value.";
+
+    public static GET_TOKEN_BY_ID_FILE_ERROR = "Exception in getTokenById - FileStore : Given ID is invalid";
+
+    public static CLIENT_ID_NULL_ERROR_MESSAGE = "ClientID MUST NOT be null";
+
+    public static CLIENT_SECRET_NULL_ERROR_MESSAGE = "ClientSecret MUST NOT be null";
+
+    public static OAUTH_MANDATORY_KEYS = ["grantToken", "refreshToken", "id"];
+
+    public static REDIRECT_URI = "redirect_uri";
+
+    public static INVALID_TOKEN_ERROR = "INVALID TOKEN ERROR";
+
+    public static NO_ACCESS_TOKEN_ERROR = "ACCESS TOKEN IS NOT PRESENT IN RESPONSE";
+
+    public static GET_TOKEN_BY_ID_DB_ERROR = "Exception in getTokenById - DBStore : Given ID is invalid";
+
+    public static USERSIGNATURE_ERROR_MESSAGE = "UserSignature MUST NOT be null.";
+
+    public static ENVIRONMENT_ERROR_MESSAGE = "Environment MUST NOT be null.";
+
+    public static TOKEN_ERROR_MESSAGE = "Token MUST NOT be null.";
+
+    public static STORE_ERROR_MESSAGE = "Store MUST NOT be null.";
+
+    public static SDK_CONFIG_ERROR_MESSAGE = "sdkConfig MUST NOT be null.";
+
+    public static REQUEST_PROXY_ERROR = "REQUEST_PROXY ERROR";
+
+    public static FLOAT_NAMESPACE = 'Float';
+
+    public static OBJECT_NAMESPACE = 'Object';
+
+    public static DEFAULT_MODULENAME_VS_APINAME = new Map([
+        ["leads", "Leads"],
+        ["contacts", "Contacts"],
+        ["accounts", "Accounts"],
+        ["deals", "Deals"],
+        ["tasks", "Tasks"],
+        ["events", "Events"],
+        ["activities", "Activities"],
+        ["calls", "Calls"],
+        ["products", "Products"],
+        ["quotes", "Quotes"],
+        ["sales_orders", "Sales_Orders"],
+        ["purchase_orders", "Purchase_Orders"],
+        ["invoices", "Invoices"],
+        ["campaigns", "Campaigns"],
+        ["vendors", "Vendors"],
+        ["price_books", "Price_Books"],
+        ["cases", "Cases"],
+        ["solutions", "Solutions"],
+        ["visits", "Visits"],
+        ["approvals", "Approvals"],
+        ["notes", "Notes"],
+        ["attachments", "Attachments"],
+        ["actions_performed", "Actions_Performed"]
+    ]);
+
+    public static SDK_MODULE_METADATA = "SDK-MODULE-METADATA";
+
+    public static SKIP_MODULES = ["deals"];
+
+    public static PHOTO_SUPPORTED_MODULES = ["leads", "contacts", "accounts", "products", "vendors"];
+
+    public static GENERATED_TYPE = "generated_type";
+
+    public static GENERATED_TYPE_CUSTOM = "custom";
+
+    public static UPLOAD_PHOTO_UNSUPPORTED_ERROR = "UPLOAD PHOTO UNSUPPORTED MODULE";
+
+    static UPLOAD_PHOTO_UNSUPPORTED_MESSAGE = "Photo Upload Operation is not supported by the module: ";
 }

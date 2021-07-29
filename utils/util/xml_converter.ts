@@ -1,6 +1,6 @@
 import { Converter } from "./converter";
 
-class XMLConverter extends Converter{
+class XMLConverter extends Converter {
     public getResponse(response: object, pack: string): Promise<object> {
         throw new Error("Method not implemented.");
     }

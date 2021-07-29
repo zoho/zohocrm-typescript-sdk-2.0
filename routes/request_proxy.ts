@@ -1,8 +1,11 @@
 class RequestProxy {
-    private host: string;
-    private port: number;
-    private user?: string;
-    private password?: string;
+    private _host: string;
+
+    private _port: number;
+
+    private _user?: string;
+
+    private _password?: string;
 
     /**
      * Creates a RequestProxy class instance with the specified parameters.
@@ -12,10 +15,13 @@ class RequestProxy {
      * @param {String} password A String containing the password of the proxy server
      */
     constructor(host: string, port: number, user?: string, password?: string) {
-        this.host = host;
-        this.port = port;
-        this.user = user;
-        this.password = password;
+        this._host = host;
+
+        this._port = port;
+
+        this._user = user;
+
+        this._password = password;
     }
 
     /**
@@ -23,7 +29,7 @@ class RequestProxy {
      * @returns {String}
      */
     public getHost(): string {
-        return this.host;
+        return this._host;
     }
 
     /**
@@ -31,23 +37,23 @@ class RequestProxy {
      * @returns {Number}
      */
     public getPort(): number {
-        return this.port;
+        return this._port;
     }
 
     /**
-	 * This is a getter method to get the Proxy user name.
-	 * @returns {String}
-	 */
-    public getUser() : string | undefined {
-        return this.user;
+     * This is a getter method to get the Proxy user name.
+     * @returns {String}
+     */
+    public getUser(): string | undefined {
+        return this._user;
     }
 
     /**
      * This is a getter method to get the Proxy password.
      * @returns {String}
      */
-    public getPassword() : string | undefined {
-        return this.password;
+    public getPassword(): string | undefined {
+        return this._password;
     }
 }
 

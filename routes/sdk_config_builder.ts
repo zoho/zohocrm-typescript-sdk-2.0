@@ -1,17 +1,20 @@
 import { SDKConfig } from './sdk_config'
 
 class SDKConfigBuilder {
-    private autoRefreshFields: boolean = false;
-    private pickListValidation: boolean = true;
-    private _timeout : number = 0;
+    private _autoRefreshFields: boolean = false;
+
+    private _pickListValidation: boolean = true;
+
+    private _timeout: number = 0;
 
     /**
      * This is a setter method to set autoRefreshFields.
      * @param {Boolean} autoRefreshFields A boolean value
      * @returns {SDKConfigBuilder} An instance of SDKConfigBuilder
      */
-    public setAutoRefreshFields(autoRefreshFields: boolean): SDKConfigBuilder{
-        this.autoRefreshFields = autoRefreshFields;
+    public autoRefreshFields(autoRefreshFields: boolean): SDKConfigBuilder {
+        this._autoRefreshFields = autoRefreshFields;
+
         return this;
     }
 
@@ -20,8 +23,9 @@ class SDKConfigBuilder {
      * @param {Boolean} pickListValidation A boolean value
      * @returns {SDKConfigBuilder} An instance of SDKConfigBuilder
      */
-    public setPickListValidation(pickListValidation: boolean): SDKConfigBuilder {
-        this.pickListValidation = pickListValidation;
+    public pickListValidation(pickListValidation: boolean): SDKConfigBuilder {
+        this._pickListValidation = pickListValidation;
+
         return this;
     }
 
@@ -30,7 +34,7 @@ class SDKConfigBuilder {
      * @param {number} timeout
      * @returns {SDKConfigBuilder} An instance of SDKConfigBuilder
      */
-    public timeout(timeout: number) {
+    public timeout(timeout: number): SDKConfigBuilder {
 
         this._timeout = timeout > 0 ? timeout : 0;
 
@@ -42,7 +46,7 @@ class SDKConfigBuilder {
      * @returns {SDKConfig} An instance of SDKConfig
      */
     public build(): SDKConfig {
-        return new SDKConfig(this.autoRefreshFields, this.pickListValidation, this._timeout);
+        return new SDKConfig(this._autoRefreshFields, this._pickListValidation, this._timeout);
     }
 }
 

@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HeaderMap = exports.MasterModel = void 0;
 const header_param_validator_1 = require("../utils/util/header_param_validator");
@@ -33,34 +24,32 @@ class HeaderMap {
      * @param {object} value - An object containing the header value.
      * @throws {SDKException}
      */
-    add(header, value) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (header == null || header == undefined) {
-                throw new sdk_exception_1.SDKException(constants_1.Constants.HEADER_NULL_ERROR, constants_1.Constants.HEADER_INSTANCE_NULL_ERROR);
+    async add(header, value) {
+        if (header == null || header == undefined) {
+            throw new sdk_exception_1.SDKException(constants_1.Constants.HEADER_NULL_ERROR, constants_1.Constants.HEADER_INSTANCE_NULL_ERROR);
+        }
+        let headerName = header.getName();
+        if (headerName == null || headerName == undefined) {
+            throw new sdk_exception_1.SDKException(constants_1.Constants.HEADER_NAME_NULL_ERROR, constants_1.Constants.HEADER_NAME_NULL_ERROR_MESSAGE);
+        }
+        if (value == null) {
+            throw new sdk_exception_1.SDKException(constants_1.Constants.HEADER_NULL_ERROR, headerName + constants_1.Constants.NULL_VALUE_ERROR_MESSAGE);
+        }
+        let headerClassName = header.getClassName();
+        let parsedHeaderValue;
+        if (headerClassName !== undefined && headerClassName != null) {
+            parsedHeaderValue = await new header_param_validator_1.HeaderParamValidator().validate(header, value);
+        }
+        if (this.headerMap.has(headerName) && this.headerMap.get(headerName) != null) {
+            let headerValue = this.headerMap.get(headerName);
+            if (headerValue !== undefined) {
+                headerValue = headerValue.concat(",", parsedHeaderValue.toString());
+                this.headerMap.set(headerName, headerValue);
             }
-            let headerName = header.getName();
-            if (headerName == null || headerName == undefined) {
-                throw new sdk_exception_1.SDKException(constants_1.Constants.HEADER_NAME_NULL_ERROR, constants_1.Constants.HEADER_NAME_NULL_ERROR_MESSAGE);
-            }
-            if (value == null) {
-                throw new sdk_exception_1.SDKException(constants_1.Constants.HEADER_NULL_ERROR, headerName + constants_1.Constants.NULL_VALUE_ERROR_MESSAGE);
-            }
-            let headerClassName = header.getClassName();
-            let headerValue;
-            if (headerClassName !== undefined) {
-                headerValue = yield new header_param_validator_1.HeaderParamValidator().validate(header, value);
-            }
-            if (this.headerMap.has(headerName) && this.headerMap.get(headerName) != null) {
-                let existingHeaderValue = this.headerMap.get(headerName);
-                if (existingHeaderValue !== undefined) {
-                    headerValue = existingHeaderValue.concat(",", headerValue.toString());
-                    this.headerMap.set(headerName, headerValue);
-                }
-            }
-            else {
-                this.headerMap.set(headerName, headerValue.toString());
-            }
-        });
+        }
+        else {
+            this.headerMap.set(headerName, parsedHeaderValue.toString());
+        }
     }
 }
 exports.MasterModel = HeaderMap;

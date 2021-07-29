@@ -1,4 +1,5 @@
 import { DataCenter } from './data_center'
+
 import { Environment } from './environment';
 
 /**
@@ -7,22 +8,24 @@ import { Environment } from './environment';
  */
 export class EUDataCenter extends DataCenter {
 
-    private static PRODUCTION_ENVIRONMENT :Environment;
+    private static _PRODUCTION: Environment;
 
-    private static SANDBOX_ENVIRONMENT :Environment;
+    private static _SANDBOX: Environment;
 
-    private static DEVELOPER_ENVIRONMENT :Environment;
+    private static _DEVELOPER: Environment;
+
+    private static EU: EUDataCenter = new EUDataCenter();
 
     /**
      * This method represents the Zoho CRM Production environment in EU domain
      * @returns {Environment} An instance of Environment
      */
     public static PRODUCTION(): Environment {
-        if(this.PRODUCTION_ENVIRONMENT == null) {
-            this.PRODUCTION_ENVIRONMENT = DataCenter.setEnvironment("https://www.zohoapis.eu", new EUDataCenter().getIAMUrl(), new EUDataCenter().getFileUploadUrl());
+        if (this._PRODUCTION == null) {
+            this._PRODUCTION = DataCenter.setEnvironment("https://www.zohoapis.eu", this.EU.getIAMUrl(), this.EU.getFileUploadUrl(), "eu_prd");
         }
 
-        return this.PRODUCTION_ENVIRONMENT;
+        return this._PRODUCTION;
     }
 
     /**
@@ -30,11 +33,11 @@ export class EUDataCenter extends DataCenter {
      * @returns {Environment} An instance of Environment
      */
     public static SANDBOX(): Environment {
-        if(this.SANDBOX_ENVIRONMENT == null) {
-            this.SANDBOX_ENVIRONMENT = DataCenter.setEnvironment("https://sandbox.zohoapis.eu", new EUDataCenter().getIAMUrl(), new EUDataCenter().getFileUploadUrl());
+        if (this._SANDBOX == null) {
+            this._SANDBOX = DataCenter.setEnvironment("https://sandbox.zohoapis.eu", this.EU.getIAMUrl(), this.EU.getFileUploadUrl(), "eu_sdb");
         }
 
-        return this.SANDBOX_ENVIRONMENT;
+        return this._SANDBOX;
     }
 
     /**
@@ -42,18 +45,18 @@ export class EUDataCenter extends DataCenter {
      * @returns {Environment} An instance of Environment
      */
     public static DEVELOPER(): Environment {
-        if(this.DEVELOPER_ENVIRONMENT == null) {
-            this.DEVELOPER_ENVIRONMENT = DataCenter.setEnvironment("https://developer.zohoapis.eu", new EUDataCenter().getIAMUrl(), new EUDataCenter().getFileUploadUrl());
+        if (this._DEVELOPER == null) {
+            this._DEVELOPER = DataCenter.setEnvironment("https://developer.zohoapis.eu", this.EU.getIAMUrl(), this.EU.getFileUploadUrl(), "eu_dev");
         }
 
-        return this.DEVELOPER_ENVIRONMENT;
+        return this._DEVELOPER;
     }
 
     public getIAMUrl() {
         return "https://accounts.zoho.eu/oauth/v2/token";
     }
 
-    public getFileUploadUrl(){
+    public getFileUploadUrl() {
         return "https://content.zohoapis.eu";
     }
 }

@@ -12,30 +12,30 @@ class AUDataCenter extends data_center_1.DataCenter {
      * @returns {Environment} An instance of Environment
     */
     static PRODUCTION() {
-        if (this.PRODUCTION_ENVIRONMENT == null) {
-            this.PRODUCTION_ENVIRONMENT = data_center_1.DataCenter.setEnvironment("https://www.zohoapis.com.au", new AUDataCenter().getIAMUrl(), new AUDataCenter().getFileUploadUrl());
+        if (this._PRODUCTION == null) {
+            this._PRODUCTION = data_center_1.DataCenter.setEnvironment("https://www.zohoapis.com.au", this.AU.getIAMUrl(), this.AU.getFileUploadUrl(), "au_prd");
         }
-        return this.PRODUCTION_ENVIRONMENT;
+        return this._PRODUCTION;
     }
     /**
      * This method represents the Zoho CRM Sandbox environment in AU domain
      * @returns {Environment} An instance of Environment
     */
     static SANDBOX() {
-        if (this.SANDBOX_ENVIRONMENT == null) {
-            this.SANDBOX_ENVIRONMENT = data_center_1.DataCenter.setEnvironment("https://sandbox.zohoapis.com.au", new AUDataCenter().getIAMUrl(), new AUDataCenter().getFileUploadUrl());
+        if (this._SANDBOX == null) {
+            this._SANDBOX = data_center_1.DataCenter.setEnvironment("https://sandbox.zohoapis.com.au", this.AU.getIAMUrl(), this.AU.getFileUploadUrl(), "au_sdb");
         }
-        return this.SANDBOX_ENVIRONMENT;
+        return this._SANDBOX;
     }
     /**
      * This method represents the Zoho CRM Developer environment in AU domain
      * @returns {Environment} An instance of Environment
     */
     static DEVELOPER() {
-        if (this.DEVELOPER_ENVIRONMENT == null) {
-            this.DEVELOPER_ENVIRONMENT = data_center_1.DataCenter.setEnvironment("https://developer.zohoapis.com.au", new AUDataCenter().getIAMUrl(), new AUDataCenter().getFileUploadUrl());
+        if (this._DEVELOPER == null) {
+            this._DEVELOPER = data_center_1.DataCenter.setEnvironment("https://developer.zohoapis.com.au", this.AU.getIAMUrl(), this.AU.getFileUploadUrl(), "au_dev");
         }
-        return this.DEVELOPER_ENVIRONMENT;
+        return this._DEVELOPER;
     }
     getIAMUrl() {
         return "https://accounts.zoho.com.au/oauth/v2/token";
@@ -45,4 +45,5 @@ class AUDataCenter extends data_center_1.DataCenter {
     }
 }
 exports.AUDataCenter = AUDataCenter;
+AUDataCenter.AU = new AUDataCenter();
 //# sourceMappingURL=au_data_center.js.map

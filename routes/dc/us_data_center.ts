@@ -1,4 +1,5 @@
 import { DataCenter } from './data_center'
+
 import { Environment } from './environment';
 
 /**
@@ -6,22 +7,24 @@ import { Environment } from './environment';
  */
 export class USDataCenter extends DataCenter {
 
-    private static PRODUCTION_ENVIRONMENT :Environment;
+    private static _PRODUCTION: Environment;
 
-    private static SANDBOX_ENVIRONMENT :Environment;
+    private static _SANDBOX: Environment;
 
-    private static DEVELOPER_ENVIRONMENT :Environment;
+    private static _DEVELOPER: Environment;
+
+    static US: USDataCenter = new USDataCenter();
 
     /**
      * This method represents the Zoho CRM Production environment in US domain
      * @returns {Environment} An instance of Environment
      */
     public static PRODUCTION(): Environment {
-        if(this.PRODUCTION_ENVIRONMENT == null) {
-            this.PRODUCTION_ENVIRONMENT = DataCenter.setEnvironment("https://www.zohoapis.com", new USDataCenter().getIAMUrl(), new USDataCenter().getFileUploadUrl());
+        if (this._PRODUCTION == null) {
+            this._PRODUCTION = DataCenter.setEnvironment("https://www.zohoapis.com", this.US.getIAMUrl(), this.US.getFileUploadUrl(), "us_prd");
         }
 
-        return this.PRODUCTION_ENVIRONMENT;
+        return this._PRODUCTION;
     }
 
     /**
@@ -29,11 +32,11 @@ export class USDataCenter extends DataCenter {
      * @returns {Environment} An instance of Environment
      */
     public static SANDBOX(): Environment {
-        if(this.SANDBOX_ENVIRONMENT == null) {
-            this.SANDBOX_ENVIRONMENT = DataCenter.setEnvironment("https://sandbox.zohoapis.com", new USDataCenter().getIAMUrl(), new USDataCenter().getFileUploadUrl());
+        if (this._SANDBOX == null) {
+            this._SANDBOX = DataCenter.setEnvironment("https://sandbox.zohoapis.com", this.US.getIAMUrl(), this.US.getFileUploadUrl(), "us_sdb");
         }
 
-        return this.SANDBOX_ENVIRONMENT;
+        return this._SANDBOX;
     }
 
     /**
@@ -41,18 +44,18 @@ export class USDataCenter extends DataCenter {
      * @returns {Environment} An instance of Environment
      */
     public static DEVELOPER(): Environment {
-        if(this.DEVELOPER_ENVIRONMENT == null) {
-            this.DEVELOPER_ENVIRONMENT = DataCenter.setEnvironment("https://developer.zohoapis.com", new USDataCenter().getIAMUrl(), new USDataCenter().getFileUploadUrl());
+        if (this._DEVELOPER == null) {
+            this._DEVELOPER = DataCenter.setEnvironment("https://developer.zohoapis.com", this.US.getIAMUrl(), this.US.getFileUploadUrl(), "us_dev");
         }
 
-        return this.DEVELOPER_ENVIRONMENT;
+        return this._DEVELOPER;
     }
 
     public getIAMUrl() {
         return "https://accounts.zoho.com/oauth/v2/token";
     }
 
-    public getFileUploadUrl(){
+    public getFileUploadUrl() {
         return "https://content.zohoapis.com";
     }
 }

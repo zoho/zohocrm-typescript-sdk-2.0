@@ -10,38 +10,38 @@ class RequestProxy {
      * @param {String} password A String containing the password of the proxy server
      */
     constructor(host, port, user, password) {
-        this.host = host;
-        this.port = port;
-        this.user = user;
-        this.password = password;
+        this._host = host;
+        this._port = port;
+        this._user = user;
+        this._password = password;
     }
     /**
      * This is a getter method to get Proxy host.
      * @returns {String}
      */
     getHost() {
-        return this.host;
+        return this._host;
     }
     /**
      * This is a getter method to get the Proxy port.
      * @returns {Number}
      */
     getPort() {
-        return this.port;
+        return this._port;
     }
     /**
      * This is a getter method to get the Proxy user name.
      * @returns {String}
      */
     getUser() {
-        return this.user;
+        return this._user;
     }
     /**
      * This is a getter method to get the Proxy password.
      * @returns {String}
      */
     getPassword() {
-        return this.password;
+        return this._password;
     }
 }
 exports.MasterModel = RequestProxy;

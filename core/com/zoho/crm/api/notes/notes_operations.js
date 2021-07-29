@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DeleteNotesParam = exports.NotesOperations = exports.MasterModel = exports.GetNotesParam = exports.GetNoteHeader = exports.GetNoteParam = exports.GetNotesHeader = void 0;
 const header_1 = require("../../../../../../routes/header");
@@ -22,19 +13,17 @@ class NotesOperations {
      * @returns An instance of APIResponse<ResponseHandler>
      * @throws SDKException
      */
-    getNotes(paramInstance, headerInstance) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/Notes");
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_GET);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_READ);
-            handlerInstance.setParam(paramInstance);
-            handlerInstance.setHeader(headerInstance);
-            let ResponseHandler = require.resolve("./response_handler");
-            return handlerInstance.apiCall(ResponseHandler, "application/json");
-        });
+    async getNotes(paramInstance, headerInstance) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/Notes");
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_GET);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_READ);
+        handlerInstance.setParam(paramInstance);
+        handlerInstance.setHeader(headerInstance);
+        let ResponseHandler = require.resolve("./response_handler");
+        return handlerInstance.apiCall(ResponseHandler, "application/json");
     }
     /**
      * The method to create notes
@@ -42,20 +31,18 @@ class NotesOperations {
      * @returns An instance of APIResponse<ActionHandler>
      * @throws SDKException
      */
-    createNotes(request) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/Notes");
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_POST);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_CREATE);
-            handlerInstance.setContentType("application/json");
-            handlerInstance.setRequest(request);
-            handlerInstance.setMandatoryChecker(true);
-            let ActionHandler = require.resolve("./action_handler");
-            return handlerInstance.apiCall(ActionHandler, "application/json");
-        });
+    async createNotes(request) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/Notes");
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_POST);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_CREATE);
+        handlerInstance.setContentType("application/json");
+        handlerInstance.setRequest(request);
+        handlerInstance.setMandatoryChecker(true);
+        let ActionHandler = require.resolve("./action_handler");
+        return handlerInstance.apiCall(ActionHandler, "application/json");
     }
     /**
      * The method to update notes
@@ -63,20 +50,18 @@ class NotesOperations {
      * @returns An instance of APIResponse<ActionHandler>
      * @throws SDKException
      */
-    updateNotes(request) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/Notes");
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_PUT);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_UPDATE);
-            handlerInstance.setContentType("application/json");
-            handlerInstance.setRequest(request);
-            handlerInstance.setMandatoryChecker(true);
-            let ActionHandler = require.resolve("./action_handler");
-            return handlerInstance.apiCall(ActionHandler, "application/json");
-        });
+    async updateNotes(request) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/Notes");
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_PUT);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_UPDATE);
+        handlerInstance.setContentType("application/json");
+        handlerInstance.setRequest(request);
+        handlerInstance.setMandatoryChecker(true);
+        let ActionHandler = require.resolve("./action_handler");
+        return handlerInstance.apiCall(ActionHandler, "application/json");
     }
     /**
      * The method to delete notes
@@ -84,18 +69,16 @@ class NotesOperations {
      * @returns An instance of APIResponse<ActionHandler>
      * @throws SDKException
      */
-    deleteNotes(paramInstance) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/Notes");
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_DELETE);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_METHOD_DELETE);
-            handlerInstance.setParam(paramInstance);
-            let ActionHandler = require.resolve("./action_handler");
-            return handlerInstance.apiCall(ActionHandler, "application/json");
-        });
+    async deleteNotes(paramInstance) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/Notes");
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_DELETE);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_METHOD_DELETE);
+        handlerInstance.setParam(paramInstance);
+        let ActionHandler = require.resolve("./action_handler");
+        return handlerInstance.apiCall(ActionHandler, "application/json");
     }
     /**
      * The method to get note
@@ -105,20 +88,18 @@ class NotesOperations {
      * @returns An instance of APIResponse<ResponseHandler>
      * @throws SDKException
      */
-    getNote(id, paramInstance, headerInstance) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/Notes/");
-            apiPath = apiPath.concat(id.toString());
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_GET);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_READ);
-            handlerInstance.setParam(paramInstance);
-            handlerInstance.setHeader(headerInstance);
-            let ResponseHandler = require.resolve("./response_handler");
-            return handlerInstance.apiCall(ResponseHandler, "application/json");
-        });
+    async getNote(id, paramInstance, headerInstance) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/Notes/");
+        apiPath = apiPath.concat(id.toString());
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_GET);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_READ);
+        handlerInstance.setParam(paramInstance);
+        handlerInstance.setHeader(headerInstance);
+        let ResponseHandler = require.resolve("./response_handler");
+        return handlerInstance.apiCall(ResponseHandler, "application/json");
     }
     /**
      * The method to update note
@@ -127,20 +108,18 @@ class NotesOperations {
      * @returns An instance of APIResponse<ActionHandler>
      * @throws SDKException
      */
-    updateNote(id, request) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/Notes/");
-            apiPath = apiPath.concat(id.toString());
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_PUT);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_UPDATE);
-            handlerInstance.setContentType("application/json");
-            handlerInstance.setRequest(request);
-            let ActionHandler = require.resolve("./action_handler");
-            return handlerInstance.apiCall(ActionHandler, "application/json");
-        });
+    async updateNote(id, request) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/Notes/");
+        apiPath = apiPath.concat(id.toString());
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_PUT);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_UPDATE);
+        handlerInstance.setContentType("application/json");
+        handlerInstance.setRequest(request);
+        let ActionHandler = require.resolve("./action_handler");
+        return handlerInstance.apiCall(ActionHandler, "application/json");
     }
     /**
      * The method to delete note
@@ -148,18 +127,16 @@ class NotesOperations {
      * @returns An instance of APIResponse<ActionHandler>
      * @throws SDKException
      */
-    deleteNote(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let handlerInstance = new common_api_handler_1.CommonAPIHandler();
-            let apiPath = '';
-            apiPath = apiPath.concat("/crm/v2/Notes/");
-            apiPath = apiPath.concat(id.toString());
-            handlerInstance.setAPIPath(apiPath);
-            handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_DELETE);
-            handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_METHOD_DELETE);
-            let ActionHandler = require.resolve("./action_handler");
-            return handlerInstance.apiCall(ActionHandler, "application/json");
-        });
+    async deleteNote(id) {
+        let handlerInstance = new common_api_handler_1.CommonAPIHandler();
+        let apiPath = '';
+        apiPath = apiPath.concat("/crm/v2/Notes/");
+        apiPath = apiPath.concat(id.toString());
+        handlerInstance.setAPIPath(apiPath);
+        handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_DELETE);
+        handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_METHOD_DELETE);
+        let ActionHandler = require.resolve("./action_handler");
+        return handlerInstance.apiCall(ActionHandler, "application/json");
     }
 }
 exports.MasterModel = NotesOperations;

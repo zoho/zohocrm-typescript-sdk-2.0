@@ -4,8 +4,8 @@ exports.SDKConfigBuilder = exports.MasterModel = void 0;
 const sdk_config_1 = require("./sdk_config");
 class SDKConfigBuilder {
     constructor() {
-        this.autoRefreshFields = false;
-        this.pickListValidation = true;
+        this._autoRefreshFields = false;
+        this._pickListValidation = true;
         this._timeout = 0;
     }
     /**
@@ -13,8 +13,8 @@ class SDKConfigBuilder {
      * @param {Boolean} autoRefreshFields A boolean value
      * @returns {SDKConfigBuilder} An instance of SDKConfigBuilder
      */
-    setAutoRefreshFields(autoRefreshFields) {
-        this.autoRefreshFields = autoRefreshFields;
+    autoRefreshFields(autoRefreshFields) {
+        this._autoRefreshFields = autoRefreshFields;
         return this;
     }
     /**
@@ -22,8 +22,8 @@ class SDKConfigBuilder {
      * @param {Boolean} pickListValidation A boolean value
      * @returns {SDKConfigBuilder} An instance of SDKConfigBuilder
      */
-    setPickListValidation(pickListValidation) {
-        this.pickListValidation = pickListValidation;
+    pickListValidation(pickListValidation) {
+        this._pickListValidation = pickListValidation;
         return this;
     }
     /**
@@ -40,7 +40,7 @@ class SDKConfigBuilder {
      * @returns {SDKConfig} An instance of SDKConfig
      */
     build() {
-        return new sdk_config_1.SDKConfig(this.autoRefreshFields, this.pickListValidation, this._timeout);
+        return new sdk_config_1.SDKConfig(this._autoRefreshFields, this._pickListValidation, this._timeout);
     }
 }
 exports.MasterModel = SDKConfigBuilder;

@@ -1,6 +1,9 @@
 import { HeaderParamValidator } from '../utils/util/header_param_validator';
+
 import { Param} from './param';
+
 import { SDKException } from "../core/com/zoho/crm/api/exception/sdk_exception";
+
 import { Constants} from '../utils/util/constants';
 
 /**
@@ -39,21 +42,24 @@ class ParameterMap {
 		}
 
         let paramClassName = param.getClassName();
-        let paramValue: any;
 
-        if(paramClassName !==  undefined) {
-            paramValue = await new HeaderParamValidator().validate(param, value);
+        let parsedParamValue: any;
+
+        if(paramClassName !==  undefined && paramClassName !== null) {
+            parsedParamValue = await new HeaderParamValidator().validate(param, value);
         }
 
         if(this.parameterMap.has(paramName) && this.parameterMap.get(paramName)!= null) {
-            let existingParamValue = this.parameterMap.get(paramName);
-            if(existingParamValue !== undefined){
-                paramValue = existingParamValue.concat(",", paramValue.toString());
+            let paramValue = this.parameterMap.get(paramName);
+            
+            if(paramValue !== undefined){
+                paramValue = paramValue.concat(",", parsedParamValue.toString());
+                
                 this.parameterMap.set(paramName, paramValue);
             }
 		}
 		else {
-			this.parameterMap.set(paramName, paramValue.toString());
+			this.parameterMap.set(paramName, parsedParamValue.toString());
 		}
     }
 }

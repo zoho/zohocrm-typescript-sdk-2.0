@@ -25,13 +25,6 @@ const winston = __importStar(require("winston"));
  * The class to initialize the SDK logger.
  */
 class SDKLogger {
-    /**
-     * The method to initialize SDKLogger
-     * @param {Logger} logInstance A Logger class instance
-     */
-    static initialize(loggerInstance) {
-        return new SDKLogger(loggerInstance);
-    }
     constructor(loggerInstance) {
         winston.configure({
             level: loggerInstance.getLevel(),
@@ -42,6 +35,13 @@ class SDKLogger {
                 })
             ]
         });
+    }
+    /**
+     * The method to initialize SDKLogger
+     * @param {Logger} logInstance A Logger class instance
+     */
+    static initialize(loggerInstance) {
+        return new SDKLogger(loggerInstance);
     }
 }
 exports.SDKLogger = SDKLogger;

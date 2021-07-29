@@ -49,15 +49,15 @@ class DataTypeConverter {
         var postObject = (obj) => {
             return this.postConvertObjectData(obj);
         };
-        this.addToMap("String", string, string);
-        this.addToMap("Integer", integer, integer);
-        this.addToMap("Long", long, longToString);
-        this.addToMap("Boolean", bool, bool);
-        this.addToMap("Date", stringToDate, dateToString);
-        this.addToMap("DateTime", stringToDateTime, dateTimeToString);
-        this.addToMap("Double", double, double);
-        this.addToMap("Float", double, double);
-        this.addToMap("Object", preObject, postObject);
+        this.addToMap(constants_1.Constants.STRING_NAMESPACE, string, string);
+        this.addToMap(constants_1.Constants.INTEGER_NAMESPACE, integer, integer);
+        this.addToMap(constants_1.Constants.LONG_NAMESPACE, long, longToString);
+        this.addToMap(constants_1.Constants.BOOLEAN_NAMESPACE, bool, bool);
+        this.addToMap(constants_1.Constants.DATE_NAMESPACE, stringToDate, dateToString);
+        this.addToMap(constants_1.Constants.DATETIME_NAMESPACE, stringToDateTime, dateTimeToString);
+        this.addToMap(constants_1.Constants.DOUBLE_NAMESPACE, double, double);
+        this.addToMap(constants_1.Constants.FLOAT_NAMESPACE, double, double);
+        this.addToMap(constants_1.Constants.OBJECT_NAMESPACE, preObject, postObject);
     }
     static preConvertObjectData(obj) {
         return obj;
@@ -68,10 +68,10 @@ class DataTypeConverter {
             for (let data of obj) {
                 if (data instanceof Date) {
                     if (data.getHours() == 0 && data.getMinutes() == 0 && data.getSeconds() == 0) {
-                        list.push(this.postConvert(data, "Date"));
+                        list.push(this.postConvert(data, constants_1.Constants.DATE_NAMESPACE));
                     }
                     else {
-                        list.push(this.postConvert(data, "DateTime"));
+                        list.push(this.postConvert(data, constants_1.Constants.DATETIME_NAMESPACE));
                     }
                 }
                 else if (data instanceof Map) {
@@ -92,10 +92,10 @@ class DataTypeConverter {
                 }
                 else if (value instanceof Date) {
                     if (value.getHours() == 0 && value.getMinutes() == 0 && value.getSeconds() == 0) {
-                        requestObject[key] = this.postConvert(value, "Date");
+                        requestObject[key] = this.postConvert(value, constants_1.Constants.DATE_NAMESPACE);
                     }
                     else {
-                        requestObject[key] = this.postConvert(value, "DateTime");
+                        requestObject[key] = this.postConvert(value, constants_1.Constants.DATETIME_NAMESPACE);
                     }
                 }
                 else if (value instanceof Map) {
@@ -109,10 +109,10 @@ class DataTypeConverter {
         }
         else if (obj instanceof Date) {
             if (obj.getHours() == 0 && obj.getMinutes() == 0 && obj.getSeconds() == 0) {
-                return this.postConvert(obj, "Date");
+                return this.postConvert(obj, constants_1.Constants.DATE_NAMESPACE);
             }
             else {
-                return this.postConvert(obj, "DateTime");
+                return this.postConvert(obj, constants_1.Constants.DATETIME_NAMESPACE);
             }
         }
         else {
@@ -137,7 +137,10 @@ class DataTypeConverter {
      */
     static preConvert(obj, type) {
         this.init();
-        return this.preConverterMap.get(type)(obj);
+        if (this.preConverterMap.has(type)) {
+            return this.preConverterMap.get(type)(obj);
+        }
+        return obj;
     }
     /**
      * This method to convert JavaScript data to JSON data value.
@@ -147,7 +150,10 @@ class DataTypeConverter {
      */
     static postConvert(obj, type) {
         this.init();
-        return this.postConverterMap.get(type)(obj);
+        if (this.postConverterMap.has(type)) {
+            return this.postConverterMap.get(type)(obj);
+        }
+        return obj;
     }
 }
 exports.MasterModel = DataTypeConverter;

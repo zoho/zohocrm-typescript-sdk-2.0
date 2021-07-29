@@ -10,11 +10,13 @@ class Environment {
      * @param {string} url - A String representing the domain URL
      * @param {string} accountsUrl - A String representing the accounts URL to fetch tokens.
      * @param {string} fileUploadUrl - A string representing the file Upload URL
+     * @param {string} name - A string
      */
-    constructor(url, accountsUrl, fileUploadUrl) {
+    constructor(url, accountsUrl, fileUploadUrl, name) {
         this.url = url;
         this.accountsUrl = accountsUrl;
         this.fileUploadUrl = fileUploadUrl;
+        this.name = name;
     }
     /**
      * The method is used to get the Zoho CRM API URL.
@@ -36,6 +38,13 @@ class Environment {
      */
     getFileUploadUrl() {
         return this.fileUploadUrl;
+    }
+    /**
+     * This method to get name.
+     * @return {string} A string representing the name.
+     */
+    getName() {
+        return this.name;
     }
 }
 exports.Environment = Environment;
