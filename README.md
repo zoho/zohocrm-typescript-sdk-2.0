@@ -27,13 +27,13 @@ Since Zoho CRM APIs are authenticated with OAuth2 standards, you should register
 
 - Visit this page [https://api-console.zoho.com/](https://api-console.zoho.com)
 
-- Click on `ADD CLIENT`.
+- Click `ADD CLIENT`.
 
-- Choose a `Client Type`.
+- Choose the `Client Type`.
 
 - Enter **Client Name**, **Client Domain** or **Homepage URL** and **Authorized Redirect URIs** then click `CREATE`.
 
-- Your Client app would have been created and displayed by now.
+- Your Client app will be created.
 
 - Select the created OAuth client.
 
@@ -41,15 +41,13 @@ Since Zoho CRM APIs are authenticated with OAuth2 standards, you should register
 
 ## Environmental Setup
 
-TypeScript SDK is installable through **npm**. **npm** is a tool for dependency management in TypeScript. SDK expects the following from the client app.
+TypeScript SDK is installable through **npm**. **npm** is a tool for dependency management in TypeScript. SDK expects the following from the client app:
 
 - Client app must have Node(version 12 and above)
 
-- TypeScript SDK must be installed into client app through **npm**.
+- TypeScript SDK must be installed in the client app through **npm**.
 
 ## Including the SDK in your project
-
-You can include the SDK to your project using:
 
 - Install **Node** from [nodejs.org](https://nodejs.org/en/download/) (if not installed).
 
@@ -68,7 +66,7 @@ You can include the SDK to your project using:
     ```
 - The TypeScript SDK will be installed and a package named **@zohocrm/typescript-sdk-2.0** will be created in the local machine.
 
-- Another method to install the SDK
+- Another method to install the SDK:
     - Add dependencies to the package.json of the node server with the latest version (recommended)
     - Run **npm install** in the directory which installs all the dependencies mentioned in package.json.
 
@@ -101,7 +99,7 @@ The persistence is achieved by writing an implementation of the inbuilt **TokenS
 
 - **deleteTokens()** - The method to delete all the stored tokens.
 
-- **getTokenById(id, token)** - This method is used to retrieve the user token details based on unique ID.
+- **getTokenById(id, token)** - The method to retrieve the user's token details based on unique ID.
 
 Note:
 
@@ -138,7 +136,7 @@ In case the user prefers to use default DataBase persistence, **MySQL** can be u
   - redirect_url varchar(255)
 
 Note:
-- Custom database name and table name can be set in DBStore instance
+- Custom database name and table name can be set in DBStore instance.
 
 #### MySQL Query
 
@@ -220,7 +218,7 @@ let tokenstore: FileStore = new FileStore("/Users/username/Documents/ts_sdk_toke
 
 ### Custom Persistence
 
-To use Custom Persistence, the user must extend **TokenStore Class** (**@zohocrm/typescript-sdk-2.0/models/authenticator/store/token_store**) and override the methods.
+To use Custom Persistence, you must extend **TokenStore Class** (**@zohocrm/typescript-sdk-2.0/models/authenticator/store/token_store**) and override the methods.
 
 ```ts
 import { TokenStore } from "@zohocrm/typescript-sdk-2.0/models/authenticator/store/token_store";
@@ -293,20 +291,14 @@ export class CustomStore implements TokenStore {
 
 Before you get started with creating your TypeScript application, you need to register your client and authenticate the app with Zoho.
 
-- Create an instance of **[Logger](routes/logger/logger.ts)** Class to log exception and API information.
-    ```ts
-    import {Levels,Logger} from "@zohocrm/typescript-sdk-2.0/routes/logger/logger"
-    import {LogBuilder} from "@zohocrm/typescript-sdk-2.0/routes/logger/log_builder"
-    /*
-    * Create an instance of Logger Class that takes two parameters
-    * level -> Level of the log messages to be logged. Can be configured by typing Levels "." and choose any level from the list displayed.
-    * filePath -> Absolute file path, where messages need to be logged.
-    */
-    let logger: Logger = new LogBuilder()
-    .level(Levels.INFO)
-    .filePath("/Users/user_name/Documents/node_sdk_logs.log")
-    .build();
-    ```
+| Mandatory Keys    | Optional Keys |
+| :---------------- | :------------ |
+| user              | logger        |
+| environment       | tokenstore    |
+| token             | sdkConfig     |
+|                   | requestProxy  |
+|                   | resourcePath  |
+-----
 
 - Create an instance of **UserSignature** Class that identifies the current user.
     ```ts
@@ -337,6 +329,7 @@ Before you get started with creating your TypeScript application, you need to re
     * clientId -> OAuth client id.
     * clientSecret -> OAuth client secret.
     * refreshToken -> REFRESH token.
+    * accessToken -> Access token.
     * grantToken -> GRANT token.
     * id -> User unique id.
     * redirectURL -> OAuth redirect URL.
@@ -357,15 +350,34 @@ Before you get started with creating your TypeScript application, you need to re
     .build();
     
     // if ID (obtained from persistence) is available
-    let token: OAuthToken= new OAuthBuilder()
+    let token: OAuthToken = new OAuthBuilder()
     .clientId("clientId")
     .clientSecret("clientSecret")
     .refreshToken("refreshToken")
     .redirectURL("redirectURL")
     .build();
+
+    // if access token is available
+    let token: OAuthToken = new OAuthBuilder()
+    .accessToken("accessToken")
+    .build();
+    ```
+- Create an instance of **Logger** Class to log exception and API information. By default, the SDK constructs a Logger instance with level - INFO and file_path - (sdk_logs.log parallel to node_modules)
+    ```ts
+    import {Levels,Logger} from "@zohocrm/typescript-sdk-2.0/routes/logger/logger"
+    import {LogBuilder} from "@zohocrm/typescript-sdk-2.0/routes/logger/log_builder"
+    /*
+    * Create an instance of Logger Class that takes two parameters
+    * level -> Level of the log messages to be logged. Can be configured by typing Levels "." and choose any level from the list displayed.
+    * filePath -> Absolute file path, where messages need to be logged.
+    */
+    let logger: Logger = new LogBuilder()
+    .level(Levels.INFO)
+    .filePath("/Users/user_name/Documents/node_sdk_logs.log")
+    .build();
     ```
 
-- Create an instance of **[TokenStore](models/authenticator/store/token_store.ts)** to persist tokens, used for authenticating all the requests.
+- Create an instance of TokenStore to persist tokens, used for authenticating all the requests. By default, the SDK creates the sdk_tokens.txt file (parallel to node_modules folder) to persist the tokens.
     ```ts
     import {DBStore} from "@zohocrm/typescript-sdk-2.0/models/authenticator/store/db_store"
     import {FileStore} from "@zohocrm/typescript-sdk-2.0/models/authenticator/store/file_store"
@@ -399,11 +411,12 @@ Before you get started with creating your TypeScript application, you need to re
     import {SDKConfigBuilder} from "@zohocrm/typescript-sdk-2.0/routes/sdk_config_builder";
 
     /*
-     * autoRefreshFields
+     * By default, the SDK creates the SDKConfig instance
+     * autoRefreshFields (default - false)
      * if true - all the modules' fields will be auto-refreshed in the background, every hour.
      * if false - the fields will not be auto-refreshed in the background. The user can manually delete the file(s) or refresh the fields using methods from ModuleFieldsHandler(utils/util/module_fields_handler.ts)
      *
-     * pickListValidation
+     * pickListValidation (default - true)
      * A boolean field that validates user input for a pick list field and allows or disallows the addition of a new value to the list.
      * if true - the SDK validates the input. If the value does not exist in the pick list, the SDK throws an error.
      * if false - the SDK does not validate the input and makes the API request with the user’s input to the pick list
@@ -431,7 +444,7 @@ Before you get started with creating your TypeScript application, you need to re
     .build();
     ```
 
-- The path containing the absolute directory path (in the key resourcePath) to store user-specific files containing information about fields in modules.
+- The path containing the absolute directory path to store user specific files containing module fields information. By default, the SDK stores the user-specific files in a folder parallel to node_modules
     ```ts
     let resourcePath: string = "/Users/user_name/Documents/typescript-app";
     ```

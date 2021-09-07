@@ -42,12 +42,13 @@ class OAuthToken {
      * @param {String} redirectURL - A String containing the OAuth redirect URL.
      * @param {String} id - A string
      */
-    constructor(clientID, clientSecret, grantToken, refreshToken, redirectURL, id) {
+    constructor(clientID, clientSecret, grantToken, refreshToken, redirectURL, id, accessToken) {
         this.clientID = clientID;
         this.clientSecret = clientSecret;
         this.grantToken = grantToken;
         this.refreshToken = refreshToken;
         this.redirectURL = redirectURL;
+        this.accessToken = accessToken;
         this.id = id;
     }
     /**
@@ -321,7 +322,7 @@ class OAuthToken {
     }
     async generateId() {
         let email = (await initializer_1.Initializer.getInitializer()).getUser().getEmail();
-        let builder = "typescript_" + (email).substring(0, (email.indexOf('@'))) + "_";
+        let builder = constants_1.Constants.TYPE_SCRIPT + (email).substring(0, (email.indexOf('@'))) + "_";
         builder = builder + (await initializer_1.Initializer.getInitializer()).getEnvironment().getName() + "_";
         if (this.refreshToken != null) {
             builder = builder + this.refreshToken.substring(this.refreshToken.length - 4);
