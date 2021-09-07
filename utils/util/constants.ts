@@ -61,7 +61,7 @@ export class Constants {
 
     public static ZOHO_SDK = "X-ZOHO-SDK";
 
-    public static SDK_VERSION = "2.0.0";
+    public static SDK_VERSION = "3.0.0";
 
     public static MYSQL_HOST = "localhost";
 
@@ -101,95 +101,95 @@ export class Constants {
 
     public static TOKEN_ERROR = "TOKEN ERROR";
 
-    public static ERROR_HASH_FIELD = 'field'
+    public static ERROR_HASH_FIELD = 'field';
 
-    public static ERROR_HASH_EXPECTED_TYPE = 'expected_type'
+    public static ERROR_HASH_EXPECTED_TYPE = 'expected_type';
 
-    public static ERROR_HASH_CLASS = 'class'
+    public static ERROR_HASH_CLASS = 'class';
 
-    public static CONTENT_TYPE = 'content-type'
+    public static CONTENT_TYPE = 'content-type';
 
-    public static INSTANCE_NUMBER = 'instance-number'
+    public static INSTANCE_NUMBER = 'instance-number';
 
-    public static ERROR_HASH_MEMBER = 'member'
+    public static ERROR_HASH_MEMBER = 'member';
 
-    public static NAME = 'name'
+    public static NAME = 'name';
 
-    public static DATA_TYPE_ERROR = "DATA TYPE ERROR"
+    public static DATA_TYPE_ERROR = "DATA TYPE ERROR";
 
-    public static VALUES = 'values'
+    public static VALUES = 'values';
 
-    public static ACCEPTED_VALUES = 'accepted-values'
+    public static ACCEPTED_VALUES = 'accepted-values';
 
-    public static ACCEPTED_TYPE = 'accepted-type'
+    public static ACCEPTED_TYPE = 'accepted-type';
 
     public static GIVEN_TYPE = "given-type";
 
     public static GIVEN_LENGTH = "given-length";
 
-    public static UNACCEPTED_VALUES_ERROR = 'UNACCEPTED VALUES ERROR'
+    public static UNACCEPTED_VALUES_ERROR = 'UNACCEPTED VALUES ERROR';
 
-    public static MIN_LENGTH = "min-length"
+    public static MIN_LENGTH = "min-length";
 
-    public static MAX_LENGTH = "max-length"
+    public static MAX_LENGTH = "max-length";
 
-    public static ERROR_HASH_MAXIMUM_LENGTH = "maximum-length"
+    public static ERROR_HASH_MAXIMUM_LENGTH = "maximum-length";
 
-    public static MAXIMUM_LENGTH_ERROR = "MAXIMUM LENGTH ERROR"
+    public static MAXIMUM_LENGTH_ERROR = "MAXIMUM LENGTH ERROR";
 
-    public static ERROR_HASH_MINIMUM_LENGTH = "minimum-length"
+    public static ERROR_HASH_MINIMUM_LENGTH = "minimum-length";
 
-    public static MINIMUM_LENGTH_ERROR = "MINIMUM LENGTH ERROR"
+    public static MINIMUM_LENGTH_ERROR = "MINIMUM LENGTH ERROR";
 
-    public static REGEX = "regex"
+    public static REGEX = "regex";
 
-    public static REGEX_MISMATCH_ERROR = "REGEX MISMATCH ERROR"
+    public static REGEX_MISMATCH_ERROR = "REGEX MISMATCH ERROR";
 
-    public static UNIQUE = "unique"
+    public static UNIQUE = "unique";
 
-    public static UNIQUE_KEY_ERROR = "UNIQUE KEY ERROR"
+    public static UNIQUE_KEY_ERROR = "UNIQUE KEY ERROR";
 
-    public static FIRST_INDEX = "first-index"
+    public static FIRST_INDEX = "first-index";
 
-    public static NEXT_INDEX = "next-index"
+    public static NEXT_INDEX = "next-index";
 
-    public static LONG_NAMESPACE = 'Long'
+    public static LONG_NAMESPACE = 'Long';
 
-    public static BOOLEAN_NAMESPACE = 'Boolean'
+    public static BOOLEAN_NAMESPACE = 'Boolean';
 
-    public static INTEGER_NAMESPACE = 'Integer'
+    public static INTEGER_NAMESPACE = 'Integer';
 
-    public static STRING_NAMESPACE = 'String'
+    public static STRING_NAMESPACE = 'String';
 
-    public static DOUBLE_NAMESPACE = 'Double'
+    public static DOUBLE_NAMESPACE = 'Double';
 
-    public static DATETIME_NAMESPACE = 'DateTime'
+    public static DATETIME_NAMESPACE = 'DateTime';
 
-    public static DATE_NAMESPACE = 'Date'
+    public static DATE_NAMESPACE = 'Date';
 
-    public static DOUBLE_COLON = '::'
+    public static DOUBLE_COLON = '::';
 
-    public static DOT = '.'
+    public static DOT = '.';
 
-    public static UNDERSCORE = "_"
+    public static UNDERSCORE = "_";
 
-    public static STREAM_WRAPPER_CLASS_PATH = "utils/util/stream_wrapper"
+    public static STREAM_WRAPPER_CLASS_PATH = "utils/util/stream_wrapper";
 
-    public static FILE_NAMESPACE = "utils/util/stream_wrapper"
+    public static FILE_NAMESPACE = "utils/util/stream_wrapper";
 
     public static CONTENT_DISPOSITION = "content-disposition";
 
-    public static PACKAGE_PREFIX = 'com.zoho.crm.api.'
+    public static PACKAGE_PREFIX = 'com.zoho.crm.api.';
 
-    public static INTERFACE = "interface"
+    public static INTERFACE = "interface";
 
-    public static CLASSES = "classes"
+    public static CLASSES = "classes";
 
-    public static CLASS_KEY = "class"
+    public static CLASS_KEY = "class";
 
-    public static READ_ONLY = "read-only"
+    public static READ_ONLY = "read-only";
 
-    public static IS_KEY_MODIFIED = 'is_key_modified'
+    public static IS_KEY_MODIFIED = 'is_key_modified';
 
     public static SET_KEY_MODIFIED = "set_key_modified";
 
@@ -197,25 +197,25 @@ export class Constants {
 
     public static REQUIRED_IN_UPDATE = "required_in_update";
 
-    public static MANDATORY_VALUE_ERROR = "MANDATORY VALUE ERROR"
+    public static MANDATORY_VALUE_ERROR = "MANDATORY VALUE ERROR";
 
-    public static MANDATORY_VALUE_NULL_ERROR = "MANDATORY VALUE NULL ERROR"
+    public static MANDATORY_VALUE_NULL_ERROR = "MANDATORY VALUE NULL ERROR";
 
     public static MANDATORY_KEY_ERROR = "Value missing or null for mandatory key(s) :";
 
-    public static MANDATORY_KEY_NULL_ERROR = "Null Value for mandatory key : "
+    public static MANDATORY_KEY_NULL_ERROR = "Null Value for mandatory key : ";
 
-    public static LIST_NAMESPACE = "list"
+    public static LIST_NAMESPACE = "list";
 
-    public static MAP_NAMESPACE = "map"
+    public static MAP_NAMESPACE = "map";
 
-    public static HASH_MAP_NAMESPACE = "HashMap"
+    public static HASH_MAP_NAMESPACE = "HashMap";
 
-    public static STRUCTURE_NAME = "structure_name"
+    public static STRUCTURE_NAME = "structure_name";
 
-    public static KEYS = "keys"
+    public static KEYS = "keys";
 
-    public static INITIALIZATION_ERROR = 'INITIALIZATION ERROR'
+    public static INITIALIZATION_ERROR = 'INITIALIZATION ERROR';
 
     public static INITIALIZATION_EXCEPTION = "Exception in initialization : ";
 
@@ -223,31 +223,33 @@ export class Constants {
 
     public static EMAIL = "email";
 
-    public static USER_ERROR = "USER ERROR"
+    public static USER_ERROR = "USER ERROR";
 
-    public static CLIENT_ID_FIELD = "clientID"
+    public static CLIENT_ID_FIELD = "clientID";
 
-    public static CLIENT_SECRET_FIELD = "clientSecret"
+    public static CLIENT_SECRET_FIELD = "clientSecret";
 
-    public static REDIRECT_URL_FIELD = "redirectURL"
+    public static REDIRECT_URL_FIELD = "redirectURL";
 
-    public static TYPE = "type"
+    public static TYPE = "type";
 
-    public static TYPE_ERROR = "TYPE ERROR"
+    public static TYPE_ERROR = "TYPE ERROR";
 
-    public static HEADER_PARAM_VALIDATION_ERROR = "Exception in header or param validation"
+    public static HEADER_PARAM_VALIDATION_ERROR = "Exception in header or param validation";
 
-    public static TOKEN = "token"
+    public static TOKEN = "token";
 
-    public static EXPECTED_TOKEN_TYPES = "REFRESH, GRANT"
+    public static EXPECTED_TOKEN_TYPES = "REFRESH, GRANT";
 
-    public static INVALID_CLIENT_ERROR = "INVALID CLIENT ERROR"
+    public static INVALID_CLIENT_ERROR = "INVALID CLIENT ERROR";
 
-    public static ERROR_KEY = "error"
+    public static ERROR_KEY = "error";
 
     public static GET_TOKEN_ERROR = "Exception in getting access token";
 
-    public static LOGFILE_NAME = "sdk_logs.log"
+    public static LOG_FILE_NAME = "sdk_logs.log";
+
+    public static TOKEN_FILE = "sdk_tokens.txt";
 
     public static JSON_DETAILS_FILE_PATH = "json_details.json";
 
@@ -559,7 +561,7 @@ export class Constants {
 
     public static CLIENT_SECRET_NULL_ERROR_MESSAGE = "ClientSecret MUST NOT be null";
 
-    public static OAUTH_MANDATORY_KEYS = ["grantToken", "refreshToken", "id"];
+    public static OAUTH_MANDATORY_KEYS = ["grantToken", "refreshToken", "id", "accessToken"];
 
     public static REDIRECT_URI = "redirect_uri";
 
@@ -569,7 +571,7 @@ export class Constants {
 
     public static GET_TOKEN_BY_ID_DB_ERROR = "Exception in getTokenById - DBStore : Given ID is invalid";
 
-    public static USERSIGNATURE_ERROR_MESSAGE = "UserSignature MUST NOT be null.";
+    public static USER_SIGNATURE_ERROR_MESSAGE = "UserSignature MUST NOT be null.";
 
     public static ENVIRONMENT_ERROR_MESSAGE = "Environment MUST NOT be null.";
 
@@ -623,5 +625,7 @@ export class Constants {
 
     public static UPLOAD_PHOTO_UNSUPPORTED_ERROR = "UPLOAD PHOTO UNSUPPORTED MODULE";
 
-    static UPLOAD_PHOTO_UNSUPPORTED_MESSAGE = "Photo Upload Operation is not supported by the module: ";
+    public static UPLOAD_PHOTO_UNSUPPORTED_MESSAGE = "Photo Upload Operation is not supported by the module: ";
+
+    public static TYPE_SCRIPT = "typescript_";
 }

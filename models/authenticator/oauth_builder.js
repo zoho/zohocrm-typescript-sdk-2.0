@@ -32,11 +32,15 @@ class OAuthBuilder {
         this._grantToken = grantToken;
         return this;
     }
+    accessToken(accessToken) {
+        this._accessToken = accessToken;
+        return this;
+    }
     build() {
-        if (this._grantToken == null && this._refreshToken == null && this._id == null) {
+        if (this._grantToken == null && this._refreshToken == null && this._id == null && this._accessToken == null) {
             throw new sdk_exception_1.SDKException(constants_1.Constants.MANDATORY_VALUE_ERROR, constants_1.Constants.MANDATORY_KEY_ERROR, constants_1.Constants.OAUTH_MANDATORY_KEYS);
         }
-        return new oauth_token_1.OAuthToken(this._clientID, this._clientSecret, this._grantToken, this._refreshToken, this._redirectURL, this._id);
+        return new oauth_token_1.OAuthToken(this._clientID, this._clientSecret, this._grantToken, this._refreshToken, this._redirectURL, this._id, this._accessToken);
     }
 }
 exports.OAuthBuilder = OAuthBuilder;

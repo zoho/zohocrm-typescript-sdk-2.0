@@ -16,7 +16,7 @@ export class SDKException extends Error {
      * @param {object} details - A key/value pair object containing the error response.
      * @param {Error} cause - A Error class instance.
     */
-    constructor(code: string | null, message: string | null, details?: { [key: string]: any } | null, cause?: Error) {
+    constructor(code: string | null, message: string | null, details?: { [key: string]: any } | null, cause?: Error | undefined) {
         super();
     
         this.code = code;

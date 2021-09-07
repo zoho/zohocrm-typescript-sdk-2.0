@@ -24,7 +24,10 @@ const constants_1 = require("../utils/util/constants");
 const utility_1 = require("../utils/util/utility");
 const sdk_exception_1 = require("../core/com/zoho/crm/api/exception/sdk_exception");
 const initializer_1 = require("./initializer");
-const LoggerFile = __importStar(require("./logger/logger"));
+const logger_1 = require("./logger/logger");
+const log_builder_1 = require("./logger/log_builder");
+const sdk_config_builder_1 = require("../routes/sdk_config_builder");
+const file_store_1 = require("../models/authenticator/store/file_store");
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 class InitializeBuilder {
@@ -42,14 +45,20 @@ class InitializeBuilder {
         })();
     }
     async initialize() {
-        utility_1.Utility.assertNotNull(this._user, this.errorMessage, constants_1.Constants.USERSIGNATURE_ERROR_MESSAGE);
+        utility_1.Utility.assertNotNull(this._user, this.errorMessage, constants_1.Constants.USER_SIGNATURE_ERROR_MESSAGE);
         utility_1.Utility.assertNotNull(this._environment, this.errorMessage, constants_1.Constants.ENVIRONMENT_ERROR_MESSAGE);
         utility_1.Utility.assertNotNull(this._token, this.errorMessage, constants_1.Constants.TOKEN_ERROR_MESSAGE);
-        utility_1.Utility.assertNotNull(this._store, this.errorMessage, constants_1.Constants.STORE_ERROR_MESSAGE);
-        utility_1.Utility.assertNotNull(this._sdkConfig, this.errorMessage, constants_1.Constants.SDK_CONFIG_ERROR_MESSAGE);
-        utility_1.Utility.assertNotNull(this._resourcePath, this.errorMessage, constants_1.Constants.RESOURCE_PATH_ERROR_MESSAGE);
+        if (this._store == null) {
+            this._store = new file_store_1.FileStore(path.join(__dirname, "../../../../", constants_1.Constants.TOKEN_FILE));
+        }
+        if (this._sdkConfig == null) {
+            this._sdkConfig = new sdk_config_builder_1.SDKConfigBuilder().build();
+        }
+        if (this._resourcePath == null) {
+            this._resourcePath = path.join(__dirname, "../../../../", '');
+        }
         if (this._logger == null) {
-            this._logger = LoggerFile.Logger.getInstance(LoggerFile.Levels.INFO, path.join(__dirname, "..", constants_1.Constants.LOGFILE_NAME));
+            this._logger = new log_builder_1.LogBuilder().level(logger_1.Levels.INFO).filePath(path.join(__dirname, "../../../../", constants_1.Constants.LOG_FILE_NAME)).build();
         }
         initializer_1.Initializer.initialize(this._user, this._environment, this._token, this._store, this._sdkConfig, this._resourcePath, this._logger, this._requestProxy);
     }
@@ -67,7 +76,6 @@ class InitializeBuilder {
         return this;
     }
     SDKConfig(sdkConfig) {
-        utility_1.Utility.assertNotNull(sdkConfig, this.errorMessage, constants_1.Constants.SDK_CONFIG_ERROR_MESSAGE);
         this._sdkConfig = sdkConfig;
         return this;
     }
@@ -76,22 +84,18 @@ class InitializeBuilder {
         return this;
     }
     resourcePath(resourcePath) {
-        if (resourcePath == null || resourcePath.length <= 0) {
-            throw new sdk_exception_1.SDKException(this.errorMessage, constants_1.Constants.RESOURCE_PATH_ERROR_MESSAGE);
-        }
-        if (!fs.statSync(resourcePath).isDirectory()) {
+        if (resourcePath != null && !fs.statSync(resourcePath).isDirectory()) {
             throw new sdk_exception_1.SDKException(this.errorMessage, constants_1.Constants.RESOURCE_PATH_INVALID_ERROR_MESSAGE);
         }
         this._resourcePath = resourcePath;
         return this;
     }
     user(user) {
-        utility_1.Utility.assertNotNull(user, this.errorMessage, constants_1.Constants.USERSIGNATURE_ERROR_MESSAGE);
+        utility_1.Utility.assertNotNull(user, this.errorMessage, constants_1.Constants.USER_SIGNATURE_ERROR_MESSAGE);
         this._user = user;
         return this;
     }
     store(store) {
-        utility_1.Utility.assertNotNull(store, this.errorMessage, constants_1.Constants.STORE_ERROR_MESSAGE);
         this._store = store;
         return this;
     }

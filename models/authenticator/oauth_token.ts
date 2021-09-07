@@ -13,9 +13,9 @@ import { APIHTTPConnector } from '../../routes/controllers/api_http_connector';
  * This class maintains the tokens and authenticates every request.
 */
 export class OAuthToken implements Token {
-    private clientID: string;
+    private clientID: string | null;
 
-    private clientSecret: string;
+    private clientSecret: string | null;
 
     private redirectURL: string | null;
 
@@ -43,7 +43,7 @@ export class OAuthToken implements Token {
      * This is a getter method to get OAuth client id.
      * @returns A String representing the OAuth client id.
     */
-    public getClientId(): string {
+    public getClientId(): string | null {
         return this.clientID;
     }
 
@@ -59,7 +59,7 @@ export class OAuthToken implements Token {
      * This is a getter method to get OAuth client secret.
      * @returns A String representing the OAuth client secret.
     */
-    public getClientSecret(): string {
+    public getClientSecret(): string | null {
         return this.clientSecret;
     }
 
@@ -373,7 +373,7 @@ export class OAuthToken implements Token {
      * @param {String} redirectURL - A String containing the OAuth redirect URL.
      * @param {String} id - A string
      */
-    constructor(clientID: string, clientSecret: string, grantToken: string | null, refreshToken: string | null, redirectURL: string | null, id: string | null) {
+    constructor(clientID: string | null, clientSecret: string | null, grantToken: string | null, refreshToken: string | null, redirectURL: string | null, id: string | null, accessToken: string | null) {
         this.clientID = clientID;
 
         this.clientSecret = clientSecret;
@@ -384,13 +384,15 @@ export class OAuthToken implements Token {
 
         this.redirectURL = redirectURL;
 
+        this.accessToken = accessToken;
+
         this.id = id;
     }
 
     async generateId() {
         let email = (await Initializer.getInitializer()).getUser().getEmail();
 
-        let builder = "typescript_" + (email).substring(0, (email.indexOf('@'))) + "_";
+        let builder = Constants.TYPE_SCRIPT + (email).substring(0, (email.indexOf('@'))) + "_";
 
         builder = builder + (await Initializer.getInitializer()).getEnvironment().getName() + "_";
 

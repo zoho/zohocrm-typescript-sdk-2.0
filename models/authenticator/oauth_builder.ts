@@ -4,15 +4,17 @@ import { SDKException } from '../../core/com/zoho/crm/api/exception/sdk_exceptio
 import { OAuthToken } from './oauth_token';
 
 export class OAuthBuilder {
-    private _clientID: string;
+    private _clientID: string | null;
 
-    private _clientSecret: string;
+    private _clientSecret: string | null;
 
     private _redirectURL: string | null;
 
+    private _refreshToken: string | null;
+
     private _grantToken: string | null;
 
-    private _refreshToken: string | null;
+    private _accessToken: string | null;
 
     private _id: string | null;
 
@@ -56,12 +58,18 @@ export class OAuthBuilder {
         return this;
     }
 
+    public accessToken(accessToken: string): OAuthBuilder {
+        this._accessToken = accessToken;
+
+        return this;
+    }
+
     public build(): OAuthToken {
 
-        if (this._grantToken == null && this._refreshToken == null && this._id == null) {
+        if (this._grantToken == null && this._refreshToken == null && this._id == null && this._accessToken == null) {
             throw new SDKException(Constants.MANDATORY_VALUE_ERROR, Constants.MANDATORY_KEY_ERROR, Constants.OAUTH_MANDATORY_KEYS);
         }
 
-        return new OAuthToken(this._clientID, this._clientSecret, this._grantToken, this._refreshToken, this._redirectURL, this._id);
+        return new OAuthToken(this._clientID, this._clientSecret, this._grantToken, this._refreshToken, this._redirectURL, this._id, this._accessToken);
     }
 }

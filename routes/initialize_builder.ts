@@ -18,6 +18,14 @@ import { Initializer } from './initializer';
 
 import * as LoggerFile from './logger/logger';
 
+import { Logger, Levels } from "./logger/logger";
+
+import { LogBuilder } from "./logger/log_builder";
+
+import { SDKConfigBuilder } from "../routes/sdk_config_builder";
+
+import { FileStore } from "../models/authenticator/store/file_store";
+
 import { RequestProxy } from './request_proxy';
 
 import * as fs from 'fs';
@@ -65,20 +73,26 @@ export class InitializeBuilder {
     }
 
     public async initialize() {
-        Utility.assertNotNull(this._user, this.errorMessage, Constants.USERSIGNATURE_ERROR_MESSAGE);
+        Utility.assertNotNull(this._user, this.errorMessage, Constants.USER_SIGNATURE_ERROR_MESSAGE);
 
         Utility.assertNotNull(this._environment, this.errorMessage, Constants.ENVIRONMENT_ERROR_MESSAGE);
 
         Utility.assertNotNull(this._token, this.errorMessage, Constants.TOKEN_ERROR_MESSAGE);
 
-        Utility.assertNotNull(this._store, this.errorMessage, Constants.STORE_ERROR_MESSAGE);
+        if (this._store == null) {
+            this._store = new FileStore(path.join(__dirname, "../../../../", Constants.TOKEN_FILE));
+        }
 
-        Utility.assertNotNull(this._sdkConfig, this.errorMessage, Constants.SDK_CONFIG_ERROR_MESSAGE);
+        if (this._sdkConfig == null) {
+            this._sdkConfig = new SDKConfigBuilder().build();
+        }
 
-        Utility.assertNotNull(this._resourcePath, this.errorMessage, Constants.RESOURCE_PATH_ERROR_MESSAGE);
+        if (this._resourcePath == null) {
+            this._resourcePath = path.join(__dirname, "../../../../", '');
+        }
 
         if (this._logger == null) {
-            this._logger = LoggerFile.Logger.getInstance(LoggerFile.Levels.INFO, path.join(__dirname, "..", Constants.LOGFILE_NAME));
+            this._logger = new LogBuilder().level(Levels.INFO).filePath(path.join(__dirname, "../../../../", Constants.LOG_FILE_NAME)).build();
         }
 
         Initializer.initialize(this._user, this._environment, this._token, this._store, this._sdkConfig, this._resourcePath, this._logger, this._requestProxy);
@@ -105,8 +119,6 @@ export class InitializeBuilder {
     }
 
     public SDKConfig(sdkConfig: SDKConfig): InitializeBuilder {
-        Utility.assertNotNull(sdkConfig, this.errorMessage, Constants.SDK_CONFIG_ERROR_MESSAGE);
-
         this._sdkConfig = sdkConfig;
 
         return this;
@@ -119,11 +131,7 @@ export class InitializeBuilder {
     }
 
     public resourcePath(resourcePath: string): InitializeBuilder {
-        if (resourcePath == null || resourcePath.length <= 0) {
-            throw new SDKException(this.errorMessage, Constants.RESOURCE_PATH_ERROR_MESSAGE);
-        }
-
-        if (!fs.statSync(resourcePath).isDirectory()) {
+        if (resourcePath != null && !fs.statSync(resourcePath).isDirectory()) {
             throw new SDKException(this.errorMessage, Constants.RESOURCE_PATH_INVALID_ERROR_MESSAGE);
         }
 
@@ -133,7 +141,7 @@ export class InitializeBuilder {
     }
 
     public user(user: UserSignature): InitializeBuilder {
-        Utility.assertNotNull(user, this.errorMessage, Constants.USERSIGNATURE_ERROR_MESSAGE);
+        Utility.assertNotNull(user, this.errorMessage, Constants.USER_SIGNATURE_ERROR_MESSAGE);
 
         this._user = user;
 
@@ -141,8 +149,6 @@ export class InitializeBuilder {
     }
 
     public store(store: TokenStore): InitializeBuilder {
-        Utility.assertNotNull(store, this.errorMessage, Constants.STORE_ERROR_MESSAGE);
-
         this._store = store;
 
         return this;
