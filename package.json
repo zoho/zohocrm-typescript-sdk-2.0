@@ -24,12 +24,13 @@
         "winston": "^3.2.1"
     },
     "devDependencies": {
+        "@types/node": "^16.11.12",
         "date": "^1.0.2",
         "string-format": "^2.0.0",
         "utils": "^0.3.1"
     },
     "author": "Zoho CRM API Team (support@zohocrm.com)",
-    "license": "ISC",
+    "license": "Apache-2.0",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     }
