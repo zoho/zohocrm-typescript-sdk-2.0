@@ -809,7 +809,7 @@ class Utility {
 
             fieldDetail.structure_name = Constants.INVENTORY_LINE_ITEMS;
 
-            fieldDetail.skip_mandatory = true;
+            fieldDetail[Constants.SKIP_MANDATORY] = true;
 
             return;
         }
@@ -820,7 +820,7 @@ class Utility {
 
             fieldDetail.structure_name = Constants.PRICINGDETAILS;
 
-            fieldDetail.skip_mandatory = true;
+            fieldDetail[Constants.SKIP_MANDATORY] = true;
 
             return;
         }
@@ -831,7 +831,7 @@ class Utility {
 
             fieldDetail.structure_name = Constants.PARTICIPANTS;
 
-            fieldDetail.skip_mandatory = true;
+            fieldDetail[Constants.SKIP_MANDATORY] = true;
 
             return;
         }
@@ -879,8 +879,8 @@ class Utility {
             fieldDetail.lookup = true;
         }
 
-        if (apiType.toLowerCase() == Constants.CONSENT_LOOKUP) {
-            fieldDetail.skip_mandatory = true;
+        if (apiType.toLowerCase() == Constants.CONSENT_LOOKUP || apiType.toLowerCase() == Constants.OWNER_LOOKUP) {
+            fieldDetail[Constants.SKIP_MANDATORY] = true;
         }
 
         if (Utility.apiTypeVsStructureName.has(apiType)) {
@@ -902,7 +902,7 @@ class Utility {
 
             fieldDetail.module = module;
 
-            fieldDetail.skip_mandatory = true;
+            fieldDetail[Constants.SKIP_MANDATORY] = true;
 
             fieldDetail.subform = true;
         }
@@ -914,7 +914,7 @@ class Utility {
                 fieldDetail.module = module;
 
                 if (module.toLowerCase() == Constants.ACCOUNTS && !field.getCustomField()) {
-                    fieldDetail.skip_mandatory = true;
+                    fieldDetail[Constants.SKIP_MANDATORY] = true;
                 }
             }
             else {

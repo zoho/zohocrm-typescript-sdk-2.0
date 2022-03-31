@@ -61,7 +61,7 @@ export class Constants {
 
     public static ZOHO_SDK = "X-ZOHO-SDK";
 
-    public static SDK_VERSION = "3.0.0";
+    public static SDK_VERSION = "5.0.0";
 
     public static MYSQL_HOST = "localhost";
 
@@ -195,7 +195,7 @@ export class Constants {
 
     public static REQUIRED = "required";
 
-    public static REQUIRED_IN_UPDATE = "required_in_update";
+    public static REQUIRED_IN_UPDATE = "required-in-update";
 
     public static MANDATORY_VALUE_ERROR = "MANDATORY VALUE ERROR";
 
@@ -475,7 +475,7 @@ export class Constants {
 
     public static REFRESH_ALL_MODULE_FIELDS_ERROR = "Exception in refreshing fields of all modules : ";
 
-    public static SKIP_MANDATORY = "skip_mandatory";
+    public static SKIP_MANDATORY = "skip-mandatory";
 
     public static PRIMARY_KEY_ERROR = "Value missing or null for required key(s) : ";
 
@@ -628,4 +628,6 @@ export class Constants {
     public static UPLOAD_PHOTO_UNSUPPORTED_MESSAGE = "Photo Upload Operation is not supported by the module: ";
 
     public static TYPE_SCRIPT = "typescript_";
+
+    public static OWNER_LOOKUP = "ownerlookup";
 }

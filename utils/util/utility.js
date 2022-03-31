@@ -557,21 +557,21 @@ class Utility {
             fieldDetail.name = keyName;
             fieldDetail.type = constants_1.Constants.LIST_NAMESPACE;
             fieldDetail.structure_name = constants_1.Constants.INVENTORY_LINE_ITEMS;
-            fieldDetail.skip_mandatory = true;
+            fieldDetail[constants_1.Constants.SKIP_MANDATORY] = true;
             return;
         }
         else if (keyName.toLowerCase() == constants_1.Constants.PRICING_DETAILS.toLowerCase() && moduleAPIName.toLowerCase() == constants_1.Constants.PRICE_BOOKS) {
             fieldDetail.name = keyName;
             fieldDetail.type = constants_1.Constants.LIST_NAMESPACE;
             fieldDetail.structure_name = constants_1.Constants.PRICINGDETAILS;
-            fieldDetail.skip_mandatory = true;
+            fieldDetail[constants_1.Constants.SKIP_MANDATORY] = true;
             return;
         }
         else if (keyName.toLowerCase() == constants_1.Constants.PARTICIPANT_API_NAME.toLowerCase() && (moduleAPIName.toLowerCase() == constants_1.Constants.EVENTS || moduleAPIName.toLowerCase() == constants_1.Constants.ACTIVITIES)) {
             fieldDetail.name = keyName;
             fieldDetail.type = constants_1.Constants.LIST_NAMESPACE;
             fieldDetail.structure_name = constants_1.Constants.PARTICIPANTS;
-            fieldDetail.skip_mandatory = true;
+            fieldDetail[constants_1.Constants.SKIP_MANDATORY] = true;
             return;
         }
         else if (keyName.toLowerCase() == constants_1.Constants.COMMENTS.toLowerCase() && (moduleAPIName.toLowerCase() == constants_1.Constants.SOLUTIONS || moduleAPIName.toLowerCase() == constants_1.Constants.CASES)) {
@@ -606,8 +606,8 @@ class Utility {
         if (apiType.toLowerCase().includes(constants_1.Constants.LOOKUP.toLowerCase())) {
             fieldDetail.lookup = true;
         }
-        if (apiType.toLowerCase() == constants_1.Constants.CONSENT_LOOKUP) {
-            fieldDetail.skip_mandatory = true;
+        if (apiType.toLowerCase() == constants_1.Constants.CONSENT_LOOKUP || apiType.toLowerCase() == constants_1.Constants.OWNER_LOOKUP) {
+            fieldDetail[constants_1.Constants.SKIP_MANDATORY] = true;
         }
         if (Utility.apiTypeVsStructureName.has(apiType)) {
             fieldDetail.structure_name = Utility.apiTypeVsStructureName.get(apiType);
@@ -621,7 +621,7 @@ class Utility {
         if (apiType.toLowerCase() == constants_1.Constants.SUBFORM && field.getSubform() != null) {
             module = field.getSubform().getModule();
             fieldDetail.module = module;
-            fieldDetail.skip_mandatory = true;
+            fieldDetail[constants_1.Constants.SKIP_MANDATORY] = true;
             fieldDetail.subform = true;
         }
         if (apiType.toLowerCase() == constants_1.Constants.LOOKUP && field.getLookup() != null) {
@@ -629,7 +629,7 @@ class Utility {
             if (module != null && module != constants_1.Constants.SE_MODULE) {
                 fieldDetail.module = module;
                 if (module.toLowerCase() == constants_1.Constants.ACCOUNTS && !field.getCustomField()) {
-                    fieldDetail.skip_mandatory = true;
+                    fieldDetail[constants_1.Constants.SKIP_MANDATORY] = true;
                 }
             }
             else {

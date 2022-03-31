@@ -90,7 +90,7 @@ class DBStore {
                 var values = [
                     [token.getId(), user.getEmail(), token.getClientId(), token.getClientSecret(), token.getRefreshToken(), token.getAccessToken(), token.getGrantToken(), token.getExpiresIn(), token.getRedirectURL()]
                 ];
-                new Promise(function (resolve, reject) {
+                return new Promise(function (resolve, reject) {
                     dbStoreInstance.deleteToken(token).then(function () {
                         connection.connect(function (err) {
                             if (err) {
@@ -118,7 +118,7 @@ class DBStore {
             var connection = await this.getConnection();
             if (token instanceof oauth_token_1.OAuthToken) {
                 var sqlQuery = await this.constructDBQuery(token.getUserMail(), token, true);
-                new Promise(function (resolve, reject) {
+                return new Promise(function (resolve, reject) {
                     connection.connect(function (err) {
                         if (err)
                             throw err;

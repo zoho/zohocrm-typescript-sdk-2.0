@@ -186,7 +186,7 @@ class APIHTTPConnector {
             Logger.info(await this.proxyLog(requestProxy));
         }
         Logger.info(await this.toString());
-        return await got_1.default(this.url, requestDetails);
+        return await (0, got_1.default)(this.url, requestDetails);
     }
     setContentTypeHeader() {
         for (let url of constants_1.Constants.SET_TO_CONTENT_TYPE) {
