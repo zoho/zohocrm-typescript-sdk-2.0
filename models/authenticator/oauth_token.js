@@ -196,7 +196,7 @@ class OAuthToken {
                 oauthToken = this;
             }
             if (oauthToken == null) { //first time
-                token = (this.refreshToken === null) ? (await this.generateAccessToken(user, store)).getAccessToken() : (await this.refreshAccessToken(user, store)).getAccessToken();
+                token = (this.refreshToken == null) ? (await this.generateAccessToken(user, store)).getAccessToken() : (await this.refreshAccessToken(user, store)).getAccessToken();
             }
             else if (oauthToken.getExpiresIn() !== undefined && (parseInt(oauthToken.getExpiresIn()) - (new Date().getTime())) < 5000) { //access token will expire in next 5 seconds or less
                 Logger.info(constants_1.Constants.REFRESH_TOKEN_MESSAGE);
@@ -254,7 +254,6 @@ class OAuthToken {
         let initializer = await initializer_1.Initializer.getInitializer();
         let url = initializer.getEnvironment().getAccountsUrl();
         var formDataRequestBody = new FormData();
-        formDataRequestBody.append(constants_1.Constants.REFRESH_TOKEN, this.refreshToken);
         formDataRequestBody.append(constants_1.Constants.CLIENT_ID, this.clientID);
         formDataRequestBody.append(constants_1.Constants.CLIENT_SECRET, this.clientSecret);
         if (this.redirectURL != null) {
@@ -287,7 +286,7 @@ class OAuthToken {
         return this;
     }
     async getResponse(url, requestDetails) {
-        return await got_1.default(url, requestDetails);
+        return await (0, got_1.default)(url, requestDetails);
     }
     async parseResponse(response) {
         var responseJSON = JSON.parse(response);
