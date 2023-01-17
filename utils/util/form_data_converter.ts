@@ -30,7 +30,7 @@ class FormDataConverter extends Converter {
 
         var formDataRequestBody = new FormData();
 
-        await this.addFileBody(request.getRequestBody(), formDataRequestBody);
+        await this.addFileBody(request.getRequestBody(), formDataRequestBody).catch(err => { throw err; });
 
         return formDataRequestBody;
     }
@@ -108,19 +108,19 @@ class FormDataConverter extends Converter {
 
             var fieldValue = Reflect.get(requestInstance, memberName);
 
-            if (modification != null && modification != 0 && await this.valueChecker(requestInstance.constructor.name, memberName, memberDetail, fieldValue, this.uniqueValuesMap, instanceNumber)) {
+            if (modification != null && modification != 0 && await this.valueChecker(requestInstance.constructor.name, memberName, memberDetail, fieldValue, this.uniqueValuesMap, instanceNumber).catch(err => { throw err; })) {
                 var keyName = memberDetail[Constants.NAME];
 
                 var type = memberDetail[Constants.TYPE];
 
                 if (type.toLowerCase() == Constants.LIST_NAMESPACE.toLowerCase()) {
-                    request[keyName] = await this.setJSONArray(fieldValue, memberDetail);
+                    request[keyName] = await this.setJSONArray(fieldValue, memberDetail).catch(err => { throw err; });
                 }
                 else if (type.toLowerCase() == Constants.MAP_NAMESPACE.toLowerCase()) {
-                    request[keyName] = await this.setJSONObject(fieldValue, memberDetail);
+                    request[keyName] = await this.setJSONObject(fieldValue, memberDetail).catch(err => { throw err; });
                 }
                 else if (memberDetail.hasOwnProperty(Constants.STRUCTURE_NAME)) {
-                    request[keyName] = await this.formRequest(fieldValue, memberDetail[Constants.STRUCTURE_NAME], 0, memberDetail);
+                    request[keyName] = await this.formRequest(fieldValue, memberDetail[Constants.STRUCTURE_NAME], 0, memberDetail).catch(err => { throw err; });
                 }
                 else {
                     request[keyName] = fieldValue;
@@ -153,14 +153,14 @@ class FormDataConverter extends Converter {
 
                 if (requestObject.has(keyName) && requestObject.get(keyName) != null) {
                     if (keyDetail.hasOwnProperty(Constants.STRUCTURE_NAME)) {
-                        keyValue = await this.formRequest(requestObject.get(keyName), keyDetail[Constants.STRUCTURE_NAME], 0, memberDetail);
+                        keyValue = await this.formRequest(requestObject.get(keyName), keyDetail[Constants.STRUCTURE_NAME], 0, memberDetail).catch(err => { throw err; });
 
                         jsonObject[keyName] = keyValue;
                     }
                     else {
                         keyValue = requestObject.get(keyName);
 
-                        jsonObject[keyName] = await this.redirectorForObjectToJSON(keyValue);
+                        jsonObject[keyName] = await this.redirectorForObjectToJSON(keyValue).catch(err => { throw err; });
                     }
                 }
             }
@@ -186,12 +186,12 @@ class FormDataConverter extends Converter {
                 let pack = memberDetail[Constants.STRUCTURE_NAME];
 
                 for (let request of requestObjects) {
-                    jsonArray.push(await this.formRequest(request, pack, instanceCount++, memberDetail));
+                    jsonArray.push(await this.formRequest(request, pack, instanceCount++, memberDetail).catch(err => { throw err; }));
                 }
             }
             else {
                 for (let request of requestObjects) {
-                    jsonArray.push(await this.redirectorForObjectToJSON(request));
+                    jsonArray.push(await this.redirectorForObjectToJSON(request).catch(err => { throw err; }));
                 }
             }
         }
@@ -203,10 +203,10 @@ class FormDataConverter extends Converter {
         let type = Object.prototype.toString.call(request)
 
         if (type == Constants.ARRAY_TYPE) {
-            return await this.setJSONArray(request, null);
+            return await this.setJSONArray(request, null).catch(err => { throw err; });
         }
         else if (type == Constants.MAP_TYPE) {
-            return await this.setJSONObject(request, null);
+            return await this.setJSONObject(request, null).catch(err => { throw err; });
         }
         else {
             return request;

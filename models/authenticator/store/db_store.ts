@@ -53,21 +53,18 @@ export class DBStore implements TokenStore {
             if (token instanceof OAuthToken) {
                 var oauthToken = token;
 
-                var sql = await this.constructDBQuery(user.getEmail(), oauthToken, false);
+                var sql = await this.constructDBQuery(user.getName(), oauthToken, false);
 
-                return new Promise(function (resolve, reject) {
+                return new Promise<Token | undefined>(function (resolve, reject) {
                     connection.connect(function (err) {
-                        if (err) throw err;
-
+                        if (err) {
+                            return reject(err);
+                        }
                         connection.query(sql, function (err, result) {
-                            if (err) {
-                                connection.end();
-
-                                throw err;
-                            }
-
                             connection.end();
-
+                            if (err) {
+                                return reject(err);
+                            }
                             if (result.length != 0) {
                                 oauthToken.setId(result[0].id);
 
@@ -79,13 +76,13 @@ export class DBStore implements TokenStore {
 
                                 oauthToken.setUserMail(result[0].user_mail);
 
-                                resolve(oauthToken);
+                                return resolve(oauthToken);
                             }
 
-                            resolve(undefined);
+                            return resolve(undefined);
                         });
                     });
-                })
+                }).catch(err => { throw err; });
             }
         } catch (error) {
             throw new SDKException(Constants.TOKEN_STORE, Constants.GET_TOKEN_DB_ERROR, null, error);
@@ -94,39 +91,33 @@ export class DBStore implements TokenStore {
 
     async saveToken(user: UserSignature, token: Token): Promise<void> {
         try {
-            var connection = await this.getConnection();
-
             var dbStoreInstance = this;
-
+            var connection = await this.getConnection();
             if (token instanceof OAuthToken) {
-                token.setUserMail(user.getEmail());
+                token.setUserMail(user.getName());
                 
                 var sqlQuery = "INSERT INTO " + this.tableName + "(id,user_mail,client_id,client_secret,refresh_token,access_token,grant_token,expiry_time,redirect_url) VALUES ?";
                 
                 var values = [
-                    [token.getId(), user.getEmail(), token.getClientId(), token.getClientSecret(), token.getRefreshToken(), token.getAccessToken(), token.getGrantToken(), token.getExpiresIn(), token.getRedirectURL()]
+                    [token.getId(), user.getName(), token.getClientId(), token.getClientSecret(), token.getRefreshToken(), token.getAccessToken(), token.getGrantToken(), token.getExpiresIn(), token.getRedirectURL()]
                 ]
+
+                await dbStoreInstance.deleteToken(token).catch(err => { throw err; });
                 
                 return new Promise<void>(function (resolve, reject) {
-                    dbStoreInstance.deleteToken(token).then(function () {
-                        connection.connect(function (err) {
+                    connection.connect(function (err) {
+                        if (err) {
+                            return reject(err);
+                        }
+                        connection.query(sqlQuery, [values], function (err, result) {
+                            connection.end();
                             if (err) {
-                                throw err;
+                                return reject(err);
                             }
-                            connection.query(sqlQuery, [values], function (err, result) {
-                                if (err) {
-                                    connection.end();
-                                    
-                                    throw err;
-                                }
-                                
-                                connection.end();
-                                
-                                resolve();
-                            })
+                            return resolve();
                         })
                     })
-                })
+                }).catch(err => { throw err; });                
             }
         } catch (error) {
             throw new SDKException(Constants.TOKEN_STORE, Constants.SAVE_TOKEN_DB_ERROR, null, error);
@@ -141,21 +132,20 @@ export class DBStore implements TokenStore {
                 
                 var sqlQuery = await this.constructDBQuery(token.getUserMail(), token, true);
                 
-                return new Promise(function (resolve, reject) {
+                return new Promise<void>(function (resolve, reject) {
                     connection.connect(function (err) {
-                        if (err) throw err;
-                        
-                        connection.query(sqlQuery, function (err, result) {
-                            if (err) {
-                                throw err;
-                            }
-                            
+                        if (err) {
+                           return reject(err);
+                        }
+                        connection.query(sqlQuery, (err, result) => {
                             connection.end();
-                            
-                            resolve(result);
+                            if (err) {
+                                return reject(err);
+                            }
+                            return resolve(result);
                         })
                     })
-                })
+                }).catch(err => { throw err; });
             }
         } catch (error) {
             throw new SDKException(Constants.TOKEN_STORE, Constants.DELETE_TOKEN_DB_ERROR, null, error);
@@ -170,19 +160,16 @@ export class DBStore implements TokenStore {
             
             var sqlQuery = "select * from " + this.tableName + ";";
             
-            return new Promise(function (resolve, reject) {
+            return new Promise<Array<Token> | undefined>(function (resolve, reject) {
                 connection.connect(function (err) {
-                    if (err) throw err;
-                    
+                    if (err) {
+                        return reject(err);
+                    }
                     connection.query(sqlQuery, function (err, result) {
-                        if (err) {
-                            connection.end();
-                            
-                            throw err;
-                        }
-
                         connection.end();
-                        
+                        if (err) {
+                            return reject(err);
+                        }
                         if (result.length > 0) {
                             for (let row of result) {
                                 let grantToken = (row.grant_token !== null && row.grant_token !== Constants.NULL_VALUE && row.grant_token.length > 0) ? row.grant_token : null;
@@ -206,13 +193,13 @@ export class DBStore implements TokenStore {
                                 tokens.push(token);
                             }
 
-                            resolve(tokens);
+                            return resolve(tokens);
                         }
 
-                        resolve(undefined);
+                        return resolve(undefined);
                     });
                 });
-            });
+            }).catch(err => { throw err; });
         } catch (error) {
             throw new SDKException(Constants.TOKEN_STORE, Constants.GET_TOKENS_DB_ERROR, null, error);
         }
@@ -224,21 +211,20 @@ export class DBStore implements TokenStore {
 
             var sqlQuery = "delete from " + this.tableName + ";";
             
-            return new Promise(function (resolve, reject) {
+            return new Promise<void>(function (resolve, reject) {
                 connection.connect(function (err) {
-                    if (err) throw err;
-                    
+                    if (err) {
+                        return reject(err);
+                    }
                     connection.query(sqlQuery, function (err, result) {
-                        if (err) {
-                            throw err;
-                        }
-                        
                         connection.end();
-                        
-                        resolve(result);
+                        if (err) {
+                            return reject(err);
+                        }
+                        return resolve(result);
                     })
                 })
-            })
+            }).catch(err => { throw err; });
         } catch (error) {
             throw new SDKException(Constants.TOKEN_STORE, Constants.DELETE_TOKENS_DB_ERROR, null, error);
         }
@@ -282,19 +268,16 @@ export class DBStore implements TokenStore {
             if (token instanceof OAuthToken) {
                 var sql = "select * from " + this.tableName + " where id='" + id + "'";
 
-                return new Promise(function (resolve, reject) {
+                return new Promise<Token | undefined>(function (resolve, reject) {
                     connection.connect(function (err) {
-                        if (err) throw err;
-
+                        if (err) {
+                            return reject(err);
+                        }
                         connection.query(sql, function (err, result) {
-                            if (err) {
-                                connection.end();
-
-                                throw err;
-                            }
-
                             connection.end();
-
+                            if (err) {
+                                return reject(err);
+                            }
                             if (result.length != 0) {
                                 let grantToken = (result[0].grant_token != null && result[0].grant_token !== Constants.NULL_VALUE && result[0].grant_token.length > 0) ? result[0].grant_token : null;
 
@@ -318,16 +301,14 @@ export class DBStore implements TokenStore {
 
                                 token.setRedirectURL(result[0].redirect_url);
 
-                                resolve(token);
+                                return resolve(token);
                             }
                             else {
-                                throw new SDKException(Constants.TOKEN_STORE, Constants.GET_TOKEN_BY_ID_DB_ERROR);
+                                return reject(new SDKException(Constants.TOKEN_STORE, Constants.GET_TOKEN_BY_ID_DB_ERROR));
                             }
-
-                            resolve(undefined);
                         });
                     });
-                })
+                }).catch(err => { throw err; });
             }
         } catch (error) {
             throw new SDKException(Constants.TOKEN_STORE, Constants.GET_TOKEN_DB_ERROR, null, error);

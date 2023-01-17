@@ -42,6 +42,7 @@ const LoggerFile = __importStar(require("./logger/logger"));
 const constants_1 = require("../utils/util/constants");
 const sdk_logger_1 = require("./logger/sdk_logger");
 const sdk_exception_1 = require("../core/com/zoho/crm/api/exception/sdk_exception");
+const oauth_token_1 = require("../models/authenticator/oauth_token");
 /**
  * The class to initialize Zoho CRM SDK.
  */
@@ -79,7 +80,7 @@ class Initializer {
             initializer._sdkConfig = sdkConfig;
             initializer._resourcePath = resourcePath;
             initializer._requestProxy = proxy;
-            Initializer.LOCAL.set(await initializer.getEncodedKey(user, environment), initializer);
+            Initializer.LOCAL.set(await initializer.getEncodedKey(user, environment, initializer.getToken()), initializer);
             Initializer.initializer = initializer;
             Logger.info(constants_1.Constants.INITIALIZATION_SUCCESSFUL.concat(await Initializer.initializer.toString()));
         }
@@ -107,7 +108,7 @@ class Initializer {
     static async getInitializer() {
         if (Array.from(Initializer.LOCAL.keys()).length > 0) {
             let initializer = new Initializer();
-            let encodedKey = await initializer.getEncodedKey(Initializer.initializer._user, Initializer.initializer._environment);
+            let encodedKey = await initializer.getEncodedKey(Initializer.initializer._user, Initializer.initializer._environment, Initializer.initializer._token);
             if (Initializer.LOCAL.has(encodedKey)) {
                 let value = Initializer.LOCAL.get(encodedKey);
                 if (value !== undefined) {
@@ -134,7 +135,7 @@ class Initializer {
         initializer._sdkConfig = sdkConfig;
         initializer._requestProxy = proxy;
         initializer._resourcePath = Initializer.initializer.getResourcePath();
-        Initializer.LOCAL.set(await initializer.getEncodedKey(user, environment), initializer);
+        Initializer.LOCAL.set(await initializer.getEncodedKey(user, environment, initializer.getToken()), initializer);
         Initializer.initializer = initializer;
         Logger.info(constants_1.Constants.INITIALIZATION_SWITCHED.concat(await Initializer.initializer.toString()));
     }
@@ -187,9 +188,9 @@ class Initializer {
     getSDKConfig() {
         return this._sdkConfig;
     }
-    static async removeUserConfiguration(user, environment) {
+    static async removeUserConfiguration(user, environment, token) {
         let initializer = new Initializer();
-        let encodedKey = await initializer.getEncodedKey(user, environment);
+        let encodedKey = await initializer.getEncodedKey(user, environment, token);
         if (Initializer.LOCAL.has(encodedKey)) {
             Initializer.LOCAL.delete(encodedKey);
         }
@@ -197,12 +198,29 @@ class Initializer {
             throw new sdk_exception_1.SDKException(constants_1.Constants.USER_NOT_FOUND_ERROR, constants_1.Constants.USER_NOT_FOUND_ERROR);
         }
     }
-    async getEncodedKey(user, environment) {
-        let key = (user.getEmail()).substring(0, (user.getEmail().indexOf('@'))) + environment.getUrl();
+    async getEncodedKey(user, environment, token) {
+        let grantToken = "";
+        let refreshToken = "";
+        let accessToken = "";
+        let tokenKey = "";
+        if (token instanceof oauth_token_1.OAuthToken) {
+            grantToken = token.getGrantToken();
+            refreshToken = token.getRefreshToken();
+            if (grantToken != null && grantToken.length > 0) {
+                tokenKey = grantToken.substring(grantToken.length - 32);
+            }
+            else if (refreshToken != null && refreshToken.length > 0) {
+                tokenKey = refreshToken.substring(refreshToken.length - 32);
+            }
+            else if (accessToken != null && accessToken.length > 0) {
+                tokenKey = accessToken.substring(accessToken.length - 32);
+            }
+        }
+        let key = user.getName() + environment.getUrl() + tokenKey;
         return Buffer.from(this.toUTF8Array(key)).toString('base64');
     }
     async toString() {
-        return constants_1.Constants.FOR_EMAIL_ID.concat((await Initializer.initializer)._user.getEmail()).concat(constants_1.Constants.IN_ENVIRONMENT).concat((await Initializer.initializer)._environment.getUrl()).concat(".");
+        return constants_1.Constants.FOR_EMAIL_ID.concat((await Initializer.initializer)._user.getName()).concat(constants_1.Constants.IN_ENVIRONMENT).concat((await Initializer.initializer)._environment.getUrl()).concat(".");
     }
     toUTF8Array(str) {
         var utf8 = [];

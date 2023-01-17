@@ -25,7 +25,7 @@ class CustomViewsOperations {
         handlerInstance.setAPIPath(apiPath);
         handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_GET);
         handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_READ);
-        await handlerInstance.addParam(new param_1.Param("module", "com.zoho.crm.api.CustomViews.GetCustomViewsParam"), this.module);
+        await handlerInstance.addParam(new param_1.Param("module", "com.zoho.crm.api.CustomViews.GetCustomViewsParam"), this.module).catch(err => { throw err; });
         handlerInstance.setParam(paramInstance);
         let ResponseHandler = require.resolve("./response_handler");
         return handlerInstance.apiCall(ResponseHandler, "application/json");
@@ -44,7 +44,7 @@ class CustomViewsOperations {
         handlerInstance.setAPIPath(apiPath);
         handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_GET);
         handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_READ);
-        await handlerInstance.addParam(new param_1.Param("module", "com.zoho.crm.api.CustomViews.GetCustomViewParam"), this.module);
+        await handlerInstance.addParam(new param_1.Param("module", "com.zoho.crm.api.CustomViews.GetCustomViewParam"), this.module).catch(err => { throw err; });
         let ResponseHandler = require.resolve("./response_handler");
         return handlerInstance.apiCall(ResponseHandler, "application/json");
     }

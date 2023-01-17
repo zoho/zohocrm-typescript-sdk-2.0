@@ -95,7 +95,7 @@ export class SDKInitializer {
          * logger -> Logger instance
          */
         try {
-            (await new InitializeBuilder())
+            await (await new InitializeBuilder())
                 .user(user)
                 .environment(environment)
                 .token(token)
@@ -103,7 +103,7 @@ export class SDKInitializer {
                 .SDKConfig(sdkConfig)
                 .resourcePath(resourcePath)
                 .logger(logger)
-                .initialize();
+                .initialize().catch(err => { console.error("SDK initialize issue : " + err) });
         } catch (error) {
             console.log(error);
         }

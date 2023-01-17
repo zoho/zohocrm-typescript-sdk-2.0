@@ -1,8 +1,8 @@
 import { Constants } from '../utils/util/constants';
 
-import { Utility } from '../utils/util/utility';
-
 import { RequestProxy } from './request_proxy';
+
+import { SDKException } from '../core/com/zoho/crm/api/exception/sdk_exception';
 
 export class ProxyBuilder {
     private _host: string;
@@ -14,16 +14,12 @@ export class ProxyBuilder {
     private _password?: string = "";
 
     public host(host: string): ProxyBuilder {
-        Utility.assertNotNull(host, Constants.REQUEST_PROXY_ERROR, Constants.HOST_ERROR_MESSAGE);
-
         this._host = host;
 
         return this;
     }
 
     public port(port: number): ProxyBuilder {
-        Utility.assertNotNull(port, Constants.REQUEST_PROXY_ERROR, Constants.PORT_ERROR_MESSAGE);
-
         this._port = port;
 
         return this;
@@ -42,10 +38,9 @@ export class ProxyBuilder {
     }
 
     public build(): RequestProxy {
-        Utility.assertNotNull(this._host, Constants.REQUEST_PROXY_ERROR, Constants.HOST_ERROR_MESSAGE);
-
-        Utility.assertNotNull(this._port, Constants.REQUEST_PROXY_ERROR, Constants.PORT_ERROR_MESSAGE);
-
+        if (this._host == null && this._port == null) {
+            throw new SDKException(Constants.MANDATORY_VALUE_ERROR, Constants.MANDATORY_KEY_ERROR, Constants.PROXY_MANDATORY_KEYS);
+        }
         return new RequestProxy(this._host, this._port, this._user, this._password);
     }
 }

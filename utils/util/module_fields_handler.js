@@ -90,7 +90,7 @@ class ModuleFieldsHandler {
             if (fs_1.default.existsSync(recordFieldDetailsPath)) {
                 let recordFieldDetailsJson = await initializer_1.Initializer.getJSON(recordFieldDetailsPath);
                 if (recordFieldDetailsJson.hasOwnProperty(module.toLowerCase())) {
-                    await utility_1.Utility.deleteFields(recordFieldDetailsJson, module);
+                    await utility_1.Utility.deleteFields(recordFieldDetailsJson, module).catch(err => { throw err; });
                     fs_1.default.writeFileSync(recordFieldDetailsPath, JSON.stringify(recordFieldDetailsJson));
                 }
             }
@@ -107,8 +107,8 @@ class ModuleFieldsHandler {
     */
     static async refreshFields(module) {
         try {
-            await this.deleteFields(module);
-            await utility_1.Utility.getFieldsInfo(module, null);
+            await this.deleteFields(module).catch(err => { throw err; });
+            await utility_1.Utility.getFieldsInfo(module, null).catch(err => { throw err; });
         }
         catch (error) {
             if (!(error instanceof sdk_exception_1.SDKException)) {
@@ -124,7 +124,7 @@ class ModuleFieldsHandler {
      */
     static async refreshAllModules() {
         try {
-            await utility_1.Utility.refreshModules();
+            await utility_1.Utility.refreshModules().catch(err => { throw err; });
         }
         catch (error) {
             if (!(error instanceof sdk_exception_1.SDKException)) {

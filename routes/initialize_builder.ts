@@ -73,11 +73,11 @@ export class InitializeBuilder {
     }
 
     public async initialize() {
-        Utility.assertNotNull(this._user, this.errorMessage, Constants.USER_SIGNATURE_ERROR_MESSAGE);
+        await Utility.assertNotNull(this._user, this.errorMessage, Constants.USER_SIGNATURE_ERROR_MESSAGE).catch(err => { throw err; });
 
-        Utility.assertNotNull(this._environment, this.errorMessage, Constants.ENVIRONMENT_ERROR_MESSAGE);
+        await Utility.assertNotNull(this._environment, this.errorMessage, Constants.ENVIRONMENT_ERROR_MESSAGE).catch(err => { throw err; });
 
-        Utility.assertNotNull(this._token, this.errorMessage, Constants.TOKEN_ERROR_MESSAGE);
+        await Utility.assertNotNull(this._token, this.errorMessage, Constants.TOKEN_ERROR_MESSAGE).catch(err => { throw err; });
 
         if (this._store == null) {
             this._store = new FileStore(path.join(__dirname, "../../../../", Constants.TOKEN_FILE));
@@ -99,7 +99,7 @@ export class InitializeBuilder {
     }
 
     public async switchUser() {
-        Utility.assertNotNull(Initializer.getInitializer(), Constants.SDK_UNINITIALIZATION_ERROR, Constants.SDK_UNINITIALIZATION_MESSAGE);
+        await Utility.assertNotNull(Initializer.getInitializer(), Constants.SDK_UNINITIALIZATION_ERROR, Constants.SDK_UNINITIALIZATION_MESSAGE).catch(err => { throw err; });
 
         Initializer.switchUser(this._user, this._environment, this._token, this._sdkConfig, this._requestProxy);
     }
@@ -111,8 +111,6 @@ export class InitializeBuilder {
     }
 
     public token(token: Token): InitializeBuilder {
-        Utility.assertNotNull(token, this.errorMessage, Constants.TOKEN_ERROR_MESSAGE);
-
         this._token = token;
 
         return this;
@@ -141,8 +139,6 @@ export class InitializeBuilder {
     }
 
     public user(user: UserSignature): InitializeBuilder {
-        Utility.assertNotNull(user, this.errorMessage, Constants.USER_SIGNATURE_ERROR_MESSAGE);
-
         this._user = user;
 
         return this;
@@ -155,8 +151,6 @@ export class InitializeBuilder {
     }
 
     public environment(environment: Environment): InitializeBuilder {
-        Utility.assertNotNull(environment, this.errorMessage, Constants.ENVIRONMENT_ERROR_MESSAGE);
-
         this._environment = environment;
 
         return this;

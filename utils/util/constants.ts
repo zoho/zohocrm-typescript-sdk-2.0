@@ -61,7 +61,7 @@ export class Constants {
 
     public static ZOHO_SDK = "X-ZOHO-SDK";
 
-    public static SDK_VERSION = "5.0.0";
+    public static SDK_VERSION = "7.0.0";
 
     public static MYSQL_HOST = "localhost";
 
@@ -563,6 +563,8 @@ export class Constants {
 
     public static OAUTH_MANDATORY_KEYS = ["grantToken", "refreshToken", "id", "accessToken"];
 
+    public static PROXY_MANDATORY_KEYS = ["host", "port"];
+    
     public static REDIRECT_URI = "redirect_uri";
 
     public static INVALID_TOKEN_ERROR = "INVALID TOKEN ERROR";

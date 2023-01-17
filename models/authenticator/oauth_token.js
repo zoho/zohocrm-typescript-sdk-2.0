@@ -186,21 +186,21 @@ class OAuthToken {
             var oauthToken = null;
             if (this.accessToken == null) {
                 if (this.id != null) {
-                    oauthToken = await store.getTokenById(this.id, this);
+                    oauthToken = await store.getTokenById(this.id, this).catch(err => { throw err; });
                 }
                 else {
-                    oauthToken = await store.getToken(user, this);
+                    oauthToken = await store.getToken(user, this).catch(err => { throw err; });
                 }
             }
             else {
                 oauthToken = this;
             }
             if (oauthToken == null) { //first time
-                token = (this.refreshToken == null) ? (await this.generateAccessToken(user, store)).getAccessToken() : (await this.refreshAccessToken(user, store)).getAccessToken();
+                token = (this.refreshToken == null) ? (await this.generateAccessToken(user, store).catch(err => { throw err; })).getAccessToken() : (await this.refreshAccessToken(user, store).catch(err => { throw err; })).getAccessToken();
             }
             else if (oauthToken.getExpiresIn() !== undefined && (parseInt(oauthToken.getExpiresIn()) - (new Date().getTime())) < 5000) { //access token will expire in next 5 seconds or less
                 Logger.info(constants_1.Constants.REFRESH_TOKEN_MESSAGE);
-                token = (await this.refreshAccessToken(user, store)).getAccessToken();
+                token = (await this.refreshAccessToken(user, store).catch(err => { throw err; })).getAccessToken();
             }
             else {
                 token = this.getAccessToken();
@@ -234,11 +234,11 @@ class OAuthToken {
         };
         var response = await this.getResponse(url, requestDetails);
         try {
-            await this.parseResponse(response.body);
+            await this.parseResponse(response.body).catch(err => { throw err; });
             if (this.id == null) {
                 await this.generateId();
             }
-            store.saveToken(user, this);
+            await store.saveToken(user, this).catch(err => { throw err; });
         }
         catch (error) {
             if (error instanceof sdk_exception_1.SDKException) {
@@ -271,9 +271,9 @@ class OAuthToken {
         };
         var response = await this.getResponse(url, requestDetails);
         try {
-            await this.parseResponse(response.body);
+            await this.parseResponse(response.body).catch(err => { throw err; });
             await this.generateId();
-            await store.saveToken(user, this);
+            await store.saveToken(user, this).catch(err => { throw err; });
         }
         catch (error) {
             if (error instanceof sdk_exception_1.SDKException) {
@@ -306,7 +306,7 @@ class OAuthToken {
     async remove() {
         try {
             let initializer = await initializer_1.Initializer.getInitializer();
-            await initializer.getStore().deleteToken(this);
+            await initializer.getStore().deleteToken(this).catch(err => { throw err; });
             return true;
         }
         catch (error) {
@@ -320,11 +320,11 @@ class OAuthToken {
         return false;
     }
     async generateId() {
-        let email = (await initializer_1.Initializer.getInitializer()).getUser().getEmail();
-        let builder = constants_1.Constants.TYPE_SCRIPT + (email).substring(0, (email.indexOf('@'))) + "_";
+        let email = (await initializer_1.Initializer.getInitializer()).getUser().getName();
+        let builder = constants_1.Constants.TYPE_SCRIPT + email + "_";
         builder = builder + (await initializer_1.Initializer.getInitializer()).getEnvironment().getName() + "_";
         if (this.refreshToken != null) {
-            builder = builder + this.refreshToken.substring(this.refreshToken.length - 4);
+            builder = builder + this.refreshToken.substring(this.refreshToken.length - 32);
         }
         this.id = builder;
     }

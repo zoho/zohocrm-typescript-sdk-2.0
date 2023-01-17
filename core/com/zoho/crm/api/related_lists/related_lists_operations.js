@@ -24,7 +24,7 @@ class RelatedListsOperations {
         handlerInstance.setAPIPath(apiPath);
         handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_GET);
         handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_READ);
-        await handlerInstance.addParam(new param_1.Param("module", "com.zoho.crm.api.RelatedLists.GetRelatedListsParam"), this.module);
+        await handlerInstance.addParam(new param_1.Param("module", "com.zoho.crm.api.RelatedLists.GetRelatedListsParam"), this.module).catch(err => { throw err; });
         let ResponseHandler = require.resolve("./response_handler");
         return handlerInstance.apiCall(ResponseHandler, "application/json");
     }
@@ -42,7 +42,7 @@ class RelatedListsOperations {
         handlerInstance.setAPIPath(apiPath);
         handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_GET);
         handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_READ);
-        await handlerInstance.addParam(new param_1.Param("module", "com.zoho.crm.api.RelatedLists.GetRelatedListParam"), this.module);
+        await handlerInstance.addParam(new param_1.Param("module", "com.zoho.crm.api.RelatedLists.GetRelatedListParam"), this.module).catch(err => { throw err; });
         let ResponseHandler = require.resolve("./response_handler");
         return handlerInstance.apiCall(ResponseHandler, "application/json");
     }

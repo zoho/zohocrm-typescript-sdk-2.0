@@ -24,7 +24,7 @@ class ProfilesOperations {
         handlerInstance.setAPIPath(apiPath);
         handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_GET);
         handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_READ);
-        await handlerInstance.addHeader(new header_1.Header("If-Modified-Since", "com.zoho.crm.api.Profiles.GetProfilesHeader"), this.ifModifiedSince);
+        await handlerInstance.addHeader(new header_1.Header("If-Modified-Since", "com.zoho.crm.api.Profiles.GetProfilesHeader"), this.ifModifiedSince).catch(err => { throw err; });
         let ResponseHandler = require.resolve("./response_handler");
         return handlerInstance.apiCall(ResponseHandler, "application/json");
     }
@@ -42,7 +42,7 @@ class ProfilesOperations {
         handlerInstance.setAPIPath(apiPath);
         handlerInstance.setHttpMethod(constants_1.Constants.REQUEST_METHOD_GET);
         handlerInstance.setCategoryMethod(constants_1.Constants.REQUEST_CATEGORY_READ);
-        await handlerInstance.addHeader(new header_1.Header("If-Modified-Since", "com.zoho.crm.api.Profiles.GetProfileHeader"), this.ifModifiedSince);
+        await handlerInstance.addHeader(new header_1.Header("If-Modified-Since", "com.zoho.crm.api.Profiles.GetProfileHeader"), this.ifModifiedSince).catch(err => { throw err; });
         let ResponseHandler = require.resolve("./response_handler");
         return handlerInstance.apiCall(ResponseHandler, "application/json");
     }

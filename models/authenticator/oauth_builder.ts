@@ -1,4 +1,3 @@
-import { Utility } from '../../utils/util/utility';
 import { Constants } from '../../utils/util/constants';
 import { SDKException } from '../../core/com/zoho/crm/api/exception/sdk_exception';
 import { OAuthToken } from './oauth_token';
@@ -25,16 +24,12 @@ export class OAuthBuilder {
     }
 
     public clientId(clientID: string): OAuthBuilder {
-        Utility.assertNotNull(clientID, Constants.TOKEN_ERROR, Constants.CLIENT_ID_NULL_ERROR_MESSAGE);
-
         this._clientID = clientID;
 
         return this;
     }
 
     public clientSecret(clientSecret: string): OAuthBuilder {
-        Utility.assertNotNull(clientSecret, Constants.TOKEN_ERROR, Constants.CLIENT_SECRET_NULL_ERROR_MESSAGE);
-
         this._clientSecret = clientSecret;
 
         return this;
@@ -65,7 +60,6 @@ export class OAuthBuilder {
     }
 
     public build(): OAuthToken {
-
         if (this._grantToken == null && this._refreshToken == null && this._id == null && this._accessToken == null) {
             throw new SDKException(Constants.MANDATORY_VALUE_ERROR, Constants.MANDATORY_KEY_ERROR, Constants.OAUTH_MANDATORY_KEYS);
         }
