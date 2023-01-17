@@ -147,7 +147,7 @@ export class APIHTTPConnector {
         }
 
         if (this.requestBody !== undefined && this.requestBody !== null && Array.from(Object.keys(this.requestBody)).length > 0 && converterInstance !== null) {
-            modifiedRequestBody = await converterInstance.appendToRequest(this);
+            modifiedRequestBody = await converterInstance.appendToRequest(this).catch(err => { throw err; });
         }
 
         let initializer = await Initializer.getInitializer();

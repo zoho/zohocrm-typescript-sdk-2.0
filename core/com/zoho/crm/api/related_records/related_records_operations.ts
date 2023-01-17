@@ -49,10 +49,10 @@ class RelatedRecordsOperations{
 		handlerInstance.setAPIPath(apiPath);
 		handlerInstance.setHttpMethod(Constants.REQUEST_METHOD_GET);
 		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_READ);
-		await handlerInstance.addHeader(new Header<string>("X-EXTERNAL", "com.zoho.crm.api.RelatedRecords.GetRelatedRecordsHeader"), this.xExternal);
+		await handlerInstance.addHeader(new Header<string>("X-EXTERNAL", "com.zoho.crm.api.RelatedRecords.GetRelatedRecordsHeader"), this.xExternal).catch(err => { throw err; });
 		handlerInstance.setParam(paramInstance);
 		handlerInstance.setHeader(headerInstance);
-		await Utility.getRelatedLists(this.relatedListAPIName, this.moduleAPIName, handlerInstance);
+		await Utility.getRelatedLists(this.relatedListAPIName, this.moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let ResponseHandler = require.resolve("./response_handler");
 		return handlerInstance.apiCall<ResponseHandler>(ResponseHandler, "application/json");
 
@@ -79,8 +79,8 @@ class RelatedRecordsOperations{
 		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_UPDATE);
 		handlerInstance.setContentType("application/json");
 		handlerInstance.setRequest(request);
-		await handlerInstance.addHeader(new Header<string>("X-EXTERNAL", "com.zoho.crm.api.RelatedRecords.UpdateRelatedRecordsHeader"), this.xExternal);
-		await Utility.getRelatedLists(this.relatedListAPIName, this.moduleAPIName, handlerInstance);
+		await handlerInstance.addHeader(new Header<string>("X-EXTERNAL", "com.zoho.crm.api.RelatedRecords.UpdateRelatedRecordsHeader"), this.xExternal).catch(err => { throw err; });
+		await Utility.getRelatedLists(this.relatedListAPIName, this.moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let ActionHandler = require.resolve("./action_handler");
 		return handlerInstance.apiCall<ActionHandler>(ActionHandler, "application/json");
 
@@ -105,9 +105,9 @@ class RelatedRecordsOperations{
 		handlerInstance.setAPIPath(apiPath);
 		handlerInstance.setHttpMethod(Constants.REQUEST_METHOD_DELETE);
 		handlerInstance.setCategoryMethod(Constants.REQUEST_METHOD_DELETE);
-		await handlerInstance.addHeader(new Header<string>("X-EXTERNAL", "com.zoho.crm.api.RelatedRecords.DelinkRecordsHeader"), this.xExternal);
+		await handlerInstance.addHeader(new Header<string>("X-EXTERNAL", "com.zoho.crm.api.RelatedRecords.DelinkRecordsHeader"), this.xExternal).catch(err => { throw err; });
 		handlerInstance.setParam(paramInstance);
-		await Utility.getFields(this.moduleAPIName, handlerInstance);
+		await Utility.getFields(this.moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let ActionHandler = require.resolve("./action_handler");
 		return handlerInstance.apiCall<ActionHandler>(ActionHandler, "application/json");
 
@@ -133,10 +133,10 @@ class RelatedRecordsOperations{
 		handlerInstance.setAPIPath(apiPath);
 		handlerInstance.setHttpMethod(Constants.REQUEST_METHOD_GET);
 		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_READ);
-		await handlerInstance.addHeader(new Header<string>("X-EXTERNAL", "com.zoho.crm.api.RelatedRecords.GetRelatedRecordsUsingExternalIDHeader"), this.xExternal);
+		await handlerInstance.addHeader(new Header<string>("X-EXTERNAL", "com.zoho.crm.api.RelatedRecords.GetRelatedRecordsUsingExternalIDHeader"), this.xExternal).catch(err => { throw err; });
 		handlerInstance.setParam(paramInstance);
 		handlerInstance.setHeader(headerInstance);
-		await Utility.getRelatedLists(this.relatedListAPIName, this.moduleAPIName, handlerInstance);
+		await Utility.getRelatedLists(this.relatedListAPIName, this.moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let ResponseHandler = require.resolve("./response_handler");
 		return handlerInstance.apiCall<ResponseHandler>(ResponseHandler, "application/json");
 
@@ -163,8 +163,8 @@ class RelatedRecordsOperations{
 		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_UPDATE);
 		handlerInstance.setContentType("application/json");
 		handlerInstance.setRequest(request);
-		await handlerInstance.addHeader(new Header<string>("X-EXTERNAL", "com.zoho.crm.api.RelatedRecords.UpdateRelatedRecordsUsingExternalIDHeader"), this.xExternal);
-		await Utility.getRelatedLists(this.relatedListAPIName, this.moduleAPIName, handlerInstance);
+		await handlerInstance.addHeader(new Header<string>("X-EXTERNAL", "com.zoho.crm.api.RelatedRecords.UpdateRelatedRecordsUsingExternalIDHeader"), this.xExternal).catch(err => { throw err; });
+		await Utility.getRelatedLists(this.relatedListAPIName, this.moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let ActionHandler = require.resolve("./action_handler");
 		return handlerInstance.apiCall<ActionHandler>(ActionHandler, "application/json");
 
@@ -189,9 +189,9 @@ class RelatedRecordsOperations{
 		handlerInstance.setAPIPath(apiPath);
 		handlerInstance.setHttpMethod(Constants.REQUEST_METHOD_DELETE);
 		handlerInstance.setCategoryMethod(Constants.REQUEST_METHOD_DELETE);
-		await handlerInstance.addHeader(new Header<string>("X-EXTERNAL", "com.zoho.crm.api.RelatedRecords.DeleteRelatedRecordsUsingExternalIDHeader"), this.xExternal);
+		await handlerInstance.addHeader(new Header<string>("X-EXTERNAL", "com.zoho.crm.api.RelatedRecords.DeleteRelatedRecordsUsingExternalIDHeader"), this.xExternal).catch(err => { throw err; });
 		handlerInstance.setParam(paramInstance);
-		await Utility.getRelatedLists(this.relatedListAPIName, this.moduleAPIName, handlerInstance);
+		await Utility.getRelatedLists(this.relatedListAPIName, this.moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let ActionHandler = require.resolve("./action_handler");
 		return handlerInstance.apiCall<ActionHandler>(ActionHandler, "application/json");
 
@@ -219,9 +219,9 @@ class RelatedRecordsOperations{
 		handlerInstance.setAPIPath(apiPath);
 		handlerInstance.setHttpMethod(Constants.REQUEST_METHOD_GET);
 		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_READ);
-		await handlerInstance.addHeader(new Header<string>("X-EXTERNAL", "com.zoho.crm.api.RelatedRecords.GetRelatedRecordHeader"), this.xExternal);
+		await handlerInstance.addHeader(new Header<string>("X-EXTERNAL", "com.zoho.crm.api.RelatedRecords.GetRelatedRecordHeader"), this.xExternal).catch(err => { throw err; });
 		handlerInstance.setHeader(headerInstance);
-		await Utility.getRelatedLists(this.relatedListAPIName, this.moduleAPIName, handlerInstance);
+		await Utility.getRelatedLists(this.relatedListAPIName, this.moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let ResponseHandler = require.resolve("./response_handler");
 		return handlerInstance.apiCall<ResponseHandler>(ResponseHandler, "application/json");
 
@@ -251,8 +251,8 @@ class RelatedRecordsOperations{
 		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_UPDATE);
 		handlerInstance.setContentType("application/json");
 		handlerInstance.setRequest(request);
-		await handlerInstance.addHeader(new Header<string>("X-EXTERNAL", "com.zoho.crm.api.RelatedRecords.UpdateRelatedRecordHeader"), this.xExternal);
-		await Utility.getRelatedLists(this.relatedListAPIName, this.moduleAPIName, handlerInstance);
+		await handlerInstance.addHeader(new Header<string>("X-EXTERNAL", "com.zoho.crm.api.RelatedRecords.UpdateRelatedRecordHeader"), this.xExternal).catch(err => { throw err; });
+		await Utility.getRelatedLists(this.relatedListAPIName, this.moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let ActionHandler = require.resolve("./action_handler");
 		return handlerInstance.apiCall<ActionHandler>(ActionHandler, "application/json");
 
@@ -279,8 +279,8 @@ class RelatedRecordsOperations{
 		handlerInstance.setAPIPath(apiPath);
 		handlerInstance.setHttpMethod(Constants.REQUEST_METHOD_DELETE);
 		handlerInstance.setCategoryMethod(Constants.REQUEST_METHOD_DELETE);
-		await handlerInstance.addHeader(new Header<string>("X-EXTERNAL", "com.zoho.crm.api.RelatedRecords.DelinkRecordHeader"), this.xExternal);
-		await Utility.getFields(this.moduleAPIName, handlerInstance);
+		await handlerInstance.addHeader(new Header<string>("X-EXTERNAL", "com.zoho.crm.api.RelatedRecords.DelinkRecordHeader"), this.xExternal).catch(err => { throw err; });
+		await Utility.getFields(this.moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let ActionHandler = require.resolve("./action_handler");
 		return handlerInstance.apiCall<ActionHandler>(ActionHandler, "application/json");
 
@@ -308,9 +308,9 @@ class RelatedRecordsOperations{
 		handlerInstance.setAPIPath(apiPath);
 		handlerInstance.setHttpMethod(Constants.REQUEST_METHOD_GET);
 		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_READ);
-		await handlerInstance.addHeader(new Header<string>("X-EXTERNAL", "com.zoho.crm.api.RelatedRecords.GetRelatedRecordUsingExternalIDHeader"), this.xExternal);
+		await handlerInstance.addHeader(new Header<string>("X-EXTERNAL", "com.zoho.crm.api.RelatedRecords.GetRelatedRecordUsingExternalIDHeader"), this.xExternal).catch(err => { throw err; });
 		handlerInstance.setHeader(headerInstance);
-		await Utility.getRelatedLists(this.relatedListAPIName, this.moduleAPIName, handlerInstance);
+		await Utility.getRelatedLists(this.relatedListAPIName, this.moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let ResponseHandler = require.resolve("./response_handler");
 		return handlerInstance.apiCall<ResponseHandler>(ResponseHandler, "application/json");
 
@@ -340,8 +340,8 @@ class RelatedRecordsOperations{
 		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_UPDATE);
 		handlerInstance.setContentType("application/json");
 		handlerInstance.setRequest(request);
-		await handlerInstance.addHeader(new Header<string>("X-EXTERNAL", "com.zoho.crm.api.RelatedRecords.UpdateRelatedRecordUsingExternalIDHeader"), this.xExternal);
-		await Utility.getRelatedLists(this.relatedListAPIName, this.moduleAPIName, handlerInstance);
+		await handlerInstance.addHeader(new Header<string>("X-EXTERNAL", "com.zoho.crm.api.RelatedRecords.UpdateRelatedRecordUsingExternalIDHeader"), this.xExternal).catch(err => { throw err; });
+		await Utility.getRelatedLists(this.relatedListAPIName, this.moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let ActionHandler = require.resolve("./action_handler");
 		return handlerInstance.apiCall<ActionHandler>(ActionHandler, "application/json");
 
@@ -368,8 +368,8 @@ class RelatedRecordsOperations{
 		handlerInstance.setAPIPath(apiPath);
 		handlerInstance.setHttpMethod(Constants.REQUEST_METHOD_DELETE);
 		handlerInstance.setCategoryMethod(Constants.REQUEST_METHOD_DELETE);
-		await handlerInstance.addHeader(new Header<string>("X-EXTERNAL", "com.zoho.crm.api.RelatedRecords.DeleteRelatedRecordUsingExternalIDHeader"), this.xExternal);
-		await Utility.getRelatedLists(this.relatedListAPIName, this.moduleAPIName, handlerInstance);
+		await handlerInstance.addHeader(new Header<string>("X-EXTERNAL", "com.zoho.crm.api.RelatedRecords.DeleteRelatedRecordUsingExternalIDHeader"), this.xExternal).catch(err => { throw err; });
+		await Utility.getRelatedLists(this.relatedListAPIName, this.moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let ActionHandler = require.resolve("./action_handler");
 		return handlerInstance.apiCall<ActionHandler>(ActionHandler, "application/json");
 

@@ -43,12 +43,12 @@ class Utility {
         if (initializer.getSDKConfig().getAutoRefreshFields() == true && !this.newFile && !this.getModifiedModules && (!(recordFieldDetailsJson.hasOwnProperty(constants_1.Constants.FIELDS_LAST_MODIFIED_TIME)) || this.forceRefresh || (new Date().getTime() - recordFieldDetailsJson[constants_1.Constants.FIELDS_LAST_MODIFIED_TIME]) > 3600000)) {
             this.getModifiedModules = true;
             lastModifiedTime = !this.forceRefresh && recordFieldDetailsJson.hasOwnProperty(constants_1.Constants.FIELDS_LAST_MODIFIED_TIME) ? recordFieldDetailsJson[constants_1.Constants.FIELDS_LAST_MODIFIED_TIME] : null;
-            await Utility.modifyFields(recordFieldDetailsPath, lastModifiedTime);
+            await Utility.modifyFields(recordFieldDetailsPath, lastModifiedTime).catch(err => { throw err; });
             this.getModifiedModules = false;
         }
         else if (initializer.getSDKConfig().getAutoRefreshFields() == false && this.forceRefresh && !this.getModifiedModules) {
             this.getModifiedModules = true;
-            await Utility.modifyFields(recordFieldDetailsPath, lastModifiedTime);
+            await Utility.modifyFields(recordFieldDetailsPath, lastModifiedTime).catch(err => { throw err; });
             this.getModifiedModules = false;
         }
         recordFieldDetailsJson = initializer_1.Initializer.getJSON(recordFieldDetailsPath);
@@ -56,10 +56,10 @@ class Utility {
             return;
         }
         else {
-            await Utility.fillDataType();
+            await Utility.fillDataType().catch(err => { throw err; });
             recordFieldDetailsJson[moduleAPIName.toLowerCase()] = {};
             fs.writeFileSync(recordFieldDetailsPath, JSON.stringify(recordFieldDetailsJson));
-            let fieldsDetails = await Utility.getFieldsDetails(moduleAPIName);
+            let fieldsDetails = await Utility.getFieldsDetails(moduleAPIName).catch(err => { throw err; });
             recordFieldDetailsJson = await initializer_1.Initializer.getJSON(recordFieldDetailsPath);
             recordFieldDetailsJson[moduleAPIName.toLowerCase()] = fieldsDetails;
             fs.writeFileSync(recordFieldDetailsPath, JSON.stringify(recordFieldDetailsJson));
@@ -107,7 +107,7 @@ class Utility {
      */
     static async getFields(moduleAPIName, handlerInstance) {
         this.moduleAPIName = moduleAPIName;
-        await this.getFieldsInfo(moduleAPIName, handlerInstance);
+        await this.getFieldsInfo(moduleAPIName, handlerInstance).catch(err => { throw err; });
     }
     /**
      * This method to fetch field details of the current module for the current user and store the result in a JSON file.
@@ -118,7 +118,7 @@ class Utility {
         let lastModifiedTime = null;
         var recordFieldDetailsPath = null;
         try {
-            if (moduleAPIName != null && await Utility.searchJSONDetails(moduleAPIName) != null) {
+            if (moduleAPIName != null && await Utility.searchJSONDetails(moduleAPIName).catch(err => { throw err; }) != null) {
                 return;
             }
             let initializer = await initializer_1.Initializer.getInitializer();
@@ -133,12 +133,12 @@ class Utility {
             }
             recordFieldDetailsPath = await this.getFileName();
             if (fs.existsSync(recordFieldDetailsPath)) {
-                await Utility.fileExistsFlow(moduleAPIName, recordFieldDetailsPath, lastModifiedTime);
+                await Utility.fileExistsFlow(moduleAPIName, recordFieldDetailsPath, lastModifiedTime).catch(err => { throw err; });
             }
             else if (initializer.getSDKConfig().getAutoRefreshFields() == true) {
                 this.newFile = true;
-                await Utility.fillDataType();
-                this.apiSupportedModule = this.apiSupportedModule.size > 0 ? this.apiSupportedModule : await Utility.getModules(null);
+                await Utility.fillDataType().catch(err => { throw err; });
+                this.apiSupportedModule = this.apiSupportedModule.size > 0 ? this.apiSupportedModule : await Utility.getModules(null).catch(err => { throw err; });
                 let recordFieldDetailsJson = fs.existsSync(recordFieldDetailsPath) ? initializer_1.Initializer.getJSON(recordFieldDetailsPath) : {};
                 recordFieldDetailsJson[constants_1.Constants.FIELDS_LAST_MODIFIED_TIME] = new Date().getTime();
                 if (Object.keys(this.apiSupportedModule).length > 0) {
@@ -147,7 +147,7 @@ class Utility {
                             let moduleData = this.apiSupportedModule[module];
                             recordFieldDetailsJson[module] = {};
                             fs.writeFileSync(recordFieldDetailsPath, JSON.stringify(recordFieldDetailsJson));
-                            let fieldsDetails = await Utility.getFieldsDetails(moduleData[constants_1.Constants.API_NAME]);
+                            let fieldsDetails = await Utility.getFieldsDetails(moduleData[constants_1.Constants.API_NAME]).catch(err => { throw err; });
                             recordFieldDetailsJson = await initializer_1.Initializer.getJSON(recordFieldDetailsPath);
                             recordFieldDetailsJson[module] = fieldsDetails;
                             fs.writeFileSync(recordFieldDetailsPath, JSON.stringify(recordFieldDetailsJson));
@@ -161,16 +161,16 @@ class Utility {
                 this.getModifiedModules = true;
                 let recordFieldDetailsJson = {};
                 fs.writeFileSync(recordFieldDetailsPath, JSON.stringify(recordFieldDetailsJson));
-                await Utility.modifyFields(recordFieldDetailsPath, lastModifiedTime);
+                await Utility.modifyFields(recordFieldDetailsPath, lastModifiedTime).catch(err => { throw err; });
                 this.getModifiedModules = false;
             }
             else {
-                await Utility.fillDataType();
+                await Utility.fillDataType().catch(err => { throw err; });
                 let recordFieldDetailsJson = {};
                 if (moduleAPIName !== null) {
                     recordFieldDetailsJson[moduleAPIName.toLowerCase()] = {};
                     fs.writeFileSync(recordFieldDetailsPath, JSON.stringify(recordFieldDetailsJson));
-                    let fieldsDetails = await Utility.getFieldsDetails(moduleAPIName);
+                    let fieldsDetails = await Utility.getFieldsDetails(moduleAPIName).catch(err => { throw err; });
                     recordFieldDetailsJson = await initializer_1.Initializer.getJSON(recordFieldDetailsPath);
                     recordFieldDetailsJson[moduleAPIName.toLowerCase()] = fieldsDetails;
                     fs.writeFileSync(recordFieldDetailsPath, JSON.stringify(recordFieldDetailsJson));
@@ -226,7 +226,7 @@ class Utility {
             fs.writeFileSync(recordFieldDetailsPath, JSON.stringify(recordFieldDetailsJson));
             for (let module in modifiedModules) {
                 let moduleData = modifiedModules[module];
-                await Utility.getFieldsInfo(moduleData[constants_1.Constants.API_NAME], null);
+                await Utility.getFieldsInfo(moduleData[constants_1.Constants.API_NAME], null).catch(err => { throw err; });
             }
         }
     }
@@ -241,7 +241,7 @@ class Utility {
         delete recordFieldDetailsJson[module.toLowerCase()];
         if (subformModules.length > 0) {
             for (let subformModule of subformModules) {
-                await this.deleteFields(recordFieldDetailsJson, subformModule);
+                await this.deleteFields(recordFieldDetailsJson, subformModule).catch(err => { throw err; });
             }
         }
     }
@@ -263,17 +263,17 @@ class Utility {
             if (!fs.existsSync(recordFieldDetailsPath) || (fs.existsSync(recordFieldDetailsPath) && (!await initializer_1.Initializer.getJSON(recordFieldDetailsPath).hasOwnProperty(key) || (await initializer_1.Initializer.getJSON(recordFieldDetailsPath)[key] == null) || await initializer_1.Initializer.getJSON(recordFieldDetailsPath)[key].length <= 0))) {
                 isnewData = true;
                 moduleAPIName = await Utility.verifyModuleAPIName(moduleAPIName);
-                let relatedListValues = await this.getRelatedListDetails(moduleAPIName);
+                let relatedListValues = await this.getRelatedListDetails(moduleAPIName).catch(err => { throw err; });
                 let recordFieldDetailsJSON = fs.existsSync(recordFieldDetailsPath) ? await initializer_1.Initializer.getJSON(recordFieldDetailsPath) : {};
                 recordFieldDetailsJSON[key] = relatedListValues;
                 fs.writeFileSync(recordFieldDetailsPath, JSON.stringify(recordFieldDetailsJSON));
             }
             recordFieldDetailsJSON = await initializer_1.Initializer.getJSON(recordFieldDetailsPath);
             let moduleRelatedList = recordFieldDetailsJSON.hasOwnProperty(key) ? recordFieldDetailsJSON[key] : {};
-            if (!(await this.checkRelatedListExists(relatedModuleName, moduleRelatedList, commonAPIHandler)) && !isnewData) {
+            if (!(await this.checkRelatedListExists(relatedModuleName, moduleRelatedList, commonAPIHandler).catch(err => { throw err; })) && !isnewData) {
                 delete recordFieldDetailsJSON[key];
                 fs.writeFileSync(recordFieldDetailsPath, JSON.stringify(recordFieldDetailsJSON));
-                await Utility.getRelatedLists(relatedModuleName, moduleAPIName, commonAPIHandler);
+                await Utility.getRelatedLists(relatedModuleName, moduleAPIName, commonAPIHandler).catch(err => { throw err; });
             }
         }
         catch (error) {
@@ -293,7 +293,7 @@ class Utility {
                 }
                 if (relatedListObject[constants_1.Constants.MODULE].toLowerCase() != constants_1.Constants.NULL_VALUE) {
                     commonAPIHandler.setModuleAPIName(relatedListObject[constants_1.Constants.MODULE]);
-                    await Utility.getFieldsInfo(relatedListObject[constants_1.Constants.MODULE], commonAPIHandler);
+                    await Utility.getFieldsInfo(relatedListObject[constants_1.Constants.MODULE], commonAPIHandler).catch(err => { throw err; });
                 }
                 return true;
             }
@@ -426,7 +426,7 @@ class Utility {
             if (constants_1.Constants.PHOTO_SUPPORTED_MODULES.includes(moduleAPIName.toLowerCase())) {
                 return true;
             }
-            let modules = await Utility.getModuleNames();
+            let modules = await Utility.getModuleNames().catch(err => { throw err; });
             if (modules.hasOwnProperty(moduleAPIName.toLowerCase()) && modules[moduleAPIName.toLowerCase()] != null) {
                 let moduleMetaData = modules[moduleAPIName.toLowerCase()];
                 if (moduleMetaData.hasOwnProperty(constants_1.Constants.GENERATED_TYPE) && moduleMetaData[constants_1.Constants.GENERATED_TYPE] != constants_1.Constants.GENERATED_TYPE_CUSTOM) {
@@ -451,15 +451,15 @@ class Utility {
         }
         let recordFieldDetailsPath = await this.getFileName();
         if (!fs.existsSync(recordFieldDetailsPath)) {
-            moduleData = await Utility.getModules(null);
-            await Utility.writeModuleMetaData(recordFieldDetailsPath, moduleData);
+            moduleData = await Utility.getModules(null).catch(err => { throw err; });
+            await Utility.writeModuleMetaData(recordFieldDetailsPath, moduleData).catch(err => { throw err; });
             return moduleData;
         }
         else if (fs.existsSync(recordFieldDetailsPath)) {
             let recordFieldDetailsJson = await initializer_1.Initializer.getJSON(recordFieldDetailsPath);
             if (!recordFieldDetailsJson.hasOwnProperty(constants_1.Constants.SDK_MODULE_METADATA) || (recordFieldDetailsJson.hasOwnProperty(constants_1.Constants.SDK_MODULE_METADATA) && (recordFieldDetailsJson[constants_1.Constants.SDK_MODULE_METADATA] == null || recordFieldDetailsJson[constants_1.Constants.SDK_MODULE_METADATA] == undefined || Object.keys(recordFieldDetailsJson[constants_1.Constants.SDK_MODULE_METADATA]).length <= 0))) {
-                moduleData = await Utility.getModules(null);
-                await Utility.writeModuleMetaData(recordFieldDetailsPath, moduleData);
+                moduleData = await Utility.getModules(null).catch(err => { throw err; }).catch(err => { throw err; });
+                await Utility.writeModuleMetaData(recordFieldDetailsPath, moduleData).catch(err => { throw err; });
                 return moduleData;
             }
         }
@@ -520,7 +520,7 @@ class Utility {
                     fs.mkdirSync(resourcesPath, { recursive: true });
                 }
                 var recordFieldDetailsPath = await this.getFileName();
-                await Utility.writeModuleMetaData(recordFieldDetailsPath, apiNames);
+                await Utility.writeModuleMetaData(recordFieldDetailsPath, apiNames).catch(err => { throw err; });
             }
             catch (error) {
                 if (!(error instanceof sdk_exception_1.SDKException)) {
@@ -534,7 +534,7 @@ class Utility {
     }
     static async refreshModules() {
         this.forceRefresh = true;
-        await Utility.getFieldsInfo(null, null);
+        await Utility.getFieldsInfo(null, null).catch(err => { throw err; });
         this.forceRefresh = false;
     }
     static async getJSONObject(json, key) {
@@ -638,7 +638,7 @@ class Utility {
             fieldDetail.lookup = true;
         }
         if (module.length > 0) {
-            await Utility.getFieldsInfo(module, null);
+            await Utility.getFieldsInfo(module, null).catch(err => { throw err; });
         }
         fieldDetail.name = keyName;
     }

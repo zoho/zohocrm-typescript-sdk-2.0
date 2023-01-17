@@ -199,7 +199,7 @@ class CommonAPIHandler {
 		var connector = new APIHTTPConnector();
 
 		try {
-			await this.setAPIUrl(connector);
+			await this.setAPIUrl(connector).catch(err => { throw err; });
 		}
 		catch (error) {
 			if (!(error instanceof SDKException)) {
@@ -268,7 +268,7 @@ class CommonAPIHandler {
 
 					baseName.push(classFileName);
 
-					requestObject = await converterInstance.formRequest(this.request, baseName.join("/"), null, null);
+					requestObject = await converterInstance.formRequest(this.request, baseName.join("/"), null, null).catch(err => { throw err; });
 				}
 			}
 			catch (error) {
@@ -289,7 +289,7 @@ class CommonAPIHandler {
 		try {
 			connector.addHeader(Constants.ZOHO_SDK, os.platform() + "/" + os.release() + "/" + Constants.SDK_NAME + "/" + process.version + ":" + Constants.SDK_VERSION);
 
-			let response = await connector.fireRequest(converterInstance);
+			let response = await connector.fireRequest(converterInstance).catch(err => { throw err; });
 
 			let headerMap = await this.getHeaders(response.headers);
 
@@ -302,7 +302,7 @@ class CommonAPIHandler {
 					converterInstance = this.getConverterClassInstance(contentType.toLowerCase());
 
 					if (converterInstance !== null) {
-						returnObject = await converterInstance.getWrappedResponse(response, pack);
+						returnObject = await converterInstance.getWrappedResponse(response, pack).catch(err => { throw err; });
 					}
 				}
 			}
@@ -438,8 +438,6 @@ class CommonAPIHandler {
 
 		connector.setUrl(apiPath);
 	}
-
-
 
 	/**
 	 * This is a getter method to get mandatoryChecker

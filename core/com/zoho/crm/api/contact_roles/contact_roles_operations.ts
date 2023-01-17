@@ -169,7 +169,7 @@ class ContactRolesOperations{
 		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_READ);
 		handlerInstance.setParam(paramInstance);
 		handlerInstance.setModuleAPIName("Contacts");
-		await Utility.getFields("Contacts", handlerInstance);
+		await Utility.getFields("Contacts", handlerInstance).catch(err => { throw err; });
 		let RecordResponseHandler = require.resolve("./record_response_handler");
 		return handlerInstance.apiCall<RecordResponseHandler>(RecordResponseHandler, "application/json");
 
@@ -193,7 +193,7 @@ class ContactRolesOperations{
 		handlerInstance.setHttpMethod(Constants.REQUEST_METHOD_GET);
 		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_READ);
 		handlerInstance.setModuleAPIName("Contacts");
-		await Utility.getFields("Contacts", handlerInstance);
+		await Utility.getFields("Contacts", handlerInstance).catch(err => { throw err; });
 		let RecordResponseHandler = require.resolve("./record_response_handler");
 		return handlerInstance.apiCall<RecordResponseHandler>(RecordResponseHandler, "application/json");
 

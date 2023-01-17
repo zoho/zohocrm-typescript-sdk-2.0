@@ -48,7 +48,7 @@ class FileStore {
                 for (var i = 0; i < array.length; i++) {
                     var line = array[i];
                     var nextRecord = line.split(",");
-                    if (this.checkTokenExists(user.getEmail(), token, nextRecord)) {
+                    if (this.checkTokenExists(user.getName(), token, nextRecord)) {
                         token.setAccessToken(nextRecord[5]);
                         token.setExpiresIn(nextRecord[7]);
                         token.setRefreshToken(nextRecord[4]);
@@ -67,11 +67,11 @@ class FileStore {
     async saveToken(user, token) {
         try {
             if (token instanceof oauth_token_1.OAuthToken) {
-                token.setUserMail(user.getEmail());
-                await this.deleteToken(token);
+                token.setUserMail(user.getName());
+                await this.deleteToken(token).catch(err => { throw err; });
                 var data = [];
                 data[0] = token.getId();
-                data[1] = user.getEmail();
+                data[1] = user.getName();
                 data[2] = token.getClientId();
                 data[3] = token.getClientSecret();
                 data[4] = token.getRefreshToken();

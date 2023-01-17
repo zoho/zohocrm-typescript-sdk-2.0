@@ -24,6 +24,8 @@ const sdk_exception_1 = require("../../core/com/zoho/crm/api/exception/sdk_excep
 const initializer_1 = require("../../routes/initializer");
 const choice_1 = require("./choice");
 const constants_1 = require("./constants");
+const oauth_token_1 = require("../../models/authenticator/oauth_token");
+const api_http_connector_1 = require("../../routes/controllers/api_http_connector");
 /**
  * This class is to construct API request and response.
  */
@@ -166,13 +168,34 @@ class Converter {
         }
         return true;
     }
-    /**
-     * getEncodedFileName
-     */
     static async getEncodedFileName() {
         let initializer = await initializer_1.Initializer.getInitializer();
-        var fileName = initializer.getUser().getEmail();
-        fileName = (fileName).substring(0, (fileName.indexOf('@'))) + initializer.getEnvironment().getUrl();
+        let token = initializer.getToken();
+        let grantToken = "";
+        let accessToken = "";
+        let refreshToken = "";
+        let tokenKey = "";
+        if (token instanceof oauth_token_1.OAuthToken) {
+            grantToken = token.getGrantToken();
+            if (grantToken != null && grantToken.length > 0) {
+                await token.authenticate(new api_http_connector_1.APIHTTPConnector()).catch(err => { throw err; });
+            }
+            refreshToken = token.getRefreshToken();
+            if (refreshToken != null && refreshToken.length > 0) {
+                tokenKey = refreshToken.substring(refreshToken.length - 32);
+            }
+            else {
+                accessToken = token.getAccessToken();
+                if (accessToken != null && accessToken.length > 0) {
+                    tokenKey = accessToken.substring(accessToken.length - 32);
+                }
+            }
+        }
+        var fileName = initializer.getUser().getName();
+        fileName = fileName + initializer.getEnvironment().getUrl();
+        if (tokenKey != null && tokenKey.length > 0) {
+            fileName = fileName + tokenKey;
+        }
         var input = this.toUTF8Array(fileName);
         var str = Buffer.from(input).toString('base64');
         return str.concat(".json");

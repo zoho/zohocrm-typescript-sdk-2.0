@@ -48,8 +48,8 @@ class FunctionsOperations{
 		handlerInstance.setContentType("application/json");
 		handlerInstance.setRequest(request);
 		handlerInstance.setMandatoryChecker(true);
-		await handlerInstance.addParam(new Param<string>("auth_type", "com.zoho.crm.api.Functions.ExecuteFunctionUsingRequestBodyParam"), this.authType);
-		await handlerInstance.addParam(new Param<Map<string, any>>("arguments", "com.zoho.crm.api.Functions.ExecuteFunctionUsingRequestBodyParam"), this.arguments1);
+		await handlerInstance.addParam(new Param<string>("auth_type", "com.zoho.crm.api.Functions.ExecuteFunctionUsingRequestBodyParam"), this.authType).catch(err => { throw err; });
+		await handlerInstance.addParam(new Param<Map<string, any>>("arguments", "com.zoho.crm.api.Functions.ExecuteFunctionUsingRequestBodyParam"), this.arguments1).catch(err => { throw err; });
 		handlerInstance.setParam(paramInstance);
 		handlerInstance.setHeader(headerInstance);
 		let ResponseWrapper = require.resolve("./response_wrapper");
@@ -73,8 +73,8 @@ class FunctionsOperations{
 		handlerInstance.setAPIPath(apiPath);
 		handlerInstance.setHttpMethod(Constants.REQUEST_METHOD_GET);
 		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_READ);
-		await handlerInstance.addParam(new Param<string>("auth_type", "com.zoho.crm.api.Functions.ExecuteFunctionUsingParametersParam"), this.authType);
-		await handlerInstance.addParam(new Param<Map<string, any>>("arguments", "com.zoho.crm.api.Functions.ExecuteFunctionUsingParametersParam"), this.arguments1);
+		await handlerInstance.addParam(new Param<string>("auth_type", "com.zoho.crm.api.Functions.ExecuteFunctionUsingParametersParam"), this.authType).catch(err => { throw err; });
+		await handlerInstance.addParam(new Param<Map<string, any>>("arguments", "com.zoho.crm.api.Functions.ExecuteFunctionUsingParametersParam"), this.arguments1).catch(err => { throw err; });
 		handlerInstance.setParam(paramInstance);
 		handlerInstance.setHeader(headerInstance);
 		let ResponseWrapper = require.resolve("./response_wrapper");
@@ -102,8 +102,8 @@ class FunctionsOperations{
 		handlerInstance.setContentType("multipart/form-data");
 		handlerInstance.setRequest(request);
 		handlerInstance.setMandatoryChecker(true);
-		await handlerInstance.addParam(new Param<string>("auth_type", "com.zoho.crm.api.Functions.ExecuteFunctionUsingFileParam"), this.authType);
-		await handlerInstance.addParam(new Param<Map<string, any>>("arguments", "com.zoho.crm.api.Functions.ExecuteFunctionUsingFileParam"), this.arguments1);
+		await handlerInstance.addParam(new Param<string>("auth_type", "com.zoho.crm.api.Functions.ExecuteFunctionUsingFileParam"), this.authType).catch(err => { throw err; });
+		await handlerInstance.addParam(new Param<Map<string, any>>("arguments", "com.zoho.crm.api.Functions.ExecuteFunctionUsingFileParam"), this.arguments1).catch(err => { throw err; });
 		handlerInstance.setParam(paramInstance);
 		handlerInstance.setHeader(headerInstance);
 		let ResponseWrapper = require.resolve("./response_wrapper");

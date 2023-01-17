@@ -29,7 +29,7 @@ class ProfilesOperations{
 		handlerInstance.setAPIPath(apiPath);
 		handlerInstance.setHttpMethod(Constants.REQUEST_METHOD_GET);
 		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_READ);
-		await handlerInstance.addHeader(new Header<Date>("If-Modified-Since", "com.zoho.crm.api.Profiles.GetProfilesHeader"), this.ifModifiedSince);
+		await handlerInstance.addHeader(new Header<Date>("If-Modified-Since", "com.zoho.crm.api.Profiles.GetProfilesHeader"), this.ifModifiedSince).catch(err => { throw err; });
 		let ResponseHandler = require.resolve("./response_handler");
 		return handlerInstance.apiCall<ResponseHandler>(ResponseHandler, "application/json");
 
@@ -49,7 +49,7 @@ class ProfilesOperations{
 		handlerInstance.setAPIPath(apiPath);
 		handlerInstance.setHttpMethod(Constants.REQUEST_METHOD_GET);
 		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_READ);
-		await handlerInstance.addHeader(new Header<Date>("If-Modified-Since", "com.zoho.crm.api.Profiles.GetProfileHeader"), this.ifModifiedSince);
+		await handlerInstance.addHeader(new Header<Date>("If-Modified-Since", "com.zoho.crm.api.Profiles.GetProfileHeader"), this.ifModifiedSince).catch(err => { throw err; });
 		let ResponseHandler = require.resolve("./response_handler");
 		return handlerInstance.apiCall<ResponseHandler>(ResponseHandler, "application/json");
 

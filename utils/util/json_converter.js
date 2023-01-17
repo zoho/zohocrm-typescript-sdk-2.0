@@ -58,12 +58,12 @@ class JSONConverter extends converter_1.Converter {
         }
         if (requestInstance instanceof record_1.Record) {
             let moduleAPIName = this.commonAPIHandler.getModuleAPIName();
-            let returnJSON = await this.isRecordRequest(requestInstance, classDetail, instanceNumber, memberDetail);
+            let returnJSON = await this.isRecordRequest(requestInstance, classDetail, instanceNumber, memberDetail).catch(err => { throw err; });
             this.commonAPIHandler.setModuleAPIName(moduleAPIName);
             return returnJSON;
         }
         else {
-            return await this.isNotRecordRequest(requestInstance, classDetail, instanceNumber, memberDetail);
+            return await this.isNotRecordRequest(requestInstance, classDetail, instanceNumber, memberDetail).catch(err => { throw err; });
         }
     }
     async isNotRecordRequest(requestInstance, classDetail, instanceNumber, classMemberDetail) {
@@ -104,7 +104,7 @@ class JSONConverter extends converter_1.Converter {
             let fieldValue = null;
             if (modification != null && modification !== undefined && modification != 0) {
                 fieldValue = Reflect.get(requestInstance, memberName);
-                if (await this.valueChecker(requestInstance.constructor.name, memberName, memberDetail, fieldValue, this.uniqueValuesMap, instanceNumber)) {
+                if (await this.valueChecker(requestInstance.constructor.name, memberName, memberDetail, fieldValue, this.uniqueValuesMap, instanceNumber).catch(err => { throw err; })) {
                     if (fieldValue != null) {
                         requiredKeys.delete(keyName);
                         primaryKeys.delete(keyName);
@@ -119,7 +119,7 @@ class JSONConverter extends converter_1.Converter {
                         }
                     }
                     else {
-                        requestJSON[keyName] = await this.setData(memberDetail, fieldValue);
+                        requestJSON[keyName] = await this.setData(memberDetail, fieldValue).catch(err => { throw err; });
                     }
                 }
             }
@@ -210,7 +210,7 @@ class JSONConverter extends converter_1.Converter {
                 moduleDetail = fullDetail[constants_1.Constants.MODULEDETAILS];
             }
             else { // from user spec
-                moduleDetail = await this.getModuleDetailFromUserSpecJSON(moduleAPIName);
+                moduleDetail = await this.getModuleDetailFromUserSpecJSON(moduleAPIName).catch(err => { throw err; });
             }
         }
         else { // inner case
@@ -273,12 +273,12 @@ class JSONConverter extends converter_1.Converter {
                 if ((keyDetail.hasOwnProperty(constants_1.Constants.READ_ONLY) && (keyDetail[constants_1.Constants.READ_ONLY] == true || keyDetail[constants_1.Constants.READ_ONLY] == 'true')) || !keyDetail.hasOwnProperty(constants_1.Constants.NAME)) { // read only or no keyName
                     continue;
                 }
-                if (await this.valueChecker(recordInstance.constructor.name, keyName, keyDetail, keyValue, uniqueValues, instanceNumber)) {
-                    jsonValue = await this.setData(keyDetail, keyValue);
+                if (await this.valueChecker(recordInstance.constructor.name, keyName, keyDetail, keyValue, uniqueValues, instanceNumber).catch(err => { throw err; })) {
+                    jsonValue = await this.setData(keyDetail, keyValue).catch(err => { throw err; });
                 }
             }
             else {
-                jsonValue = await this.redirectorForObjectToJSON(keyValue);
+                jsonValue = await this.redirectorForObjectToJSON(keyValue).catch(err => { throw err; });
             }
             requestJSON[keyName] = jsonValue;
         }
@@ -294,16 +294,16 @@ class JSONConverter extends converter_1.Converter {
                 return await this.setJSONArray(fieldValue, memberDetail);
             }
             else if (type.toLowerCase() == constants_1.Constants.MAP_NAMESPACE.toLowerCase()) {
-                return await this.setJSONObject(fieldValue, memberDetail);
+                return await this.setJSONObject(fieldValue, memberDetail).catch(err => { throw err; });
             }
             else if (type == constants_1.Constants.CHOICE_NAMESPACE || (memberDetail.hasOwnProperty(constants_1.Constants.STRUCTURE_NAME) && memberDetail[constants_1.Constants.STRUCTURE_NAME] == constants_1.Constants.CHOICE_NAMESPACE)) {
                 return (fieldValue.getValue());
             }
             else if (memberDetail.hasOwnProperty(constants_1.Constants.STRUCTURE_NAME) && memberDetail.hasOwnProperty(constants_1.Constants.MODULE)) {
-                return await this.isRecordRequest(fieldValue, await this.getModuleDetailFromUserSpecJSON(memberDetail[constants_1.Constants.MODULE]), null, memberDetail);
+                return await this.isRecordRequest(fieldValue, await this.getModuleDetailFromUserSpecJSON(memberDetail[constants_1.Constants.MODULE]).catch(err => { throw err; }), null, memberDetail).catch(err => { throw err; });
             }
             else if (memberDetail.hasOwnProperty(constants_1.Constants.STRUCTURE_NAME)) {
-                return await this.formRequest(fieldValue, memberDetail[constants_1.Constants.STRUCTURE_NAME], null, memberDetail);
+                return await this.formRequest(fieldValue, memberDetail[constants_1.Constants.STRUCTURE_NAME], null, memberDetail).catch(err => { throw err; });
             }
             else {
                 return datatype_converter_1.DataTypeConverter.postConvert(fieldValue, type);
@@ -317,7 +317,7 @@ class JSONConverter extends converter_1.Converter {
         if (Array.from(requestObject.keys()).length > 0) {
             if (memberDetail == null || (memberDetail != null && !memberDetail.hasOwnProperty(constants_1.Constants.KEYS))) {
                 for (let key of Array.from(requestObject.keys())) {
-                    jsonObject[key] = await this.redirectorForObjectToJSON(requestObject.get(key));
+                    jsonObject[key] = await this.redirectorForObjectToJSON(requestObject.get(key)).catch(err => { throw err; });
                 }
             }
             else {
@@ -328,7 +328,7 @@ class JSONConverter extends converter_1.Converter {
                         let keyName = keyDetail[constants_1.Constants.NAME];
                         let keyValue = null;
                         if (requestObject.has(keyName) && requestObject.get(keyName) != null) {
-                            keyValue = await this.setData(keyDetail, requestObject.get(keyName));
+                            keyValue = await this.setData(keyDetail, requestObject.get(keyName)).catch(err => { throw err; });
                             jsonObject[keyName] = keyValue;
                         }
                     }
@@ -343,7 +343,7 @@ class JSONConverter extends converter_1.Converter {
         if (requestObjects.length > 0) {
             if (memberDetail == null || (memberDetail != null && !memberDetail.hasOwnProperty(constants_1.Constants.STRUCTURE_NAME))) {
                 for (let request of requestObjects) {
-                    jsonArray.push(await this.redirectorForObjectToJSON(request));
+                    jsonArray.push(await this.redirectorForObjectToJSON(request).catch(err => { throw err; }));
                 }
             }
             else {
@@ -356,13 +356,13 @@ class JSONConverter extends converter_1.Converter {
                 else if (memberDetail.hasOwnProperty(constants_1.Constants.MODULE) && memberDetail[constants_1.Constants.MODULE] != null) {
                     let instanceCount = 0;
                     for (let request of requestObjects) {
-                        jsonArray.push(await this.isRecordRequest(request, await this.getModuleDetailFromUserSpecJSON(memberDetail[constants_1.Constants.MODULE]), instanceCount++, memberDetail));
+                        jsonArray.push(await this.isRecordRequest(request, await this.getModuleDetailFromUserSpecJSON(memberDetail[constants_1.Constants.MODULE]).catch(err => { throw err; }), instanceCount++, memberDetail).catch(err => { throw err; }));
                     }
                 }
                 else {
                     let instanceCount = 0;
                     for (let request of requestObjects) {
-                        jsonArray.push(await this.formRequest(request, pack, instanceCount++, memberDetail));
+                        jsonArray.push(await this.formRequest(request, pack, instanceCount++, memberDetail).catch(err => { throw err; }));
                     }
                 }
             }
@@ -371,10 +371,10 @@ class JSONConverter extends converter_1.Converter {
     }
     async redirectorForObjectToJSON(request) {
         if (Array.isArray(request)) {
-            return await this.setJSONArray(request, null);
+            return await this.setJSONArray(request, null).catch(err => { throw err; });
         }
         else if (request instanceof Map) {
-            return await this.setJSONObject(request, null);
+            return await this.setJSONObject(request, null).catch(err => { throw err; });
         }
         else {
             return request;
@@ -383,7 +383,7 @@ class JSONConverter extends converter_1.Converter {
     async getWrappedResponse(response, pack) {
         if (response.body.length != 0) {
             var responseJson = JSON.parse(response.body);
-            return await this.getResponse(responseJson, pack);
+            return await this.getResponse(responseJson, pack).catch(err => { throw err; });
         }
         return null;
     }
@@ -396,18 +396,18 @@ class JSONConverter extends converter_1.Converter {
         var instance = null;
         if (classDetail.hasOwnProperty(constants_1.Constants.INTERFACE) && classDetail[constants_1.Constants.INTERFACE]) {
             let classes = classDetail[constants_1.Constants.CLASSES];
-            instance = await this.findMatch(classes, responseJson); // findmatch returns instance(calls getresponse() recursively)
+            instance = await this.findMatch(classes, responseJson).catch(err => { throw err; }); // findmatch returns instance(calls getresponse() recursively)
         }
         else {
             let ClassName = (await Promise.resolve().then(() => __importStar(require("../../".concat(packageName))))).MasterModel;
             instance = new ClassName();
             if (instance instanceof record_1.Record) { // if record -> based on response json data will be assigned to field Values
                 let moduleAPIName = this.commonAPIHandler.getModuleAPIName();
-                instance = await this.isRecordResponse(responseJson, classDetail, packageName);
+                instance = await this.isRecordResponse(responseJson, classDetail, packageName).catch(err => { throw err; });
                 this.commonAPIHandler.setModuleAPIName(moduleAPIName);
             }
             else {
-                instance = await this.notRecordResponse(instance, responseJson, classDetail);
+                instance = await this.notRecordResponse(instance, responseJson, classDetail).catch(err => { throw err; });
             }
         }
         return instance;
@@ -418,7 +418,7 @@ class JSONConverter extends converter_1.Converter {
             let keyName = keyDetail.hasOwnProperty(constants_1.Constants.NAME) ? keyDetail[constants_1.Constants.NAME] : null; // api-name of the member
             if (keyName != null && responseJSON.hasOwnProperty(keyName) && responseJSON[keyName] !== null) {
                 let keyData = responseJSON[keyName];
-                let memberValue = await this.getData(keyData, keyDetail);
+                let memberValue = await this.getData(keyData, keyDetail).catch(err => { throw err; });
                 Reflect.set(instance, memberName, memberValue);
             }
         }
@@ -438,7 +438,7 @@ class JSONConverter extends converter_1.Converter {
                 recordInstance = new moduleClassName();
             }
             else { // from user spec
-                moduleDetail = await this.getModuleDetailFromUserSpecJSON(moduleAPIName);
+                moduleDetail = await this.getModuleDetailFromUserSpecJSON(moduleAPIName).catch(err => { throw err; });
             }
         }
         for (let key in classDetail) {
@@ -464,10 +464,10 @@ class JSONConverter extends converter_1.Converter {
             let keyData = responseJson[keyName];
             if (keyDetail != null && Object.keys(keyDetail).length > 0) {
                 keyName = keyDetail[constants_1.Constants.NAME];
-                keyValue = await this.getData(keyData, keyDetail);
+                keyValue = await this.getData(keyData, keyDetail).catch(err => { throw err; });
             }
             else { // if not key detail
-                keyValue = await this.redirectorForJSONToObject(keyData);
+                keyValue = await this.redirectorForJSONToObject(keyData).catch(err => { throw err; });
             }
             keyValues.set(keyName, keyValue);
         }
@@ -479,20 +479,20 @@ class JSONConverter extends converter_1.Converter {
         if (keyData !== null) {
             let type = memberDetail[constants_1.Constants.TYPE].toString();
             if (type.toLowerCase() == constants_1.Constants.LIST_NAMESPACE.toLowerCase()) {
-                memberValue = await this.getCollectionsData(keyData, memberDetail);
+                memberValue = await this.getCollectionsData(keyData, memberDetail).catch(err => { throw err; });
             }
             else if (type.toLowerCase() == constants_1.Constants.MAP_NAMESPACE.toLowerCase()) {
-                memberValue = await this.getMapData(keyData, memberDetail);
+                memberValue = await this.getMapData(keyData, memberDetail).catch(err => { throw err; });
             }
             else if (type == constants_1.Constants.CHOICE_NAMESPACE || (memberDetail.hasOwnProperty(constants_1.Constants.STRUCTURE_NAME) && memberDetail[constants_1.Constants.STRUCTURE_NAME] == constants_1.Constants.CHOICE_NAMESPACE)) {
                 let Choice = (await Promise.resolve().then(() => __importStar(require(constants_1.Constants.CHOICE_PATH)))).MasterModel;
                 memberValue = new Choice(keyData);
             }
             else if (memberDetail.hasOwnProperty(constants_1.Constants.STRUCTURE_NAME) && memberDetail.hasOwnProperty(constants_1.Constants.MODULE)) {
-                memberValue = await this.isRecordResponse(keyData, await this.getModuleDetailFromUserSpecJSON(memberDetail[constants_1.Constants.MODULE]), memberDetail[constants_1.Constants.STRUCTURE_NAME]);
+                memberValue = await this.isRecordResponse(keyData, await this.getModuleDetailFromUserSpecJSON(memberDetail[constants_1.Constants.MODULE]).catch(err => { throw err; }), memberDetail[constants_1.Constants.STRUCTURE_NAME]).catch(err => { throw err; });
             }
             else if (memberDetail.hasOwnProperty(constants_1.Constants.STRUCTURE_NAME)) {
-                memberValue = await this.getResponse(keyData, memberDetail[constants_1.Constants.STRUCTURE_NAME]);
+                memberValue = await this.getResponse(keyData, memberDetail[constants_1.Constants.STRUCTURE_NAME]).catch(err => { throw err; });
             }
             else {
                 memberValue = await datatype_converter_1.DataTypeConverter.preConvert(keyData, type);
@@ -505,7 +505,7 @@ class JSONConverter extends converter_1.Converter {
         if (Object.keys(response).length > 0) {
             if (memberDetail == null || (memberDetail != null && !memberDetail.hasOwnProperty(constants_1.Constants.KEYS))) {
                 for (let key in response) {
-                    mapInstance.set(key, await this.redirectorForJSONToObject(response[key]));
+                    mapInstance.set(key, await this.redirectorForJSONToObject(response[key]).catch(err => { throw err; }));
                 }
             }
             else { // member must have keys
@@ -516,7 +516,7 @@ class JSONConverter extends converter_1.Converter {
                         var keyName = keyDetail[constants_1.Constants.NAME];
                         var keyValue = null;
                         if (response.hasOwnProperty(keyName) && response[keyName] != null) {
-                            keyValue = await this.getData(response[keyName], keyDetail);
+                            keyValue = await this.getData(response[keyName], keyDetail).catch(err => { throw err; });
                             mapInstance.set(keyName, keyValue);
                         }
                     }
@@ -530,7 +530,7 @@ class JSONConverter extends converter_1.Converter {
         if (responses.length > 0) {
             if (memberDetail == null || (memberDetail != null && !memberDetail.hasOwnProperty(constants_1.Constants.STRUCTURE_NAME))) {
                 for (let response of responses) {
-                    values.push(await this.redirectorForJSONToObject(response));
+                    values.push(await this.redirectorForJSONToObject(response).catch(err => { throw err; }));
                 }
             }
             else { // need to have structure Name in memberDetail
@@ -544,12 +544,12 @@ class JSONConverter extends converter_1.Converter {
                 }
                 else if (memberDetail.hasOwnProperty(constants_1.Constants.MODULE) && memberDetail[constants_1.Constants.MODULE] != null) {
                     for (let response of responses) {
-                        values.push(await this.isRecordResponse(response, await this.getModuleDetailFromUserSpecJSON(memberDetail[constants_1.Constants.MODULE]), pack));
+                        values.push(await this.isRecordResponse(response, await this.getModuleDetailFromUserSpecJSON(memberDetail[constants_1.Constants.MODULE]).catch(err => { throw err; }), pack).catch(err => { throw err; }));
                     }
                 }
                 else {
                     for (let response of responses) {
-                        values.push(await this.getResponse(response, pack));
+                        values.push(await this.getResponse(response, pack).catch(err => { throw err; }));
                     }
                 }
             }
@@ -560,16 +560,16 @@ class JSONConverter extends converter_1.Converter {
         var moduleDetail = {};
         let initializer = await initializer_1.Initializer.getInitializer();
         var recordFieldDetailsPath = path.join(initializer.getResourcePath(), constants_1.Constants.FIELD_DETAILS_DIRECTORY, await converter_1.Converter.getEncodedFileName());
-        moduleDetail = await utility_1.Utility.getJSONObject(initializer_1.Initializer.getJSON(recordFieldDetailsPath), module);
+        moduleDetail = await utility_1.Utility.getJSONObject(initializer_1.Initializer.getJSON(recordFieldDetailsPath), module).catch(err => { throw err; });
         return moduleDetail;
     }
     async redirectorForJSONToObject(keyData) {
         let type = Object.prototype.toString.call(keyData);
         if (type == constants_1.Constants.OBJECT_TYPE) {
-            return await this.getMapData(keyData, null);
+            return await this.getMapData(keyData, null).catch(err => { throw err; });
         }
         else if (type == constants_1.Constants.ARRAY_TYPE) {
-            return await this.getCollectionsData(keyData, null);
+            return await this.getCollectionsData(keyData, null).catch(err => { throw err; });
         }
         else {
             return keyData;

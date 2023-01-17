@@ -43,7 +43,7 @@ class RecordOperations{
 		handlerInstance.setParam(paramInstance);
 		handlerInstance.setHeader(headerInstance);
 		handlerInstance.setModuleAPIName(moduleAPIName);
-		await Utility.getFields(moduleAPIName, handlerInstance);
+		await Utility.getFields(moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let ResponseHandler = require.resolve("./response_handler");
 		return handlerInstance.apiCall<ResponseHandler>(ResponseHandler, "application/json");
 
@@ -72,7 +72,7 @@ class RecordOperations{
 		handlerInstance.setRequest(request);
 		handlerInstance.setHeader(headerInstance);
 		handlerInstance.setModuleAPIName(moduleAPIName);
-		await Utility.getFields(moduleAPIName, handlerInstance);
+		await Utility.getFields(moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let ActionHandler = require.resolve("./action_handler");
 		return handlerInstance.apiCall<ActionHandler>(ActionHandler, "application/json");
 
@@ -99,7 +99,7 @@ class RecordOperations{
 		handlerInstance.setCategoryMethod(Constants.REQUEST_METHOD_DELETE);
 		handlerInstance.setParam(paramInstance);
 		handlerInstance.setHeader(headerInstance);
-		await Utility.getFields(moduleAPIName, handlerInstance);
+		await Utility.getFields(moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let ActionHandler = require.resolve("./action_handler");
 		return handlerInstance.apiCall<ActionHandler>(ActionHandler, "application/json");
 
@@ -124,7 +124,7 @@ class RecordOperations{
 		handlerInstance.setParam(paramInstance);
 		handlerInstance.setHeader(headerInstance);
 		handlerInstance.setModuleAPIName(moduleAPIName);
-		await Utility.getFields(moduleAPIName, handlerInstance);
+		await Utility.getFields(moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let ResponseHandler = require.resolve("./response_handler");
 		return handlerInstance.apiCall<ResponseHandler>(ResponseHandler, "application/json");
 
@@ -150,7 +150,7 @@ class RecordOperations{
 		handlerInstance.setRequest(request);
 		handlerInstance.setHeader(headerInstance);
 		handlerInstance.setModuleAPIName(moduleAPIName);
-		await Utility.getFields(moduleAPIName, handlerInstance);
+		await Utility.getFields(moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let ActionHandler = require.resolve("./action_handler");
 		return handlerInstance.apiCall<ActionHandler>(ActionHandler, "application/json");
 
@@ -176,7 +176,7 @@ class RecordOperations{
 		handlerInstance.setRequest(request);
 		handlerInstance.setHeader(headerInstance);
 		handlerInstance.setModuleAPIName(moduleAPIName);
-		await Utility.getFields(moduleAPIName, handlerInstance);
+		await Utility.getFields(moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let ActionHandler = require.resolve("./action_handler");
 		return handlerInstance.apiCall<ActionHandler>(ActionHandler, "application/json");
 
@@ -200,7 +200,7 @@ class RecordOperations{
 		handlerInstance.setCategoryMethod(Constants.REQUEST_METHOD_DELETE);
 		handlerInstance.setParam(paramInstance);
 		handlerInstance.setHeader(headerInstance);
-		await Utility.getFields(moduleAPIName, handlerInstance);
+		await Utility.getFields(moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let ActionHandler = require.resolve("./action_handler");
 		return handlerInstance.apiCall<ActionHandler>(ActionHandler, "application/json");
 
@@ -227,7 +227,7 @@ class RecordOperations{
 		handlerInstance.setRequest(request);
 		handlerInstance.setHeader(headerInstance);
 		handlerInstance.setModuleAPIName(moduleAPIName);
-		await Utility.getFields(moduleAPIName, handlerInstance);
+		await Utility.getFields(moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let ActionHandler = require.resolve("./action_handler");
 		return handlerInstance.apiCall<ActionHandler>(ActionHandler, "application/json");
 
@@ -252,7 +252,7 @@ class RecordOperations{
 		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_READ);
 		handlerInstance.setParam(paramInstance);
 		handlerInstance.setHeader(headerInstance);
-		await Utility.getFields(moduleAPIName, handlerInstance);
+		await Utility.getFields(moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let DeletedRecordsHandler = require.resolve("./deleted_records_handler");
 		return handlerInstance.apiCall<DeletedRecordsHandler>(DeletedRecordsHandler, "application/json");
 
@@ -278,7 +278,7 @@ class RecordOperations{
 		handlerInstance.setParam(paramInstance);
 		handlerInstance.setHeader(headerInstance);
 		handlerInstance.setModuleAPIName(moduleAPIName);
-		await Utility.getFields(moduleAPIName, handlerInstance);
+		await Utility.getFields(moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let ResponseHandler = require.resolve("./response_handler");
 		return handlerInstance.apiCall<ResponseHandler>(ResponseHandler, "application/json");
 
@@ -303,7 +303,7 @@ class RecordOperations{
 		handlerInstance.setContentType("application/json");
 		handlerInstance.setRequest(request);
 		handlerInstance.setMandatoryChecker(true);
-		await Utility.getFields("Deals", handlerInstance);
+		await Utility.getFields("Deals", handlerInstance).catch(err => { throw err; });
 		let ConvertActionHandler = require.resolve("./convert_action_handler");
 		return handlerInstance.apiCall<ConvertActionHandler>(ConvertActionHandler, "application/json");
 
@@ -327,7 +327,7 @@ class RecordOperations{
 		handlerInstance.setAPIPath(apiPath);
 		handlerInstance.setHttpMethod(Constants.REQUEST_METHOD_GET);
 		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_READ);
-		await Utility.getFields(moduleAPIName, handlerInstance);
+		await Utility.getFields(moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let DownloadHandler = require.resolve("./download_handler");
 		return handlerInstance.apiCall<DownloadHandler>(DownloadHandler, "application/x-download");
 
@@ -355,8 +355,8 @@ class RecordOperations{
 		handlerInstance.setContentType("multipart/form-data");
 		handlerInstance.setRequest(request);
 		handlerInstance.setMandatoryChecker(true);
-		await Utility.getFields(moduleAPIName, handlerInstance);
-		await Utility.verifyPhotoSupport(moduleAPIName);
+		await Utility.getFields(moduleAPIName, handlerInstance).catch(err => { throw err; });
+		await Utility.verifyPhotoSupport(moduleAPIName).catch(err => { throw err; });
 		let FileHandler = require.resolve("./file_handler");
 		return handlerInstance.apiCall<FileHandler>(FileHandler, "application/json");
 
@@ -380,7 +380,7 @@ class RecordOperations{
 		handlerInstance.setAPIPath(apiPath);
 		handlerInstance.setHttpMethod(Constants.REQUEST_METHOD_DELETE);
 		handlerInstance.setCategoryMethod(Constants.REQUEST_METHOD_DELETE);
-		await Utility.getFields(moduleAPIName, handlerInstance);
+		await Utility.getFields(moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let FileHandler = require.resolve("./file_handler");
 		return handlerInstance.apiCall<FileHandler>(FileHandler, "application/json");
 
@@ -406,7 +406,7 @@ class RecordOperations{
 		handlerInstance.setRequest(request);
 		handlerInstance.setMandatoryChecker(true);
 		handlerInstance.setModuleAPIName(moduleAPIName);
-		await Utility.getFields(moduleAPIName, handlerInstance);
+		await Utility.getFields(moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let MassUpdateActionHandler = require.resolve("./mass_update_action_handler");
 		return handlerInstance.apiCall<MassUpdateActionHandler>(MassUpdateActionHandler, "application/json");
 
@@ -429,7 +429,7 @@ class RecordOperations{
 		handlerInstance.setHttpMethod(Constants.REQUEST_METHOD_GET);
 		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_READ);
 		handlerInstance.setParam(paramInstance);
-		await Utility.getFields(moduleAPIName, handlerInstance);
+		await Utility.getFields(moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let MassUpdateResponseHandler = require.resolve("./mass_update_response_handler");
 		return handlerInstance.apiCall<MassUpdateResponseHandler>(MassUpdateResponseHandler, "application/json");
 
@@ -457,7 +457,7 @@ class RecordOperations{
 		handlerInstance.setParam(paramInstance);
 		handlerInstance.setHeader(headerInstance);
 		handlerInstance.setModuleAPIName(moduleAPIName);
-		await Utility.getFields(moduleAPIName, handlerInstance);
+		await Utility.getFields(moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let ResponseHandler = require.resolve("./response_handler");
 		return handlerInstance.apiCall<ResponseHandler>(ResponseHandler, "application/json");
 
@@ -486,7 +486,7 @@ class RecordOperations{
 		handlerInstance.setRequest(request);
 		handlerInstance.setHeader(headerInstance);
 		handlerInstance.setModuleAPIName(moduleAPIName);
-		await Utility.getFields(moduleAPIName, handlerInstance);
+		await Utility.getFields(moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let ActionHandler = require.resolve("./action_handler");
 		return handlerInstance.apiCall<ActionHandler>(ActionHandler, "application/json");
 
@@ -513,7 +513,7 @@ class RecordOperations{
 		handlerInstance.setCategoryMethod(Constants.REQUEST_METHOD_DELETE);
 		handlerInstance.setParam(paramInstance);
 		handlerInstance.setHeader(headerInstance);
-		await Utility.getFields(moduleAPIName, handlerInstance);
+		await Utility.getFields(moduleAPIName, handlerInstance).catch(err => { throw err; });
 		let ActionHandler = require.resolve("./action_handler");
 		return handlerInstance.apiCall<ActionHandler>(ActionHandler, "application/json");
 

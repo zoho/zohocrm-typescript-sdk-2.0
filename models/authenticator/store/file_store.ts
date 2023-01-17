@@ -41,7 +41,7 @@ export class FileStore implements TokenStore {
                     
                     var nextRecord = line.split(",");
                     
-                    if (this.checkTokenExists(user.getEmail(), token, nextRecord)) {
+                    if (this.checkTokenExists(user.getName(), token, nextRecord)) {
                         token.setAccessToken(nextRecord[5]);
 
                         token.setExpiresIn(nextRecord[7]);
@@ -68,15 +68,15 @@ export class FileStore implements TokenStore {
         try {
             if (token instanceof OAuthToken) {
 
-                token.setUserMail(user.getEmail());
+                token.setUserMail(user.getName());
 
-                await this.deleteToken(token);
+                await this.deleteToken(token).catch(err => { throw err; });
 
                 var data = [];
 
                 data[0] = token.getId();
 
-                data[1] = user.getEmail();
+                data[1] = user.getName();
 
                 data[2] = token.getClientId();
 

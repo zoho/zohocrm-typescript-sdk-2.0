@@ -83,7 +83,7 @@ export class ModuleFieldsHandler {
                 let recordFieldDetailsJson: { [key: string]: any } = await Initializer.getJSON(recordFieldDetailsPath);
 
                 if (recordFieldDetailsJson.hasOwnProperty(module.toLowerCase())) {
-                    await Utility.deleteFields(recordFieldDetailsJson, module);
+                    await Utility.deleteFields(recordFieldDetailsJson, module).catch(err => { throw err; });
 
                     fs.writeFileSync(recordFieldDetailsPath, JSON.stringify(recordFieldDetailsJson));
                 }
@@ -102,9 +102,9 @@ export class ModuleFieldsHandler {
     */
     public static async refreshFields(module: string) {
         try {
-            await this.deleteFields(module);
+            await this.deleteFields(module).catch(err => { throw err; });
 
-            await Utility.getFieldsInfo(module, null);
+            await Utility.getFieldsInfo(module, null).catch(err => { throw err; });
         } catch (error) {
             if (!(error instanceof SDKException)) {
                 error = new SDKException(null, null, null, error);
@@ -122,7 +122,7 @@ export class ModuleFieldsHandler {
      */
     public static async refreshAllModules() {
         try {
-            await Utility.refreshModules();
+            await Utility.refreshModules().catch(err => { throw err; });
         } catch (error) {
             if (!(error instanceof SDKException)) {
                 error = new SDKException(null, null, null, error);

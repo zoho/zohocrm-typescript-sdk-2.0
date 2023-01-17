@@ -39,6 +39,11 @@ Since Zoho CRM APIs are authenticated with OAuth2 standards, you should register
 
 - Generate grant token by providing the necessary scopes, time duration (the duration for which the generated token is valid) and Scope Description.
 
+### Note:
+- For **Contact Roles** and **Records API**, you will need to provide the **ZohoCRM.settings.fields.ALL** scope along with the **ZohoCRM.modules.ALL** scope while generating the OAuthtoken. Otherwise, the system returns the **OAUTH-SCOPE-MISMATCH** error
+
+- For **Related Records API**, the scopes required for generating OAuthtoken are **ZohoCRM.modules.ALL**, **ZohoCRM.settings.fields.ALL**, and **ZohoCRM.settings.related_lists.ALL**. Otherwise, the system returns the **OAUTH-SCOPE-MISMATCH** error
+
 ## Environmental Setup
 
 TypeScript SDK is installable through **npm**. **npm** is a tool for dependency management in TypeScript. SDK expects the following from the client app:
@@ -576,20 +581,15 @@ Initialize the SDK using the following code.
             * resourcePath -> resourcePath
             * logger -> Logger instance
             */
-            try {
-                (await new InitializeBuilder())
-                    .user(user)
-                    .environment(environment)
-                    .token(token)
-                    .store(tokenstore)
-                    .SDKConfig(sdkConfig)
-                    .resourcePath(resourcePath)
-                    .logger(logger)
-                    .initialize();
-            } catch (error) {
-                console.log(error);
-            }
-
+            await (await new InitializeBuilder())
+                .user(user)
+                .environment(environment)
+                .token(token)
+                .store(tokenstore)
+                .SDKConfig(sdkConfig)
+                .resourcePath(resourcePath)
+                .logger(logger)
+                .initialize().catch(err => { console.log(err) });
         }
     }
 
@@ -677,12 +677,12 @@ The **TypeScript SDK** (from version 1.x.x) supports both single-user and multi-
 Multi-users functionality is achieved using Initializer's static **switchUser()** method.
 
 ```ts
-(await new InitializeBuilder())
+await (await new InitializeBuilder())
     .user(user)
     .environment(environment)
     .token(token)
     .SDKConfig(sdkConfig)
-    .switchUser();
+    .switchUser().catch(err => { console.log(err) });
 ```
 
 To Remove a user's configuration in SDK. Use the below code
@@ -723,99 +723,98 @@ await Initializer.removeUserConfiguration(user, environment)
     class SampleRecord {
 
         public static async call() {
-
-           /*
-            * Create an instance of Logger Class that takes two parameters
-            * level -> Level of the log messages to be logged. Can be configured by typing Levels "." and choose any level from the list displayed.
-            * filePath -> Absolute file path, where messages need to be logged.
-            */
-            let logger: Logger= new LogBuilder()
-            .level(Levels.INFO)
-            .filePath("/Users/user_name/Documents/ts_sdk_log.log")
-            .build();
-
-            /*
-            * Create an UserSignature instance that takes user Email as parameter
-            */
-            let user1 = new UserSignature("abc@zoho.com");
-
-            /*
-            * Configure the environment
-            * which is of the pattern Domain.Environment
-            * Available Domains: USDataCenter, EUDataCenter, INDataCenter, CNDataCenter, AUDataCenter
-            * Available Environments: PRODUCTION(), DEVELOPER(), SANDBOX()
-            */
-            let environment1: Environment = USDataCenter.PRODUCTION();
-
-            /*
-            * Create a Token instance
-            * clientId -> OAuth client id.
-            * clientSecret -> OAuth client secret.
-            * grantToken -> OAuth Grant Token. 
-            * refreshToken -> OAuth Refresh Token token.
-            * redirectURL -> OAuth Redirect URL.
-            */
-            let token1: OAuthToken = new OAuthBuilder()
-            .clientId("clientId")
-            .clientSecret("clientSecret")
-            .refreshToken("refreshToken")
-            .redirectURL("redirectURL")
-            .build();
-
-            /*
-            * Create an instance of TokenStore.
-            * host -> DataBase host name. Default "localhost"
-            * databaseName -> DataBase name. Default "zohooauth"
-            * userName -> DataBase user name. Default "root"
-            * password -> DataBase password. Default ""
-            * portNumber -> DataBase port number. Default "3306"
-            * tableName -> DataBase table name. Default "oauthtoken"
-            */
-            // let store: DBStore = new DBBuilder().build();;
-
-            // let tokenstore = new DBBuilder()
-            // .host("hostName")
-            // .databaseName("databaseName")
-            // .userName("userName")
-            // .portNumber("portNumber")
-            // .tableName("tableName")
-            // .password("password")
-            // .build();
-
-            /*
-            * Create an instance of FileStore that takes absolute file path as parameter
-            */
-            let store: FileStore = new FileStore("/Users/username/ts_sdk_tokens.txt");
-
-            /*
-            * autoRefreshFields
-            * if true - all the modules' fields will be auto-refreshed in the background, every    hour.
-            * if false - the fields will not be auto-refreshed in the background. The user can manually delete the file(s) or refresh the fields using methods from ModuleFieldsHandler(utils/util/module_fields_handler.ts)
-            *
-            * pickListValidation
-            * A boolean field that validates user input for a pick list field and allows or disallows the addition of a new value to the list.
-            * True - the SDK validates the input. If the value does not exist in the pick list, the SDK throws an error.
-            * False - the SDK does not validate the input and makes the API request with the user’s input to the pick list
-            */
-            let sdkConfig: SDKConfig = new SDKConfigBuilder().pickListValidation(false).autoRefreshFields(true).build();
-
-            /*
-            * The path containing the absolute directory path to store user specific JSON files containing module fields information.
-            */
-            let resourcePath: string = "/Users/user_name/Documents/ts-app";
-
-            /*
-            * Call the static initialize method of Initializer class that takes the following arguments
-            * user -> UserSignature instance
-            * environment -> Environment instance
-            * token -> Token instance
-            * store -> TokenStore instance
-            * SDKConfig -> SDKConfig instance
-            * resourcePath -> resourcePath
-            * logger -> Logger instance
-            */
             try {
-                (await new InitializeBuilder())
+            /*
+                * Create an instance of Logger Class that takes two parameters
+                * level -> Level of the log messages to be logged. Can be configured by typing Levels "." and choose any level from the list displayed.
+                * filePath -> Absolute file path, where messages need to be logged.
+                */
+                let logger: Logger= new LogBuilder()
+                .level(Levels.INFO)
+                .filePath("/Users/user_name/Documents/ts_sdk_log.log")
+                .build();
+
+                /*
+                * Create an UserSignature instance that takes user Email as parameter
+                */
+                let user1 = new UserSignature("abc@zoho.com");
+
+                /*
+                * Configure the environment
+                * which is of the pattern Domain.Environment
+                * Available Domains: USDataCenter, EUDataCenter, INDataCenter, CNDataCenter, AUDataCenter
+                * Available Environments: PRODUCTION(), DEVELOPER(), SANDBOX()
+                */
+                let environment1: Environment = USDataCenter.PRODUCTION();
+
+                /*
+                * Create a Token instance
+                * clientId -> OAuth client id.
+                * clientSecret -> OAuth client secret.
+                * grantToken -> OAuth Grant Token. 
+                * refreshToken -> OAuth Refresh Token token.
+                * redirectURL -> OAuth Redirect URL.
+                */
+                let token1: OAuthToken = new OAuthBuilder()
+                .clientId("clientId")
+                .clientSecret("clientSecret")
+                .refreshToken("refreshToken")
+                .redirectURL("redirectURL")
+                .build();
+
+                /*
+                * Create an instance of TokenStore.
+                * host -> DataBase host name. Default "localhost"
+                * databaseName -> DataBase name. Default "zohooauth"
+                * userName -> DataBase user name. Default "root"
+                * password -> DataBase password. Default ""
+                * portNumber -> DataBase port number. Default "3306"
+                * tableName -> DataBase table name. Default "oauthtoken"
+                */
+                // let store: DBStore = new DBBuilder().build();
+
+                // let tokenstore = new DBBuilder()
+                // .host("hostName")
+                // .databaseName("databaseName")
+                // .userName("userName")
+                // .portNumber("portNumber")
+                // .tableName("tableName")
+                // .password("password")
+                // .build();
+
+                /*
+                * Create an instance of FileStore that takes absolute file path as parameter
+                */
+                let store: FileStore = new FileStore("/Users/username/ts_sdk_tokens.txt");
+
+                /*
+                * autoRefreshFields
+                * if true - all the modules' fields will be auto-refreshed in the background, every    hour.
+                * if false - the fields will not be auto-refreshed in the background. The user can manually delete the file(s) or refresh the fields using methods from ModuleFieldsHandler(utils/util/module_fields_handler.ts)
+                *
+                * pickListValidation
+                * A boolean field that validates user input for a pick list field and allows or disallows the addition of a new value to the list.
+                * True - the SDK validates the input. If the value does not exist in the pick list, the SDK throws an error.
+                * False - the SDK does not validate the input and makes the API request with the user’s input to the pick list
+                */
+                let sdkConfig: SDKConfig = new SDKConfigBuilder().pickListValidation(false).autoRefreshFields(true).build();
+
+                /*
+                * The path containing the absolute directory path to store user specific JSON files containing module fields information.
+                */
+                let resourcePath: string = "/Users/user_name/Documents/ts-app";
+
+                /*
+                * Call the static initialize method of Initializer class that takes the following arguments
+                * user -> UserSignature instance
+                * environment -> Environment instance
+                * token -> Token instance
+                * store -> TokenStore instance
+                * SDKConfig -> SDKConfig instance
+                * resourcePath -> resourcePath
+                * logger -> Logger instance
+                */
+                await (await new InitializeBuilder())
                     .user(user1)
                     .environment(environment1)
                     .token(token1)
@@ -823,36 +822,36 @@ await Initializer.removeUserConfiguration(user, environment)
                     .SDKConfig(sdkConfig)
                     .resourcePath(resourcePath)
                     .logger(logger)
-                    .initialize();
+                    .initialize().catch(err => { console.log(err) });
+
+                await SampleRecord.getRecords("Leads");
+
+                await Initializer.removeUserConfiguration(user1, environment1);
+
+                let user2: UserSignature = new UserSignature("abc2@zoho.eu");
+
+                let environment2: Environment = EUDataCenter.SANDBOX();
+
+                let token2: OAuthToken= = new OAuthBuilder()
+                .clientId("clientId")
+                .clientSecret("clientSecret")
+                .refreshToken("refreshToken")
+                .redirectURL("redirectURL")
+                .build();
+
+                let sdkConfig2: SDKConfig = new SDKConfigBuilder().pickListValidation(true).autoRefreshFields(true).build();
+
+                await(await new InitializeBuilder())
+                .user(user2)
+                .environment(environment2)
+                .token(token2)
+                .SDKConfig(sdkConfig2)
+                .switchUser().catch(err => { console.log(err) });;
+
+                await SampleRecord.getRecords("Leads");
             } catch (error) {
                 console.log(error);
             }
-
-            await SampleRecord.getRecords("Leads");
-
-            await Initializer.removeUserConfiguration(user1, environment1);
-
-            let user2: UserSignature = new UserSignature("abc2@zoho.eu");
-
-            let environment2: Environment = EUDataCenter.SANDBOX();
-
-            let token2: OAuthToken= = new OAuthBuilder()
-            .clientId("clientId")
-            .clientSecret("clientSecret")
-            .refreshToken("refreshToken")
-            .redirectURL("redirectURL")
-            .build();
-
-            let sdkConfig2: SDKConfig = new SDKConfigBuilder().pickListValidation(true).autoRefreshFields(true).build();
-
-            (await new InitializeBuilder())
-            .user(user2)
-            .environment(environment2)
-            .token(token2)
-            .SDKConfig(sdkConfig2)
-            .switchUser();
-
-            await SampleRecord.getRecords("Leads");
         }
 
         static async getRecords(moduleAPIName: string) {
@@ -986,44 +985,39 @@ await Initializer.removeUserConfiguration(user, environment)
     class SampleRecord {
 
         public static async getRecords(){
+            try{
+                let user: UserSignature = new UserSignature("abc@zoho.com");
 
-            let user: UserSignature = new UserSignature("abc@zoho.com");
+                let myLogger: Logger = new LogBuilder()
+                .level(Levels.INFO)
+                .filePath("/Users/user_name/Documents/ts_sdk_log.log")
+                .build();
 
-            let myLogger: Logger = new LogBuilder()
-            .level(Levels.INFO)
-            .filePath("/Users/user_name/Documents/ts_sdk_log.log")
-            .build();
+                let dc: Environment = USDataCenter.PRODUCTION();
 
-            let dc: Environment = USDataCenter.PRODUCTION();
+                let sdkConfig: SDKConfig = new SDKConfigBuilder().autoRefreshFields(false).pickListValidation(true).build();
 
-            let sdkConfig: SDKConfig = new SDKConfigBuilder().autoRefreshFields(false).pickListValidation(true).build();
+                let store: FileStore = new FileStore("/Users/username/Documents/ts_sdk_tokens.txt");
 
-            let store: FileStore = new FileStore("/Users/username/Documents/ts_sdk_tokens.txt");
+                let token: OAuthToken= new OAuthBuilder()
+                .clientId("clientId")
+                .clientSecret("clientSecret")
+                .refreshToken("refreshToken")
+                .redirectURL("redirectURL")
+                .build();
 
-            let token: OAuthToken= new OAuthBuilder()
-            .clientId("clientId")
-            .clientSecret("clientSecret")
-            .refreshToken("refreshToken")
-            .redirectURL("redirectURL")
-            .build();
+                let path: string = "/Users/user_name/Documents/ts-app";
 
-            let path: string = "/Users/user_name/Documents/ts-app";
+                await (await new InitializeBuilder())
+                    .user(user)
+                    .environment(dc)
+                    .token(token)
+                    .store(store)
+                    .SDKConfig(sdkConfig)
+                    .resourcePath(path)
+                    .logger(myLogger)
+                    .initialize().catch(err => { console.log(err) });
 
-            try {
-            (await new InitializeBuilder())
-                .user(user)
-                .environment(dc)
-                .token(token)
-                .store(store)
-                .SDKConfig(sdkConfig)
-                .resourcePath(path)
-                .logger(myLogger)
-                .initialize();
-            } catch (error) {
-                console.log(error);
-            }
-
-            try {
                 let moduleAPIName = "Leads";
                 //Get instance of RecordOperations Class
                 let recordOperations: RecordOperations = new RecordOperations();

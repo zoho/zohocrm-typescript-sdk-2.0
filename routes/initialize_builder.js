@@ -45,9 +45,9 @@ class InitializeBuilder {
         })();
     }
     async initialize() {
-        utility_1.Utility.assertNotNull(this._user, this.errorMessage, constants_1.Constants.USER_SIGNATURE_ERROR_MESSAGE);
-        utility_1.Utility.assertNotNull(this._environment, this.errorMessage, constants_1.Constants.ENVIRONMENT_ERROR_MESSAGE);
-        utility_1.Utility.assertNotNull(this._token, this.errorMessage, constants_1.Constants.TOKEN_ERROR_MESSAGE);
+        await utility_1.Utility.assertNotNull(this._user, this.errorMessage, constants_1.Constants.USER_SIGNATURE_ERROR_MESSAGE).catch(err => { throw err; });
+        await utility_1.Utility.assertNotNull(this._environment, this.errorMessage, constants_1.Constants.ENVIRONMENT_ERROR_MESSAGE).catch(err => { throw err; });
+        await utility_1.Utility.assertNotNull(this._token, this.errorMessage, constants_1.Constants.TOKEN_ERROR_MESSAGE).catch(err => { throw err; });
         if (this._store == null) {
             this._store = new file_store_1.FileStore(path.join(__dirname, "../../../../", constants_1.Constants.TOKEN_FILE));
         }
@@ -63,7 +63,7 @@ class InitializeBuilder {
         initializer_1.Initializer.initialize(this._user, this._environment, this._token, this._store, this._sdkConfig, this._resourcePath, this._logger, this._requestProxy);
     }
     async switchUser() {
-        utility_1.Utility.assertNotNull(initializer_1.Initializer.getInitializer(), constants_1.Constants.SDK_UNINITIALIZATION_ERROR, constants_1.Constants.SDK_UNINITIALIZATION_MESSAGE);
+        await utility_1.Utility.assertNotNull(initializer_1.Initializer.getInitializer(), constants_1.Constants.SDK_UNINITIALIZATION_ERROR, constants_1.Constants.SDK_UNINITIALIZATION_MESSAGE).catch(err => { throw err; });
         initializer_1.Initializer.switchUser(this._user, this._environment, this._token, this._sdkConfig, this._requestProxy);
     }
     logger(logger) {
@@ -71,7 +71,6 @@ class InitializeBuilder {
         return this;
     }
     token(token) {
-        utility_1.Utility.assertNotNull(token, this.errorMessage, constants_1.Constants.TOKEN_ERROR_MESSAGE);
         this._token = token;
         return this;
     }
@@ -91,7 +90,6 @@ class InitializeBuilder {
         return this;
     }
     user(user) {
-        utility_1.Utility.assertNotNull(user, this.errorMessage, constants_1.Constants.USER_SIGNATURE_ERROR_MESSAGE);
         this._user = user;
         return this;
     }
@@ -100,7 +98,6 @@ class InitializeBuilder {
         return this;
     }
     environment(environment) {
-        utility_1.Utility.assertNotNull(environment, this.errorMessage, constants_1.Constants.ENVIRONMENT_ERROR_MESSAGE);
         this._environment = environment;
         return this;
     }

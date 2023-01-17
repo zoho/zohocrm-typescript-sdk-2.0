@@ -172,7 +172,7 @@ class CommonAPIHandler {
         }
         var connector = new api_http_connector_1.APIHTTPConnector();
         try {
-            await this.setAPIUrl(connector);
+            await this.setAPIUrl(connector).catch(err => { throw err; });
         }
         catch (error) {
             if (!(error instanceof sdk_exception_1.SDKException)) {
@@ -216,7 +216,7 @@ class CommonAPIHandler {
                 if (converterInstance !== null) {
                     var classFileName = converterInstance.getFileName(this.request.constructor.name);
                     baseName.push(classFileName);
-                    requestObject = await converterInstance.formRequest(this.request, baseName.join("/"), null, null);
+                    requestObject = await converterInstance.formRequest(this.request, baseName.join("/"), null, null).catch(err => { throw err; });
                 }
             }
             catch (error) {
@@ -232,7 +232,7 @@ class CommonAPIHandler {
         }
         try {
             connector.addHeader(constants_1.Constants.ZOHO_SDK, os.platform() + "/" + os.release() + "/" + constants_1.Constants.SDK_NAME + "/" + process.version + ":" + constants_1.Constants.SDK_VERSION);
-            let response = await connector.fireRequest(converterInstance);
+            let response = await connector.fireRequest(converterInstance).catch(err => { throw err; });
             let headerMap = await this.getHeaders(response.headers);
             if (response.headers.hasOwnProperty(constants_1.Constants.CONTENT_TYPE_HEADER.toLowerCase())) {
                 let contentTypeHeader = response.headers[constants_1.Constants.CONTENT_TYPE_HEADER.toLowerCase()];
@@ -240,7 +240,7 @@ class CommonAPIHandler {
                     let contentType = contentTypeHeader.split(";")[0];
                     converterInstance = this.getConverterClassInstance(contentType.toLowerCase());
                     if (converterInstance !== null) {
-                        returnObject = await converterInstance.getWrappedResponse(response, pack);
+                        returnObject = await converterInstance.getWrappedResponse(response, pack).catch(err => { throw err; });
                     }
                 }
             }

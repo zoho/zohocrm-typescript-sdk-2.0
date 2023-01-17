@@ -29,7 +29,7 @@ class LayoutsOperations{
 		handlerInstance.setAPIPath(apiPath);
 		handlerInstance.setHttpMethod(Constants.REQUEST_METHOD_GET);
 		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_READ);
-		await handlerInstance.addParam(new Param<string>("module", "com.zoho.crm.api.Layouts.GetLayoutsParam"), this.module);
+		await handlerInstance.addParam(new Param<string>("module", "com.zoho.crm.api.Layouts.GetLayoutsParam"), this.module).catch(err => { throw err; });
 		let ResponseHandler = require.resolve("./response_handler");
 		return handlerInstance.apiCall<ResponseHandler>(ResponseHandler, "application/json");
 
@@ -49,7 +49,7 @@ class LayoutsOperations{
 		handlerInstance.setAPIPath(apiPath);
 		handlerInstance.setHttpMethod(Constants.REQUEST_METHOD_GET);
 		handlerInstance.setCategoryMethod(Constants.REQUEST_CATEGORY_READ);
-		await handlerInstance.addParam(new Param<string>("module", "com.zoho.crm.api.Layouts.GetLayoutParam"), this.module);
+		await handlerInstance.addParam(new Param<string>("module", "com.zoho.crm.api.Layouts.GetLayoutParam"), this.module).catch(err => { throw err; });
 		let ResponseHandler = require.resolve("./response_handler");
 		return handlerInstance.apiCall<ResponseHandler>(ResponseHandler, "application/json");
 
